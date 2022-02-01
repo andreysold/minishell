@@ -14,7 +14,7 @@ char *ft_one_quotes(char *str, char *tmp, int *i, int *j)
 	return (tmp);
 }
 
-char *ft_two_quotes(char *str, char **env, char *tmp, int *i, int *j)
+char *ft_two_quotes(char *str, char **env, char *tmp, int *i, int *j) // no norm
 {
 	(*i)++;
 	while (str[(*i)] && str[(*i)] != '\"')

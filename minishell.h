@@ -12,6 +12,7 @@ typedef struct s_iterat
     int i;
     int j;
     int k;
+    int z;
     int l;
     int pos;
     int foq; // flag on quotes
@@ -48,4 +49,5 @@ int ft_dol_str(char *str, char **env);
 t_comm *ft_parser4(t_comm *lst, char *str, char **env);
 char *ft_destroy_space4(char *str, char **env);
 char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j);
+void ft_count_node2(char *str, int *i, char c);
 #endif

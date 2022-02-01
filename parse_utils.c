@@ -1,5 +1,12 @@
 #include "minishell.h"
 
+void ft_count_node2(char *str, int *i, char c)
+{
+    (*i)++;
+    while (str[(*i)] && str[(*i)] != c)
+        (*i)++;
+}
+
 int ft_count_node(char *str) // func for count nodes
 {
     int i;
@@ -10,17 +17,9 @@ int ft_count_node(char *str) // func for count nodes
     while (str[i])
     {
         if (str[i] == '\'')
-        {
-            i++;
-            while (str[i] && str[i] != '\'')
-                i++;
-        }
+            ft_count_node2(str, &i, '\'');
         else if (str[i] == '\"')
-        {
-            i++;
-            while (str[i] && str[i] != '\"')
-                i++;
-        }
+            ft_count_node2(str, &i, '\"');
         else if (str[i] == '|')
             count++;
         i++;

@@ -7,11 +7,10 @@ char *ft_destroy_space4(char *str, char **env)
     int i;
     int j;
     int len_dollar;
-    char *tmp2;
 
     len_dollar = 0;
     len_dollar = ft_dol_str(str, env);
-    tmp = (char *)malloc(sizeof(char) * (len_dollar + 1));
+    tmp = (char *)malloc(sizeof(char) * (len_dollar + 2));
     if (!(tmp))
         return (NULL);
     i = 0;
@@ -21,9 +20,7 @@ char *ft_destroy_space4(char *str, char **env)
         if (str[i] == '\'')
             tmp = ft_one_quotes(str, tmp, &i, &j);
         else if (str[i] == '\"')
-        {
             tmp = ft_two_quotes(str, env, tmp, &i, &j);
-        }
         else if (str[i] == '$' && str[i + 1] != ' ')
         {
             i++;
@@ -40,7 +37,6 @@ char *ft_destroy_space4(char *str, char **env)
             tmp[j++] = str[i++];
     }
     tmp[j] = '\0';
-    printf("->%s<-\n", tmp);
     return (tmp);
 }
 
@@ -52,9 +48,8 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 
     count_nd = ft_count_node(str);
     str = ft_destroy_space4(str, env);
+    printf("|->%s<-|\n", str);
     str_tl = ft_split(str, '|');
-    printf("%d\n", count_nd);
-    lst = NULL;
     while (count_nd-- > 0)
     {
         tmp = malloc(sizeof(t_comm));
@@ -64,10 +59,11 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
         tmp->last_str = ft_strdup(str_tl[count_nd]);
         tmp->command_str = ft_split(tmp->last_str, ' ');
         tmp->command_str = ft_return_space(tmp->command_str);
+        free (tmp->last_str);
         tmp->next = lst;
         lst = tmp;
-        free (tmp->last_str);;
     }
+    ft_no_malloc(str_tl);
     free (str);
     return (lst);
 }

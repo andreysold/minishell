@@ -1,5 +1,5 @@
 #include "minishell.h"
-
+#include <string.h>
 int	ft_lexer(char *str)
 {
 	int i;
@@ -36,7 +36,7 @@ void	ft_free_list(t_comm *lst)
             int i = 0;
             while (lst->command_str[i])
 			{
-				printf("|%s\n", lst->command_str[i]);
+				//printf("|%s\n", lst->command_str[i]);
                 free (lst->command_str[i]);
 				i++;
 			}
@@ -45,6 +45,44 @@ void	ft_free_list(t_comm *lst)
         lst = lst->next;
         free (head);
     }
+}
+
+t_comm *ft_check_redir(t_comm *lst)
+{
+	t_comm *head;
+	int j;
+
+	j = 0;
+	head = lst;
+	char *red;
+	lst->rd = malloc(sizeof(t_redir));
+	if (!lst->rd)
+		return (NULL);
+	lst->rd->fd = (int *)malloc(sizeof(int) * 4);
+	if (!lst->rd->fd)
+		return (NULL);
+	red = ft_strdup(">");
+	while (lst->next != NULL)
+	{
+		if (lst->command_str)
+		{
+			int i = 0;
+			while (lst->command_str[i])
+			{
+				if (ft_strncmp(lst->command_str[i], red, ft_strlen(red))== 0)
+				{
+					if (i == 0)
+						lst->rd->fd[j] = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+					
+					j++;
+				}
+				i++;
+			}
+		}
+		lst = lst->next;
+	}
+	lst = head;
+	return (lst);
 }
 int ft_process4(char **env, char *str)
 {
@@ -55,6 +93,7 @@ int ft_process4(char **env, char *str)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
     lst = ft_parser4(lst, str, env);
+	lst = ft_check_redir(lst);
 	ft_free_list(lst);
     return (0);
 }
@@ -101,6 +140,11 @@ int main(int ac, char **av, char **env)
 		str = readline("bash:");
 		if (str && *str)
 		{
+			if (ft_lexer(str) == -1)
+			{
+				printf("Not close quoters\n");
+				exit (0);
+			}
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_process4(envp, str) == -1)

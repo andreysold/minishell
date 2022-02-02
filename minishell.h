@@ -5,9 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "libft/libft.h"
+#include <fcntl.h>
+#include <errno.h>
 #include <readline/history.h>
 
-typedef struct s_iterat
+typedef struct s_iterat // итераторы для подгонки под норму
 {
     int i;
     int j;
@@ -18,21 +20,25 @@ typedef struct s_iterat
     int foq; // flag on quotes
 }   t_iter;
 
+
+typedef struct s_redirect {
+    int *fd; // фдшники файлов
+    int *fd2; // для фдшников функций
+}   t_redir;
+
 typedef struct s_comm
 {
     char **command_str; // двумернный массив из las_str(separator ' ')
-    char *last_str; // подмножество строки
-    char *outfile;
-    char *mysor;
-    char **mysor2;
-    char *infile;
+    char *last_str; // подмножество строки 
+    char *outfile; // возможно не понадобится
+    char *infile; // возможно не понадобится 
     char *append;
     char *herdok;
     int count_word;
-    t_iter t;
+    t_iter t; // структура итераторов
     struct  s_comm *next;
+    t_redir *rd; // структура под редиректы.
 }   t_comm;
-
 
 
 int	ft_lexer(char *str);

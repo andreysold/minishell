@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "includes/minishell.h"
 
 void ft_count_node2(char *str, int *i, char c)
 {

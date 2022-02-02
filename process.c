@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "includes/minishell.h"
 #include <string.h>
 
 char *ft_destroy_space4(char *str, char **env)

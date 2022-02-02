@@ -46,6 +46,7 @@ void	ft_free_list(t_comm *lst)
         free (head);
     }
 }
+
 int ft_process4(char **env, char *str)
 {
 	t_comm *lst;
@@ -55,6 +56,7 @@ int ft_process4(char **env, char *str)
 		return (-1);
 	ft_memset((void *)lst, 0, sizeof(t_comm));
 	lst = ft_parser4(lst, str, env);
+	executor(lst, env);
 	ft_free_list(lst);
 	return (0);
 }
@@ -89,6 +91,7 @@ char **ft_get_envp(char **env)
 	envp[i] = NULL;
 	return (envp);
 }
+
 int main(int ac, char **av, char **env)
 {
 	char *str;
@@ -96,8 +99,8 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	 while (1)
-	 {
+	while (1)
+	{
 		str = readline("bash:");
 		if (str && *str)
 		{
@@ -113,5 +116,5 @@ int main(int ac, char **av, char **env)
 		}
 		else
 			exit(0);
-	 }
+	}
 }

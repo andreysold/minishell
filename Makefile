@@ -1,5 +1,5 @@
-CC	=	gcc
-RM	=	rm -f
+CC		=	gcc
+RM		=	rm -f
 LIBFT	=	srcs/libft
 CFLAGS	=	-I./includes #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
@@ -47,4 +47,4 @@ re:			fclean all
 run:		all
 			./$(NAME)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re run

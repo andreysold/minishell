@@ -60,17 +60,19 @@ static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
 ///@param argv[4] –– outfile. u should use redirect in argv[5]
 ///@param argv[5] –– necessary for outfile. use >
 ///@param argv[6] –– necessary for infile. use <
-/*
-int	main(int argc, char **argv, char **env)
+int	pipex(t_comm *lst, char **env)
 {
 	int		fd[3];
 	pid_t	pid[2];
 
 	errno = 0;
-	///added (to 5) 2 argc for infile/outfile trigger; now ac = 7
-	if (argc > 7)
-		error_n_exit("You should give four arguments");
-
+//	if (lst->count_word < 1)
+//		error_n_exit("You give 0 commands");
+	printf("%s --- \n", lst->next->command_str[0]);
+/*	///added (to 5) 2 argc for infile/outfile trigger; now ac = 7
+*//*	if (argc > 7)
+		error_n_exit("You should give four arguments");*//*
+	ft_memset((void*)fd, 0, sizeof(fd[3]));
 	if (pipe(fd) == -1)
 		error_n_exit("Can't create a pipe");
 
@@ -96,7 +98,12 @@ int	main(int argc, char **argv, char **env)
 			fd[2] = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
 		process(pid, fd, argv[3], env);
 	}
-	close_fd_and_waitpid(fd, pid);
+	close_fd_and_waitpid(fd, pid);*/
 	return (0);
 }
-*/
+
+/*int main(int argc, char **argv, char **env)
+{
+	pipex(argc, argv, env);
+	return (0);
+}*/

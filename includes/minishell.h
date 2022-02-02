@@ -6,33 +6,38 @@
 #include <stdlib.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include "../srcs/libft/libft.h"
+#include "pipex.h"
+//#include "../srcs/libft/libft.h"
 
 typedef struct s_iterat
 {
-    int i;
-    int j;
-    int k;
-    int z;
-    int l;
-    int pos;
-    int foq; // flag on quotes
+    int	i;
+    int	j;
+    int	k;
+    int	z;
+    int	l;
+    int	pos;
+    int	foq; // flag on quotes
 }   t_iter;
 
 typedef struct s_comm
 {
-    char **command_str; // двумернный массив из las_str(separator ' ')
-    char *last_str; // подмножество строки
-    char *outfile;
-    char *mysor;
-    char **mysor2;
-    char *infile;
-    char *append;
-    char *herdok;
-    int count_word;
-    t_iter t;
-    struct  s_comm *next;
-}   t_comm;
+    char	**command_str; // двумернный массив из las_str(separator ' ')
+    char	*last_str; // подмножество строки
+    char	*outfile;
+    char	*mysor;
+    char	**mysor2;
+    char	*infile;
+    char	*append;
+    char	*herdok;
+    int		count_word;
+    t_iter	t;
+    struct	s_comm *next;
+}			t_comm;
+
+/**********EXECUTOR**********/
+int		pipex(t_comm *lst, char **env);
+int		executor(t_comm *lst, char **env);
 
 int		ft_lexer(char *str);
 int		ft_process4(char **env, char *str);

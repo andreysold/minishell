@@ -13,6 +13,7 @@
 # define PIPEX_H
 
 # include "../srcs/libft/libft.h"	//unistd : access dup2 close execve pipe; stdlib
+# include "minishell.h"
 # include <sys/fcntl.h>			//open
 # include <sys/wait.h>			//waitpid
 # include <stdio.h>				//perror

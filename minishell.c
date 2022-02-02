@@ -48,15 +48,15 @@ void	ft_free_list(t_comm *lst)
 }
 int ft_process4(char **env, char *str)
 {
-    t_comm *lst;
+	t_comm *lst;
 
-    lst = malloc(sizeof(t_comm));
-    if (!lst)
-        return (-1);
-    ft_memset((void *)lst, 0, sizeof(t_comm));
-    lst = ft_parser4(lst, str, env);
+	lst = malloc(sizeof(t_comm));
+	if (!lst)
+		return (-1);
+	ft_memset((void *)lst, 0, sizeof(t_comm));
+	lst = ft_parser4(lst, str, env);
 	ft_free_list(lst);
-    return (0);
+	return (0);
 }
 
 void ft_no_malloc(char **str)
@@ -96,17 +96,22 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	// while (1)
-	// {
+	 while (1)
+	 {
 		str = readline("bash:");
 		if (str && *str)
 		{
+			///parser
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_process4(envp, str) == -1)
 				exit (0);
+			///executor
+
 			free (str);
 			ft_no_malloc(envp);
 		}
-	// }
+		else
+			exit(0);
+	 }
 }

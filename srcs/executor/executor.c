@@ -14,6 +14,7 @@
 
 int	executor(t_comm *lst, char **env)
 {
-	pipex(lst, env);
+//	pipex(lst, env);
+	pipex_alt(lst,env);
 	return (0);
 }

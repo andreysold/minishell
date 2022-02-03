@@ -28,7 +28,7 @@ void	ft_free_list(t_comm *lst)
 {
 	t_comm *head;
 
-	while (lst != NULL)
+	while (lst->next != NULL)
     {
         head = lst;
         if (lst->command_str)
@@ -57,6 +57,7 @@ int ft_process4(char **env, char *str)
 	ft_memset((void *)lst, 0, sizeof(t_comm));
 	lst = ft_parser4(lst, str, env);
 	executor(lst, env);
+//	write(2, "!!\n", 3);
 	ft_free_list(lst);
 	return (0);
 }

@@ -26,7 +26,8 @@ static inline void	close_fd_and_waitpid(int fd[3], int pid[2])
 
 static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
 {
-	if (fd[2] == -1)
+/*	///redirects here
+ * if (fd[2] == -1)
 	{
 		if (pid[0] == 0)
 			error_n_exit("Can't open file to read");
@@ -42,7 +43,7 @@ static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
 			if (pid[1] == 0)
 				dup2(fd[2], STDOUT_FILENO);
 		}
-	}
+	}*/
 	if (pid[0] == 0)
 		dup2(fd[1], STDOUT_FILENO);
 	if (pid[1] == 0)
@@ -62,17 +63,20 @@ static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
 ///@param argv[6] –– necessary for infile. use <
 int	pipex(t_comm *lst, char **env)
 {
+	///@param fd[0] fd[1] -- for pipe i/o
+	///@param fd[2] -- using for infile/outfile(open fd)
 	int		fd[3];
 	pid_t	pid[2];
 
 	errno = 0;
-//	if (lst->count_word < 1)
+//	if (lst->command_str[0] == NULL)
 //		error_n_exit("You give 0 commands");
-	printf("%s --- \n", lst->next->command_str[0]);
-/*	///added (to 5) 2 argc for infile/outfile trigger; now ac = 7
-*//*	if (argc > 7)
-		error_n_exit("You should give four arguments");*//*
-	ft_memset((void*)fd, 0, sizeof(fd[3]));
+//	printf("%s --- size -- %lu\n", lst->next->command_str[0], sizeof(pid));
+//	///added (to 5) 2 argc for infile/outfile trigger; now ac = 7
+//	if (argc > 7)
+//		error_n_exit("You should give four arguments");
+	ft_memset((void*)fd, 0, sizeof(fd));
+	ft_memset((void*)pid, 0, sizeof(pid));
 	if (pipe(fd) == -1)
 		error_n_exit("Can't create a pipe");
 
@@ -81,24 +85,130 @@ int	pipex(t_comm *lst, char **env)
 		error_n_exit("Can't fork a new process");
 	if (pid[0] == 0)
 	{
-		///infile will use file in argv[1]. if u have trigger in argv[5]
-		if (argv[6][0] == '<')
-			fd[2] = open(argv[1], O_RDONLY);
-		else
-			fd[2] = 0;
-		process(pid, fd, argv[2], env);
+//		///infile will use file in argv[1]. if u have trigger in argv[5]
+//		if (argv[6][0] == '<')
+//			fd[2] = open(argv[1], O_RDONLY);
+//		else
+//			fd[2] = 0;
+		process(pid, fd, lst->command_str[0], env);
 	}
 	pid[1] = fork();
 	if (pid[1] < 0)
 		error_n_exit("Can't fork a new process");
 	if (pid[1] == 0)
 	{
-		///this is for outfile
-		if (argv[5][0] == '>')
-			fd[2] = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
-		process(pid, fd, argv[3], env);
+//		///this is for outfile
+//		if (argv[5][0] == '>')
+//			fd[2] = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
+		process(pid, fd, lst->next->command_str[0], env);
 	}
-	close_fd_and_waitpid(fd, pid);*/
+	close_fd_and_waitpid(fd, pid);
+	return (0);
+}
+
+int pipex_alt(t_comm *lst, char **env)
+{
+	//for test:  ls -l | head -6 | cut -b 1-10
+	int status;
+	int i;
+	int pipes[4];
+
+	// arguments for commands; your parser would be responsible for
+	// setting up arrays like these
+
+	char *cat_args[] = {"ls", "-l", NULL};
+	char *grep_args[] = {"head", "-6", NULL};
+	char *cut_args[] = {"cut", "-b", "1-10", NULL};
+
+	// make 2 pipes (cat to grep and grep to cut); each has 2 fds
+
+	printf("%d", lst->count_node);
+	if (pipe(pipes) == -1) // sets up 1st pipe
+		error_n_exit("Can't create a pipe");
+	if (pipe(pipes + 2) == -1) // sets up 2st pipe
+		error_n_exit("Can't create a pipe");
+
+	// we now have 4 fds:
+	// pipes[0] = read end of ls->head pipe (read by grep)
+	// pipes[1] = write end of ls->head pipe (written by cat)
+	// pipes[2] = read end of head->cut pipe (read by cut)
+	// pipes[3] = write end of head->cut pipe (written by grep)
+
+	// Note that the code in each if is basically identical, so you
+	// could set up a loop to handle it.  The differences are in the
+	// indicies into pipes used for the dup2 system call
+	// and that the 1st and last only deal with the end of one pipe.
+
+	// fork the first child (to execute ls)
+
+	if (fork() == 0)
+	{
+		// replace ls's stdout with write part of 1st pipe
+
+		if ()
+			dup2(pipes[1], STDOUT_FILENO);
+
+		// close all pipes (very important!); end we're using was safely copied
+
+		i = 0;
+		while (i < 4)
+			close(pipes[i++]);
+
+		execve(find_command_path(lst->command_str[0], env), lst->command_str, env);
+	}
+	else
+	{
+		// fork second child (to execute head)
+
+		if (fork() == 0)
+		{
+			// replace head's stdin with read end of 1st pipe
+
+			dup2(pipes[0], STDIN_FILENO);
+
+			// replace head's stdout with write end of 2nd pipe
+
+			dup2(pipes[3], STDOUT_FILENO);
+
+			// close all ends of pipes
+
+			i = 0;
+			while (i < 4)
+				close(pipes[i++]);
+
+			execve(find_command_path(lst->next->command_str[0], env),
+				   lst->next->command_str, env);
+//			execvp(*grep_args, grep_args);
+		}
+		else
+		{
+			// fork third child (to execute cut)
+
+			if (fork() == 0)
+			{
+				// replace cut's stdin with input read of 2nd pipe
+				dup2(pipes[2], STDIN_FILENO);
+
+				// close all ends of pipes
+				i = 0;
+				while (i < 4)
+					close(pipes[i++]);
+
+				execve(find_command_path(lst->next->next->command_str[0], env),
+					   lst->next->next->command_str, env);
+//				execvp(*cut_args, cut_args);
+			}
+		}
+	}
+
+	// only the parent gets here and waits for 3 children to finish
+
+	i = 0;
+	while (i < 4)
+		close(pipes[i++]);
+
+	for (i = 0; i < 3; i++)
+		wait(&status);
 	return (0);
 }
 

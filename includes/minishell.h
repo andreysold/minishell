@@ -31,12 +31,14 @@ typedef struct s_comm
     char	*append;
     char	*herdok;
     int		count_word;
+	int		count_node;
     t_iter	t;
     struct	s_comm *next;
 }			t_comm;
 
 /**********EXECUTOR**********/
 int		pipex(t_comm *lst, char **env);
+int		pipex_alt(t_comm *lst, char **env);
 int		executor(t_comm *lst, char **env);
 
 int		ft_lexer(char *str);

@@ -45,8 +45,10 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     t_comm *tmp;
     int count_nd;
     char **str_tl;
+	int c;
 
     count_nd = ft_count_node(str);
+	c = count_nd;
     str = ft_destroy_space4(str, env);
     printf("|->%s<-|\n", str);
     str_tl = ft_split(str, '|');
@@ -59,6 +61,7 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
         tmp->last_str = ft_strdup(str_tl[count_nd]);
         tmp->command_str = ft_split(tmp->last_str, ' ');
         tmp->command_str = ft_return_space(tmp->command_str);
+		tmp->count_node = c;
         free (tmp->last_str);
         tmp->next = lst;
         lst = tmp;

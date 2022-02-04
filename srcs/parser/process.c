@@ -40,6 +40,76 @@ char *ft_destroy_space4(char *str, char **env)
     return (tmp);
 }
 
+char *ft_add_space(char *str)
+{
+    int i;
+    int j;
+    int count;
+    char *tmp;
+
+    i = 0;
+    count = 0;
+    while (str[i])
+    {
+        if (str[i] == '>')
+            count += 3;
+        else
+            count++;
+        i++;
+    }
+    tmp = (char *)malloc(sizeof(count + 1));
+    if (!tmp)
+        return (NULL);
+    i = 0;
+    j = 0;
+    while (str[i])
+    {
+        if (str[i] == '>' && str[i + 1] != '>')
+        {
+            tmp[j++] = ' ';
+            tmp[j++] = '>';
+            tmp[j++] = ' ';
+            i++;
+            while (str[i])
+                tmp[j++] = str[i++];
+        }
+        else if (str[i] == '>' && str[i + 1] == '>')
+        {
+            tmp[j++] = ' ';
+            tmp[j++] = '>';
+            tmp[j++] = '>';
+            tmp[j++] = ' ';
+            i += 2;
+            while (str[i])
+                tmp[j++] = str[i++];
+        }
+        else if (str[i] == '<' && str[i + 1] != '<')
+        {
+            tmp[j++] = ' ';
+            tmp[j++] = '<';
+            tmp[j++] = ' ';
+            i += 1;
+            while (str[i])
+                tmp[j++] = str[i++];
+        }
+        else if (str[i] == '<' && str[i + 1] == '<')
+        {
+            tmp[j++] = ' ';
+            tmp[j++] = '<';
+            tmp[j++] = '<';
+            tmp[j++] = ' ';
+            i += 2;
+            while (str[i])
+                tmp[j++] = str[i++];
+        }
+        else
+            tmp[j++] = str[i];
+        i++;
+    }
+    tmp[j] = '\0';
+    return (tmp);
+}
+
 t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 {
     t_comm *tmp;
@@ -49,8 +119,8 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 
     count_nd = ft_count_node(str);
     c = count_nd;
+    str = ft_add_space(str);
     str = ft_destroy_space4(str, env);
-   // printf("|->%s<-|\n", str);
     str_tl = ft_split(str, '|');
     while (count_nd-- > 0)
     {

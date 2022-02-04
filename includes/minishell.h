@@ -30,10 +30,7 @@ typedef struct s_comm
 {
     char **command_str; // двумернный массив из las_str(separator ' ')
     char *last_str; // подмножество строки 
-    // char *outfile; // возможно не понадобится
-    // char *infile; // возможно не понадобится 
-    // char *append;
-    // char *herdok;
+
     int infile;
     int outfile;
     int count_word;

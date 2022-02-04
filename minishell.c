@@ -48,6 +48,11 @@ int	ft_lexer(char *str)
 				write(1,"bash: syntax error near unexpected token `newline'\n", 52);
 				return (-1);
 			}
+			else
+			{
+				write(1,"bash: syntax error near unexpected token `newline'\n", 52);
+				return (-1);
+			}
 		}
 		i++;
 	}
@@ -81,35 +86,52 @@ void	ft_free_list(t_comm *lst)
 t_comm *ft_check_redir(t_comm *lst)
 {
 	t_comm *head;
-	int j;
+	char *redirect;
+	char *redirect2;
+	char *redirect3;
 
-	j = 0;
-	head = lst;
-	char *red;
-	lst->rd = malloc(sizeof(t_redir));
-	if (!lst->rd)
-		return (NULL);
-	lst->rd->fd = (int *)malloc(sizeof(int) * 4);
-	if (!lst->rd->fd)
-		return (NULL);
-	red = ft_strdup(">");
+	head = lst;	
+	redirect = ft_strdup(">"); // outfile
+	redirect2 = ft_strdup("<"); // infile
+	redirect3 = ft_strdup(">>");
 	while (lst->next != NULL)
 	{
-		// if (lst->command_str)
-		// {
-		// 	int i = 0;
-		// 	while (lst->command_str[i])
-		// 	{
-		// 		if (ft_strncmp(lst->command_str[i], red, ft_strlen(red))== 0)
-		// 		{
-		// 			if (i == 0)
-		// 				lst->rd->fd[j] = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		if (lst->command_str) 
+		{
+			int i = 0;
+			while (lst->command_str[i])
+			{
+				if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
+				{
+					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+					if (lst->outfile == -1)
+						perror("Cant open file");
+				}
+				if (ft_strncmp(lst->command_str[i], redirect2, ft_strlen(redirect2)) == 0)
+				{
+					lst->infile = open(lst->command_str[i + 1], O_RDONLY);
+					if (lst->infile == -1)
+						perror("Cant open file");
+				}
+				if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
+				{
+					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0644);
+					if (lst->outfile == -1)
+						perror("Cant open file");
+				}
+
+			}
+			// int i = 0;
+			// while (lst->command_str[i])
+			// {
+			// 	if (ft_strncmp(lst->command_str[i], red, ft_strlen(red))== 0)
+			// 	{
+			// 		lst->rd->fd = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 					
-		// 			j++;
-		// 		}
-		// 		i++;
-		// 	}
-		// }
+			// 	}
+			// 	i++;
+			// }
+		}
 		lst = lst->next;
 	}
 	lst = head;
@@ -124,7 +146,7 @@ int ft_process4(char **env, char *str)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
     lst = ft_parser4(lst, str, env);
-	lst = ft_check_redir(lst);
+	//lst = ft_check_redir(lst);
 	ft_free_list(lst);
     return (0);
 }
@@ -168,8 +190,8 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	while (1)
-	{
+	// while (1)
+	// {
 		str = readline("bash:");
 		if (str && *str)
 		{
@@ -182,5 +204,5 @@ int main(int ac, char **av, char **env)
 			free (str);
 			ft_no_malloc(envp);
 		}
-	}
+	// }
 }

@@ -122,12 +122,17 @@ void wait_childs(int status, int n)
 
 	i = 0;
 	while (i++ < n)
+	{
 		wait(&status);
+		printf("%d process exited\n", i);
+		fflush(NULL);
+	}
 }
 
 int pipex_alt(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
+	// echo p | echo r | echo i | echo v | echo e | echo t
 	int		status;
 	int		i;
 	int		pipes[4];
@@ -166,20 +171,14 @@ int pipex_alt(t_comm *lst, char **env)
 	kind = START;
 	while (tmp != NULL)
 	{
-//		printf("%d -- kind\n", kind);
-//		fflush(NULL);
-		//write(2, "@$\n", 3);
 		if (fork() == 0)
 		{
-//			write(2, &kind, 1);
-//			write(1, "\n", 1);
-//			printf("%d -- kind\n", kind);
-//			fflush(NULL);
 			if (tmp->count_node > 1)
 			{
 				if (tmp->count_node == 2)
 				{
-					if (kind == START && tmp->next->command_str != NULL)
+					//todo second condition always true
+					if (kind == START && tmp->next != NULL)
 					{
 						///    1 =>
 						dup2(pipes[1], STDOUT_FILENO);
@@ -192,7 +191,8 @@ int pipex_alt(t_comm *lst, char **env)
 				}
 				else
 				{
-					if (kind == START && tmp->next->command_str != NULL)
+					//todo second condition always true
+					if (kind == START && tmp->next != NULL)
 					{
 						///    1 =>
 						dup2(pipes[1], STDOUT_FILENO);
@@ -209,34 +209,25 @@ int pipex_alt(t_comm *lst, char **env)
 					}
 				}
 			}
-//			printf("%d -- kind\n", kind);
-//			fflush(NULL);
+
 			close_pipes(pipes, tmp->count_node);
-//			printf("%d -- kind\n", kind);
-//			fflush(NULL);
 			execve(find_command_path(tmp->command_str[0], env), \
 			tmp->command_str, env);
 		}
-//		printf("%d -- kind\n", kind);
-//		fflush(NULL);
+
 		if (kind == END)
 			break ;
-		if (tmp->count_node > 1 && tmp->next->command_str)
+		if (tmp->count_node > 1 && tmp->next)
 		{
 			kind = MIDDLE;
 		}
-		if (tmp->count_node > 1 && tmp->next->next->command_str == NULL)
+		if (tmp->count_node > 1 && tmp->next->next == NULL)
 		{
 			kind = END;
 		}
-//		printf("%d -- kind\n", kind);
-//		fflush(NULL);
-		//else
-//		if (tmp->count_node > 1)
-			tmp = tmp->next;
+		tmp = tmp->next;
 	}
-//	printf("%d -- kind\n", kind);
-//	fflush(NULL);
+
 /*
 	if (fork() == 0)
 	{
@@ -301,8 +292,6 @@ int pipex_alt(t_comm *lst, char **env)
 	tmp = lst;
 	close_pipes(pipes, tmp->count_node);
 
-	/*for (i = 0; i < 3; i++)
-		wait(&status);*/
 	wait_childs(status, tmp->count_node);
 	return (0);
 }

@@ -66,7 +66,7 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 	}
 	else
 	{
-
+		lst = NULL;
 		while (count_nd-- > 0)
 		{
 			tmp = malloc(sizeof(t_comm));

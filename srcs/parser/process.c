@@ -47,26 +47,45 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     char **str_tl;
 	int c;
 
+
     count_nd = ft_count_node(str);
 	c = count_nd;
-    str = ft_destroy_space4(str, env);
-    printf("|->%s<-|\n", str);
-    str_tl = ft_split(str, '|');
-    while (count_nd-- > 0)
-    {
-        tmp = malloc(sizeof(t_comm));
-        if (!tmp)
-            return (NULL);
-        ft_memset((void *)tmp, 0, sizeof(t_comm));
-        tmp->last_str = ft_strdup(str_tl[count_nd]);
-        tmp->command_str = ft_split(tmp->last_str, ' ');
-        tmp->command_str = ft_return_space(tmp->command_str);
-		tmp->count_node = c;
-        free (tmp->last_str);
-        tmp->next = lst;
-        lst = tmp;
-    }
-    ft_no_malloc(str_tl);
+	str = ft_destroy_space4(str, env);
+
+//    printf("|->%s<-|\n", str);
+	if (count_nd > 1)
+    	str_tl = ft_split(str, '|');
+	if (count_nd == 1)
+	{
+		lst->last_str = ft_strdup(str);
+		lst->command_str = ft_split(lst->last_str, ' ');
+		lst->command_str = ft_return_space(lst->command_str);
+		lst->count_node = c;
+		free (lst->last_str);
+		lst->next = NULL;
+	}
+	else
+	{
+
+		while (count_nd-- > 0)
+		{
+			tmp = malloc(sizeof(t_comm));
+			if (!tmp)
+				return (NULL);
+			ft_memset((void *) tmp, 0, sizeof(t_comm));
+			tmp->last_str = ft_strdup(str_tl[count_nd]);
+			tmp->command_str = ft_split(tmp->last_str, ' ');
+			tmp->command_str = ft_return_space(tmp->command_str);
+			tmp->count_node = c;
+			free(tmp->last_str);
+			tmp->next = lst;
+			//		if (lst)
+			//			tmp->next = lst;
+			lst = tmp;
+		}
+		ft_no_malloc(str_tl);
+	}
+    //ft_no_malloc(str_tl);
     free (str);
     return (lst);
 }

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include <math.h>
 
 static inline void	close_fd_and_waitpid(int fd[3], int pid[2])
 {
@@ -106,23 +107,45 @@ int	pipex(t_comm *lst, char **env)
 	return (0);
 }
 
+void close_pipes(int *pipes, int n)
+{
+	int i;
+
+	i = 0;
+	while (i < n)
+		close(pipes[i++]);
+}
+
+void wait_childs(int status, int n)
+{
+	int i;
+
+	i = 0;
+	while (i++ < n)
+		wait(&status);
+}
+
 int pipex_alt(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
-	int status;
-	int i;
-	int pipes[4];
+	int		status;
+	int		i;
+	int		pipes[4];
+	t_comm	*tmp;
+	int		kind;
 
 	// arguments for commands; your parser would be responsible for
 	// setting up arrays like these
 
-	char *cat_args[] = {"ls", "-l", NULL};
+	/*char *cat_args[] = {"ls", "-l", NULL};
 	char *grep_args[] = {"head", "-6", NULL};
 	char *cut_args[] = {"cut", "-b", "1-10", NULL};
-
+*/
 	// make 2 pipes (cat to grep and grep to cut); each has 2 fds
 
-	printf("%d", lst->count_node);
+	tmp = lst;
+	ft_memset((void *)pipes, 0, sizeof(pipes));
+//	printf("%d -- \n", lst->count_node);
 	if (pipe(pipes) == -1) // sets up 1st pipe
 		error_n_exit("Can't create a pipe");
 	if (pipe(pipes + 2) == -1) // sets up 2st pipe
@@ -140,13 +163,85 @@ int pipex_alt(t_comm *lst, char **env)
 	// and that the 1st and last only deal with the end of one pipe.
 
 	// fork the first child (to execute ls)
-
+	kind = START;
+	while (tmp != NULL)
+	{
+//		printf("%d -- kind\n", kind);
+//		fflush(NULL);
+		//write(2, "@$\n", 3);
+		if (fork() == 0)
+		{
+//			write(2, &kind, 1);
+//			write(1, "\n", 1);
+//			printf("%d -- kind\n", kind);
+//			fflush(NULL);
+			if (tmp->count_node > 1)
+			{
+				if (tmp->count_node == 2)
+				{
+					if (kind == START && tmp->next->command_str != NULL)
+					{
+						///    1 =>
+						dup2(pipes[1], STDOUT_FILENO);
+					}
+					else if (kind == END)
+					{
+						/// => 2
+						dup2(pipes[0], STDIN_FILENO);
+					}
+				}
+				else
+				{
+					if (kind == START && tmp->next->command_str != NULL)
+					{
+						///    1 =>
+						dup2(pipes[1], STDOUT_FILENO);
+					}
+					else if (kind == MIDDLE)
+					{
+						/// => 2 =>
+						dup2(pipes[0], STDIN_FILENO);
+						dup2(pipes[3], STDOUT_FILENO);
+					} else if (kind == END)
+					{
+						/// => 3
+						dup2(pipes[2], STDIN_FILENO);
+					}
+				}
+			}
+//			printf("%d -- kind\n", kind);
+//			fflush(NULL);
+			close_pipes(pipes, tmp->count_node);
+//			printf("%d -- kind\n", kind);
+//			fflush(NULL);
+			execve(find_command_path(tmp->command_str[0], env), \
+			tmp->command_str, env);
+		}
+//		printf("%d -- kind\n", kind);
+//		fflush(NULL);
+		if (kind == END)
+			break ;
+		if (tmp->count_node > 1 && tmp->next->command_str)
+		{
+			kind = MIDDLE;
+		}
+		if (tmp->count_node > 1 && tmp->next->next->command_str == NULL)
+		{
+			kind = END;
+		}
+//		printf("%d -- kind\n", kind);
+//		fflush(NULL);
+		//else
+//		if (tmp->count_node > 1)
+			tmp = tmp->next;
+	}
+//	printf("%d -- kind\n", kind);
+//	fflush(NULL);
+/*
 	if (fork() == 0)
 	{
 		// replace ls's stdout with write part of 1st pipe
-
-		if ()
-			dup2(pipes[1], STDOUT_FILENO);
+		dup2(pipes[1], STDOUT_FILENO);
 
 		// close all pipes (very important!); end we're using was safely copied
 
@@ -200,15 +295,15 @@ int pipex_alt(t_comm *lst, char **env)
 			}
 		}
 	}
+*/
 
 	// only the parent gets here and waits for 3 children to finish
+	tmp = lst;
+	close_pipes(pipes, tmp->count_node);
 
-	i = 0;
-	while (i < 4)
-		close(pipes[i++]);
-
-	for (i = 0; i < 3; i++)
-		wait(&status);
+	/*for (i = 0; i < 3; i++)
+		wait(&status);*/
+	wait_childs(status, tmp->count_node);
 	return (0);
 }
 

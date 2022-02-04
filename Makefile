@@ -1,7 +1,7 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -g #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
 NAME	=	minishell
 SRCS	=	minishell.c \

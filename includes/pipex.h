@@ -19,6 +19,9 @@
 # include <stdio.h>				//perror
 # include <sys/errno.h>
 
+#define START	1
+#define MIDDLE	2
+#define END		3
 void	error_n_exit(char *err_msg);
 int		where_is_path(char **env);
 char	*find_command_path(char *command_with_args, char **env);

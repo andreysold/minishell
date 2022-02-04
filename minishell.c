@@ -36,7 +36,7 @@ void	ft_free_list(t_comm *lst)
             int i = 0;
             while (lst->command_str[i])
 			{
-				printf("|%s\n", lst->command_str[i]);
+//				printf("|%s\n", lst->command_str[i]);
                 free (lst->command_str[i]);
 				i++;
 			}
@@ -58,7 +58,7 @@ int ft_process4(char **env, char *str)
 	lst = ft_parser4(lst, str, env);
 	executor(lst, env);
 //	write(2, "!!\n", 3);
-	ft_free_list(lst);
+	//ft_free_list(lst);
 	return (0);
 }
 
@@ -100,12 +100,16 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+
 	while (1)
 	{
 		str = readline("bash:");
+//		str = ft_strdup("ls -l | head -6 | cut -b 1-10");
+//		str = ft_strdup("yes | head -2");
 		if (str && *str)
 		{
 			///parser
+
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_process4(envp, str) == -1)

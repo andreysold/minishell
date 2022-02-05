@@ -20,24 +20,24 @@ typedef struct s_iterat
 {
     int	i;
     int	j;
-    int	k;
+/*    int	k;
     int	z;
     int	l;
     int	pos;
-    int	foq; // flag on quotes
+    int	foq; // flag on quotes*/
 }   t_iter;
 
 typedef struct s_comm
 {
     char	**command_str; // двумернный массив из las_str(separator ' ')
     char	*last_str; // подмножество строки
-    char	*outfile;
+/*    char	*outfile;
     char	*mysor;
     char	**mysor2;
     char	*infile;
     char	*append;
     char	*herdok;
-    int		count_word;
+    int		count_word;*/
 	int		count_node;
     t_iter	t;
     struct	s_comm *next;

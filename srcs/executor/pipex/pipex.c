@@ -55,6 +55,7 @@ static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
 		error_n_exit("Error");
 }
 
+/*
 ///@param argv[1] –– infile. File can be used for cmd1. It will work only if
 /// you use redirect trigger in argv[6]
 ///@param argv[2] –– cmd1. Imagine next is pipe, next to cmd1
@@ -106,6 +107,7 @@ int	pipex(t_comm *lst, char **env)
 	close_fd_and_waitpid(fd, pid);
 	return (0);
 }
+*/
 
 void close_pipes(int *pipes, int n)
 {
@@ -123,14 +125,20 @@ void wait_childs(int status, int n)
 	int i;
 
 	i = 0;
-	while (i++ < n)
+	while (i < n)
 	{
-		printf("%sPID %d | cmd have %d status %s\n", GREEN, getpid(),
+/*		printf("%sPID %d | cmd have %d status %s\n", GREEN, getpid(),
 			   status,   RESET);
-		fflush(NULL);
-		wait(&status);
-		printf("%s%d process exited%s\n", RED, i, RESET);
-		fflush(NULL);
+		fflush(NULL);*/
+		waitpid(NULL, &status, 0);
+//		if (WIFEXITED(status))
+//		{
+			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
+			fflush(NULL);
+//		}
+		i++;
+//		printf("%s%d process exited%s\n", RED, i, RESET);
+//		fflush(NULL);
 	}
 }
 
@@ -138,9 +146,9 @@ int pipex_alt(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
 	// echo p | echo r | echo i | echo v | echo e | echo t
-	int		status;
+	int		status = 0;
 	int		i;
-	int		pipes[4];
+	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
 
@@ -155,7 +163,8 @@ int pipex_alt(t_comm *lst, char **env)
 */
 
 	tmp = lst;
-	ft_memset((void *)pipes, 0, sizeof(pipes));
+	pipes
+	ft_memset((void *)pipes, 0, sizeof(int[4]));
 //	printf("%d -- \n", lst->count_node);
 	if (pipe(pipes) == -1) // sets up 1st pipe
 		error_n_exit("Can't create a pipe");
@@ -196,6 +205,7 @@ int pipex_alt(t_comm *lst, char **env)
 			{
 				if (tmp->count_node == 2)
 				{
+
 					//todo second condition always true
 					if (kind == START && tmp->next != NULL)
 					{
@@ -210,6 +220,9 @@ int pipex_alt(t_comm *lst, char **env)
 				}
 				else
 				{
+					///fixme create new pipe for a new process, malloc n pipes
+					/*if (pipe(pipes + 2) == -1) // sets up 2st pipe
+						error_n_exit("Can't create a pipe");*/
 					//todo second condition always true
 					if (kind == START && tmp->next != NULL)
 					{
@@ -246,13 +259,13 @@ int pipex_alt(t_comm *lst, char **env)
 			}
 		}
 
-		if (kind == END)
-			break ;
+//		if (kind == END)
+//			break ;
 		if (tmp->count_node > 1 && tmp->next)
 		{
 			kind = MIDDLE;
 		}
-		if (tmp->count_node > 1 && tmp->next->next == NULL)
+		if (kind == MIDDLE && (tmp->count_node > 1 && tmp->next->next == NULL))
 		{
 			kind = END;
 		}

@@ -104,7 +104,7 @@ int main(int ac, char **av, char **env)
 
 	while (1)
 	{
-		str = readline("bash:");
+		str = readline("e-bash:");
 //		str = ft_strdup("ls -l | head -6 | cut -b 1-10");
 //		str = ft_strdup("yes | head -2");
 		if (str && *str)

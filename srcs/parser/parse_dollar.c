@@ -52,6 +52,7 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
     z = 0;
     c = 0;
     l = 0;
+    (*i)++;
     z = (*i);
     while (str[(*i)] && str[(*i)] != ' ' && str[(*i)] != '\"')
     {

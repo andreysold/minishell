@@ -17,7 +17,8 @@ SRCS	=	minishell.c \
 SRCS	+=	srcs/parser/parse_dollar.c \
             srcs/parser/process.c \
             srcs/parser/parse_quotes.c \
-            srcs/parser/parse_utils.c
+            srcs/parser/parse_utils.c \
+			srcs/parser/redir.c
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 

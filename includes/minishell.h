@@ -21,16 +21,10 @@ typedef struct s_iterat // итераторы для подгонки под н�
 }   t_iter;
 
 
-typedef struct s_redirect {
-    int *fd; // фдшники файлов
-    int *fd2; // для фдшников функций
-}   t_redir;
-
 typedef struct s_comm
 {
     char **command_str; // двумернный массив из las_str(separator ' ')
     char *last_str; // подмножество строки 
-
     int infile;
     int outfile;
     int count_word;
@@ -38,7 +32,7 @@ typedef struct s_comm
     char **envp;
     t_iter t; // структура итераторов
     struct  s_comm *next;
-    t_redir *rd; // структура под редиректы.
+
 }   t_comm;
 
 
@@ -56,5 +50,8 @@ int ft_dol_str(char *str, char **env);
 t_comm *ft_parser4(t_comm *lst, char *str, char **env);
 char *ft_destroy_space4(char *str, char **env);
 char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j);
+char *ft_add_space(char *str);
 void ft_count_node2(char *str, int *i, char c);
+t_comm *ft_check_redir(t_comm *lst);
+
 #endif

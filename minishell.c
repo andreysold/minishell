@@ -83,60 +83,6 @@ void	ft_free_list(t_comm *lst)
     }
 }
 
-t_comm *ft_check_redir(t_comm *lst)
-{
-	t_comm *head;
-	char *redirect;
-	char *redirect2;
-	char *redirect3;
-
-	head = lst;	
-	redirect = ft_strdup(">"); // outfile
-	redirect2 = ft_strdup("<"); // infile
-	redirect3 = ft_strdup(">>");
-	while (lst->next != NULL)
-	{
-		if (lst->command_str) 
-		{
-			int i = 0;
-			while (lst->command_str[i])
-			{
-				if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
-				{
-					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
-					if (lst->outfile == -1)
-						perror("Cant open file");
-				}
-				if (ft_strncmp(lst->command_str[i], redirect2, ft_strlen(redirect2)) == 0)
-				{
-					lst->infile = open(lst->command_str[i + 1], O_RDONLY);
-					if (lst->infile == -1)
-						perror("Cant open file");
-				}
-				if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
-				{
-					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0644);
-					if (lst->outfile == -1)
-						perror("Cant open file");
-				}
-
-			}
-			// int i = 0;
-			// while (lst->command_str[i])
-			// {
-			// 	if (ft_strncmp(lst->command_str[i], red, ft_strlen(red))== 0)
-			// 	{
-			// 		lst->rd->fd = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
-					
-			// 	}
-			// 	i++;
-			// }
-		}
-		lst = lst->next;
-	}
-	lst = head;
-	return (lst);
-}
 int ft_process4(char **env, char *str)
 {
     t_comm *lst;
@@ -146,7 +92,7 @@ int ft_process4(char **env, char *str)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
     lst = ft_parser4(lst, str, env);
-	//lst = ft_check_redir(lst);
+	lst = ft_check_redir(lst);
 	ft_free_list(lst);
     return (0);
 }
@@ -190,13 +136,13 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	// while (1)
-	// {
+	while (1)
+	{
 		str = readline("bash:");
 		if (str && *str)
 		{
-			if (ft_lexer(str) != 1)
-				exit (0);
+			// if (ft_lexer(str) != 1)
+			// 	exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_process4(envp, str) == -1)
@@ -204,5 +150,5 @@ int main(int ac, char **av, char **env)
 			free (str);
 			ft_no_malloc(envp);
 		}
-	// }
+	}
 }

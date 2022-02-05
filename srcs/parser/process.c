@@ -22,89 +22,15 @@ char *ft_destroy_space4(char *str, char **env)
         else if (str[i] == '\"')
             tmp = ft_two_quotes(str, env, tmp, &i, &j);
         else if (str[i] == '$' && str[i + 1] != ' ')
-        {
-            i++;
             tmp = ft_shit_dollar(str, env, tmp, &i, &j);
-        }
         else if (str[i] == ' ')
         {
-            i++;
             while (str[i] && str[i] == ' ')
                 i++;
             tmp[j++] = ' ';
         }
         else
             tmp[j++] = str[i++];
-    }
-    tmp[j] = '\0';
-    return (tmp);
-}
-
-char *ft_add_space(char *str)
-{
-    int i;
-    int j;
-    int count;
-    char *tmp;
-
-    i = 0;
-    count = 0;
-    while (str[i])
-    {
-        if (str[i] == '>')
-            count += 3;
-        else
-            count++;
-        i++;
-    }
-    tmp = (char *)malloc(sizeof(count + 1));
-    if (!tmp)
-        return (NULL);
-    i = 0;
-    j = 0;
-    while (str[i])
-    {
-        if (str[i] == '>' && str[i + 1] != '>')
-        {
-            tmp[j++] = ' ';
-            tmp[j++] = '>';
-            tmp[j++] = ' ';
-            i++;
-            while (str[i])
-                tmp[j++] = str[i++];
-        }
-        else if (str[i] == '>' && str[i + 1] == '>')
-        {
-            tmp[j++] = ' ';
-            tmp[j++] = '>';
-            tmp[j++] = '>';
-            tmp[j++] = ' ';
-            i += 2;
-            while (str[i])
-                tmp[j++] = str[i++];
-        }
-        else if (str[i] == '<' && str[i + 1] != '<')
-        {
-            tmp[j++] = ' ';
-            tmp[j++] = '<';
-            tmp[j++] = ' ';
-            i += 1;
-            while (str[i])
-                tmp[j++] = str[i++];
-        }
-        else if (str[i] == '<' && str[i + 1] == '<')
-        {
-            tmp[j++] = ' ';
-            tmp[j++] = '<';
-            tmp[j++] = '<';
-            tmp[j++] = ' ';
-            i += 2;
-            while (str[i])
-                tmp[j++] = str[i++];
-        }
-        else
-            tmp[j++] = str[i];
-        i++;
     }
     tmp[j] = '\0';
     return (tmp);
@@ -122,6 +48,9 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     str = ft_add_space(str);
     str = ft_destroy_space4(str, env);
     str_tl = ft_split(str, '|');
+    int i = 0;
+    while (str_tl[i])
+        printf("%s\n", str_tl[i++]);
     while (count_nd-- > 0)
     {
         tmp = malloc(sizeof(t_comm));

@@ -112,6 +112,8 @@ void close_pipes(int *pipes, int n)
 	int i;
 
 	i = 0;
+	/*printf("%s!! %d %s\n", RED, n,   RESET);
+	fflush(NULL);*/
 	while (i < n)
 		close(pipes[i++]);
 }
@@ -123,8 +125,11 @@ void wait_childs(int status, int n)
 	i = 0;
 	while (i++ < n)
 	{
+		printf("%sPID %d | cmd have %d status %s\n", GREEN, getpid(),
+			   status,   RESET);
+		fflush(NULL);
 		wait(&status);
-		printf("%d process exited\n", i);
+		printf("%s%d process exited%s\n", RED, i, RESET);
 		fflush(NULL);
 	}
 }
@@ -139,23 +144,27 @@ int pipex_alt(t_comm *lst, char **env)
 	t_comm	*tmp;
 	int		kind;
 
+/*
 	// arguments for commands; your parser would be responsible for
 	// setting up arrays like these
 
-	/*char *cat_args[] = {"ls", "-l", NULL};
+	char *cat_args[] = {"ls", "-l", NULL};
 	char *grep_args[] = {"head", "-6", NULL};
 	char *cut_args[] = {"cut", "-b", "1-10", NULL};
-*/
 	// make 2 pipes (cat to grep and grep to cut); each has 2 fds
+*/
 
 	tmp = lst;
 	ft_memset((void *)pipes, 0, sizeof(pipes));
 //	printf("%d -- \n", lst->count_node);
 	if (pipe(pipes) == -1) // sets up 1st pipe
 		error_n_exit("Can't create a pipe");
-	if (pipe(pipes + 2) == -1) // sets up 2st pipe
-		error_n_exit("Can't create a pipe");
-
+	if (lst->count_node > 2)
+	{
+		if (pipe(pipes + 2) == -1) // sets up 2st pipe
+			error_n_exit("Can't create a pipe");
+	}
+/*
 	// we now have 4 fds:
 	// pipes[0] = read end of ls->head pipe (read by grep)
 	// pipes[1] = write end of ls->head pipe (written by cat)
@@ -167,8 +176,18 @@ int pipex_alt(t_comm *lst, char **env)
 	// indicies into pipes used for the dup2 system call
 	// and that the 1st and last only deal with the end of one pipe.
 
-	// fork the first child (to execute ls)
+	// fork the first child (to execute ls)*/
 	kind = START;
+	/*if (lst->count_node == 3)
+	{
+		int j = 0;
+		while (lst->next->next->command_str[j])
+		{
+			printf("%s'%s'%s\n", RED, lst->next->next->command_str[j++], RESET);
+			fflush(NULL);
+		}
+	}*/
+
 	while (tmp != NULL)
 	{
 		if (fork() == 0)
@@ -211,8 +230,20 @@ int pipex_alt(t_comm *lst, char **env)
 			}
 
 			close_pipes(pipes, tmp->count_node);
-			execve(find_command_path(tmp->command_str[0], env), \
-			tmp->command_str, env);
+
+			/// getpid last process
+			if (kind == END)
+			{
+				printf("%sPID %d | go to execve%s\n", YELLOW, getpid(), RESET);
+				fflush(NULL);
+			}
+
+			if (execve(find_command_path(tmp->command_str[0], env), \
+			tmp->command_str, env) == -1)
+			{
+				perror("Fail exec!!!!!!!");
+				exit(0);
+			}
 		}
 
 		if (kind == END)
@@ -291,7 +322,18 @@ int pipex_alt(t_comm *lst, char **env)
 	// only the parent gets here and waits for 3 children to finish
 	tmp = lst;
 	close_pipes(pipes, tmp->count_node);
-
+/*	if (kind == START)
+	{
+		printf("%sPID %d | 1st cmd have %d status %s\n", GREEN, getpid(),
+			   status,   RESET);
+		fflush(NULL);
+	}
+	if (kind == END)
+	{
+		printf("%sPID %d | last cmd have %d status %s\n", GREEN, getpid(),
+			   status,   RESET);
+		fflush(NULL);
+	}*/
 	wait_childs(status, tmp->count_node);
 	return (0);
 }

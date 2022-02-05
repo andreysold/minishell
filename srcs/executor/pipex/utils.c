@@ -64,5 +64,8 @@ char	*find_command_path(char *command_with_args, char **env)
 			break ;
 		i++;
 	}
+	/*printf("%sPID %d | '%s' path to the command %s\n", BLUE, getpid(), \
+	path_to_command, RESET);
+	fflush(NULL);*/
 	return (path_to_command);
 }

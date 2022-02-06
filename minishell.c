@@ -27,33 +27,40 @@ int	ft_lexer(char *str)
 				return (-1);
 			}
 		}
-		if (str[i] == '|')
-		{
-			i++;
-			while (str[i] && str[i] == ' ')
-				i++;
-			if (i == len)
-			{
-				write(1, "bash: syntax error in the absence of commands\n", 47);
-				return (-1);
-			}
-		}
-		if (str[i] == '>' || str[i] == '<')
-		{
-			i++;
-			while (str[i] && str[i] == ' ')
-				i++;
-			if (i == len)
-			{
-				write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-				return (-1);
-			}
-			else
-			{
-				write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-				return (-1);
-			}
-		}
+		// if (str[i] == '>')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (str[i] != )
+		// }
+		// if (str[i] == '|')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (i == len)
+		// 	{
+		// 		write(1, "bash: syntax error in the absence of commands\n", 47);
+		// 		return (-1);
+		// 	}
+		// }
+		// if (str[i] == '>' || str[i] == '<')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (i == len)
+		// 	{
+		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
+		// 		return (-1);
+		// 	}
+		// 	else
+		// 	{
+		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
+		// 		return (-1);
+		// 	}
+		// }
 		i++;
 	}
 	//printf("A\n");
@@ -129,6 +136,7 @@ char **ft_get_envp(char **env)
 	envp[i] = NULL;
 	return (envp);
 }
+
 int main(int ac, char **av, char **env)
 {
 	char *str;
@@ -141,8 +149,8 @@ int main(int ac, char **av, char **env)
 		str = readline("bash:");
 		if (str && *str)
 		{
-			// if (ft_lexer(str) != 1)
-			// 	exit (0);
+			if (ft_lexer(str) != 1)
+				exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_process4(envp, str) == -1)

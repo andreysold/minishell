@@ -70,14 +70,15 @@ char *ft_add_space(char *str)
 t_comm *ft_check_redir(t_comm *lst)
 {
 	t_comm *head;
-	char *redirect;
-	char *redirect2;
-	char *redirect3;
+    t_redir *r;
 
+    r = malloc(sizeof(t_redir));
+    if (!r)
+        return (NULL);
+    r->tmp1 = ft_strdup(">");
+    r->tmp2 = ft_strdup("<");
+    r->tmp3 = ft_strdup(">>");
 	head = lst;	
-	redirect = ft_strdup(">"); // outfile
-	redirect2 = ft_strdup("<"); // infile
-	redirect3 = ft_strdup(">>");
 	while (lst->next != NULL)
 	{
 		if (lst->command_str) 
@@ -85,19 +86,19 @@ t_comm *ft_check_redir(t_comm *lst)
 			int i = 0;
 			while (lst->command_str[i])
 			{
-				if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
+				if (ft_strncmp(lst->command_str[i], r->tmp1, ft_strlen(r->tmp1)) == 0)
 				{
 					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 					if (lst->outfile == -1)
 						perror("Cant open file");
 				}
-				else if (ft_strncmp(lst->command_str[i], redirect2, ft_strlen(redirect2)) == 0)
+				else if (ft_strncmp(lst->command_str[i], r->tmp2, ft_strlen(r->tmp2)) == 0)
 				{
 					lst->infile = open(lst->command_str[i + 1], O_RDONLY);
 					if (lst->infile == -1)
 						perror("Cant open file");
 				}
-				else if (ft_strncmp(lst->command_str[i], redirect, ft_strlen(redirect)) == 0)
+				else if (ft_strncmp(lst->command_str[i], r->tmp3, ft_strlen(r->tmp3)) == 0)
 				{
 					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0644);
 					if (lst->outfile == -1)
@@ -109,9 +110,10 @@ t_comm *ft_check_redir(t_comm *lst)
 		lst = lst->next;
 	}
 	lst = head;
-    free (redirect);
-    free (redirect2);
-    free (redirect3);
+    free (r->tmp1);
+    free (r->tmp2);
+    free (r->tmp3);
+    free (r);
 	return (lst);
 }
 

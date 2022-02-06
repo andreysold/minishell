@@ -20,7 +20,13 @@ typedef struct s_iterat // итераторы для подгонки под н�
     int foq; // flag on quotes
 }   t_iter;
 
-
+typedef struct s_redir
+{
+    char *tmp1;
+    char *tmp2;
+    char *tmp3;
+    char *tmp4;
+}   t_redir;
 typedef struct s_comm
 {
     char **command_str; // двумернный массив из las_str(separator ' ')

@@ -31,6 +31,8 @@ typedef struct s_comm
 {
     char	**command_str; // двумернный массив из las_str(separator ' ')
     char	*last_str; // подмножество строки
+	int		infile;
+	int		outfile;
 /*    char	*outfile;
     char	*mysor;
     char	**mysor2;

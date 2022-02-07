@@ -51,10 +51,10 @@ int ft_process4(char **env, char *str)
 {
 	t_comm *lst;
 
-	lst = NULL;
 	lst = malloc(sizeof(t_comm));
 	if (!lst)
 		return (-1);
+//	lst = NULL;
 //	ft_memset((void *)lst, 0, sizeof(t_comm));
 	lst = ft_parser4(lst, str, env);
 	executor(lst, env);

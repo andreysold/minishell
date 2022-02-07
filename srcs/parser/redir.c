@@ -100,11 +100,13 @@ t_comm *ft_check_redir(t_comm *lst)
     r->tmp1 = ft_strdup(">");
     r->tmp2 = ft_strdup("<");
     r->tmp3 = ft_strdup(">>");
+	lst->outfile = -2;
+	lst->infile = -2;
 	head = lst;	
-	while (lst->next != NULL)
+	while (lst != NULL)
 	{
-        lst->outfile = -2;
-        lst->infile = -2;
+//        lst->outfile = -2;
+//        lst->infile = -2;
 		if (lst->command_str) 
 		{
 			int i = 0;

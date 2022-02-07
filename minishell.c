@@ -1,34 +1,77 @@
-#include "includes/minishell.h"
+#include "minishell.h"
 
 int	ft_lexer(char *str)
 {
 	int i;
+	int len;
 
 	i = 0;
+	len = ft_strlen(str);
 	while (str[i])
 	{
 		if (str[i] == '\'')
 		{
 			ft_count_node2(str, &i, '\'');
 			if (str[i] != '\'')
+			{
+				write(1, "bash: syntax error in unclosed quoters\n", 40);
 				return (-1);
+			}
 		}
 		if (str[i] == '\"')
 		{
 			ft_count_node2(str, &i, '\"');
 			if (str[i] != '\"')
+			{
+				write(1, "bash: syntax error in unclosed quoters\n", 40);
 				return (-1);
+			}
 		}
+		// if (str[i] == '>')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (str[i] != )
+		// }
+		// if (str[i] == '|')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (i == len)
+		// 	{
+		// 		write(1, "bash: syntax error in the absence of commands\n", 47);
+		// 		return (-1);
+		// 	}
+		// }
+		// if (str[i] == '>' || str[i] == '<')
+		// {
+		// 	i++;
+		// 	while (str[i] && str[i] == ' ')
+		// 		i++;
+		// 	if (i == len)
+		// 	{
+		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
+		// 		return (-1);
+		// 	}
+		// 	else
+		// 	{
+		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
+		// 		return (-1);
+		// 	}
+		// }
 		i++;
 	}
-	return (0);
+	//printf("A\n");
+	return (1);
 }
 
 void	ft_free_list(t_comm *lst)
 {
 	t_comm *head;
 
-	while (lst->next != NULL)
+	while (lst != NULL)
     {
         head = lst;
         if (lst->command_str)
@@ -36,7 +79,7 @@ void	ft_free_list(t_comm *lst)
             int i = 0;
             while (lst->command_str[i])
 			{
-//				printf("|%s\n", lst->command_str[i]);
+				printf("|%s|\n", lst->command_str[i]);
                 free (lst->command_str[i]);
 				i++;
 			}
@@ -49,23 +92,24 @@ void	ft_free_list(t_comm *lst)
 
 int ft_process4(char **env, char *str)
 {
-	t_comm *lst;
+    t_comm *lst;
 
-	lst = malloc(sizeof(t_comm));
-	if (!lst)
-		return (-1);
-//	lst = NULL;
-//	ft_memset((void *)lst, 0, sizeof(t_comm));
-	lst = ft_parser4(lst, str, env);
+    lst = malloc(sizeof(t_comm));
+    if (!lst)
+        return (-1);
+    ft_memset((void *)lst, 0, sizeof(t_comm));
+    lst = ft_parser4(lst, str, env);
+	lst = ft_check_redir(lst);
 	executor(lst, env);
-//	write(2, "!!\n", 3);
-	//ft_free_list(lst);
-	return (0);
+	ft_free_list(lst);
+    return (0);
 }
 
 void ft_no_malloc(char **str)
 {
-	int i =0;
+	int i;
+
+	i = 0;
 	while (str[i])
 	{
 		free (str[i]);
@@ -101,26 +145,22 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-
 	while (1)
 	{
-		str = readline("e-bash:");
-//		str = ft_strdup("ls -l | head -6 | cut -b 1-10");
-//		str = ft_strdup("yes | head -2");
+		str = readline("bash:");
 		if (str && *str)
 		{
-			///parser
-
+			if (ft_lexer(str) != 1)
+				exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
-			if (ft_process4(envp, str) == -1)
-				exit (0);
-			///executor
-
+			if (ft_check_str(str) != -1)
+        	{
+				if (ft_process4(envp, str) == -1)
+					exit (0);
+			}
 			free (str);
 			ft_no_malloc(envp);
 		}
-		else
-			exit(0);
 	}
 }

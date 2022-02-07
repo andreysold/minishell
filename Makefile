@@ -4,7 +4,9 @@ LIBFT	=	srcs/libft
 CFLAGS	=	-I./includes -g #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
 NAME	=	minishell
-SRCS	=	minishell.c \
+SRCS	=	minishell.c
+
+
 
 #EXECUTOR
 SRCS	+=		srcs/executor/executor.c
@@ -17,7 +19,8 @@ SRCS	+=	srcs/executor/pipex/pipex.c \
 SRCS	+=	srcs/parser/parse_dollar.c \
             srcs/parser/process.c \
             srcs/parser/parse_quotes.c \
-            srcs/parser/parse_utils.c
+            srcs/parser/parse_utils.c \
+			srcs/parser/redir.c
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 

@@ -22,13 +22,9 @@ char *ft_destroy_space4(char *str, char **env)
         else if (str[i] == '\"')
             tmp = ft_two_quotes(str, env, tmp, &i, &j);
         else if (str[i] == '$' && str[i + 1] != ' ')
-        {
-            i++;
             tmp = ft_shit_dollar(str, env, tmp, &i, &j);
-        }
         else if (str[i] == ' ')
         {
-            i++;
             while (str[i] && str[i] == ' ')
                 i++;
             tmp[j++] = ' ';
@@ -37,6 +33,7 @@ char *ft_destroy_space4(char *str, char **env)
             tmp[j++] = str[i++];
     }
     tmp[j] = '\0';
+    free (str);
     return (tmp);
 }
 
@@ -45,16 +42,14 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     t_comm *tmp;
     int count_nd;
     char **str_tl;
-	int c;
-
+    int c;
 
     count_nd = ft_count_node(str);
-	c = count_nd;
-	str = ft_destroy_space4(str, env);
-
-//    printf("|->%s<-|\n", str);
+    c = count_nd;
+    str = ft_add_space(str);
+    str = ft_destroy_space4(str, env);
 	if (count_nd > 1)
-    	str_tl = ft_split(str, '|');
+		str_tl = ft_split(str, '|');
 	if (count_nd == 1)
 	{
 		lst->last_str = ft_strdup(str);
@@ -79,13 +74,13 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 			tmp->count_node = c;
 			free(tmp->last_str);
 			tmp->next = lst;
-			//		if (lst)
-			//			tmp->next = lst;
 			lst = tmp;
 		}
 		ft_no_malloc(str_tl);
 	}
-    //ft_no_malloc(str_tl);
     free (str);
     return (lst);
 }
+
+// "$US"ER$
+// $""USER$

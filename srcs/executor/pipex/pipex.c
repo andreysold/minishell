@@ -155,14 +155,14 @@ int pipex_alt(t_comm *lst, char **env)
 	int		kind;
 
 	tmp = lst;
-	lst->outfile = -2;
-	lst->infile = -2;
+/*	lst->outfile = -2;
+	lst->infile = -2;*/
 	pipes = ft_calloc(sizeof(int), 2 * (lst->count_node - 1));
 	if (!pipes)
 		return (EXIT_FAILURE);
-	lst->outfile = open("ebashu.txt", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
-	if (lst->outfile == -1)
-		perror("Can't open");
+//	lst->outfile = open("ebashu.txt", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
+//	if (lst->outfile == -1)
+//		perror("Can't open");
 /*	i = 0;
 	while (i < (lst->count_node - 1))
 		pipes[i++] = 0;*/

@@ -101,7 +101,7 @@ t_comm *ft_check_redir(t_comm *lst)
     r->tmp2 = ft_strdup("<");
     r->tmp3 = ft_strdup(">>");
 	head = lst;	
-	while (lst->next != NULL)
+	while (lst)
 	{
         lst->outfile = -2;
         lst->infile = -2;
@@ -113,6 +113,7 @@ t_comm *ft_check_redir(t_comm *lst)
 				if (ft_strncmp(lst->command_str[i], r->tmp1, ft_strlen(r->tmp1)) == 0)
 				{
 					lst->outfile = open(lst->command_str[i + 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+                    printf("aa%s\n", lst->command_str[i + 1]);
 					if (lst->outfile == -1)
 						perror("Cant open file");
 				}

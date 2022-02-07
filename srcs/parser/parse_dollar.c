@@ -48,6 +48,8 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
     char *tmp2;
     char *tmp;
     int fl = 0;
+
+   // printf("|%s|\n", str);
     k = 0;
     z = 0;
     c = 0;
@@ -60,6 +62,7 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
         c++;
     }
     tmp = ft_substr(str, z, c);
+    printf("tmp = %s\n", tmp);
     k = -1;
     z = 0;
     while (env[++k])
@@ -79,9 +82,9 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
             }
         }
     }
-    if (fl == 0)
-        tmp = ft_strdup(" ");  // ?
-        //tmp = ft_strjoin("$", tmp);
+    if (fl == 0 && c == 0)
+        //tmp = ft_strdup("");  // ?
+        tmp = ft_strjoin("$", tmp);
     while (tmp[l])
         m_tmp[(*j)++] = tmp[l++];
     m_tmp[(*j)] = '\0';

@@ -153,8 +153,11 @@ int main(int ac, char **av, char **env)
 				exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
-			if (ft_process4(envp, str) == -1)
-				exit (0);
+			if (ft_check_str(str) != -1)
+        	{
+				if (ft_process4(envp, str) == -1)
+					exit (0);
+			}
 			free (str);
 			ft_no_malloc(envp);
 		}

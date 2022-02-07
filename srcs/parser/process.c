@@ -33,6 +33,7 @@ char *ft_destroy_space4(char *str, char **env)
             tmp[j++] = str[i++];
     }
     tmp[j] = '\0';
+    free (str);
     return (tmp);
 }
 
@@ -49,8 +50,6 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     str = ft_destroy_space4(str, env);
     str_tl = ft_split(str, '|');
     int i = 0;
-    while (str_tl[i])
-        printf("%s\n", str_tl[i++]);
     while (count_nd-- > 0)
     {
         tmp = malloc(sizeof(t_comm));
@@ -69,3 +68,6 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
     free (str);
     return (lst);
 }
+
+// "$US"ER$
+// $""USER$

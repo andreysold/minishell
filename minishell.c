@@ -100,6 +100,7 @@ int ft_process4(char **env, char *str)
     ft_memset((void *)lst, 0, sizeof(t_comm));
     lst = ft_parser4(lst, str, env);
 	lst = ft_check_redir(lst);
+	executor(lst, env);
 	ft_free_list(lst);
     return (0);
 }

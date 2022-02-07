@@ -121,9 +121,9 @@ t_comm *ft_check_redir(t_comm *lst)
 					lst->infile = open(lst->command_str[i + 1], O_RDONLY);
 					if (lst->infile == -1) // ???? fixme
                     {
-                        write(1, "bash: ", 6);
-                        write(1, lst->command_str[i + 1], ft_strlen(lst->command_str[i + 1]));
-                        write(1, ": ", 2);
+//                        write(1, "bash: ", 6);
+//                        write(1, lst->command_str[i + 1], ft_strlen(lst->command_str[i + 1]));
+//                        write(1, ": ", 2);
 						perror("");
                     }
 				}

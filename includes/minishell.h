@@ -9,6 +9,13 @@
 #include <errno.h>
 #include <readline/history.h>
 
+/**********COLOR**********/
+#define RESET	"\033[0m"
+#define RED		"\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+
 typedef struct s_iterat // итераторы для подгонки под норму
 {
     int i;
@@ -27,6 +34,7 @@ typedef struct s_redir
     char *tmp3;
     char *tmp4;
 }   t_redir;
+
 typedef struct s_comm
 {
     char **command_str; // двумернный массив из las_str(separator ' ')
@@ -41,6 +49,8 @@ typedef struct s_comm
 
 }   t_comm;
 
+int pipex_alt(t_comm *lst, char **env);
+int executor(t_comm * lst, char **env);
 
 int	ft_lexer(char *str);
 int ft_process4(char **env, char *str);

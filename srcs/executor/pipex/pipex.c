@@ -108,13 +108,13 @@ int	pipex(t_comm *lst, char **env)
 }
 */
 
-void close_pipes(int *pipes, int pipes_amount)
+void close_pipes(int *pipes, int count_node)
 {
 	int i;
 	int n;
 
 	i = 0;
-	n = 2 * pipes_amount;
+	n = 2 * (count_node - 1);
 	/*printf("%s!! %d %s\n", RED, n,   RESET);
 	fflush(NULL);*/
 	while (i < n)
@@ -144,7 +144,64 @@ void wait_childs(int status, int n)
 	}
 }
 
-int pipex_alt(t_comm *lst, char **env)
+static inline int cmd_position(int kind, t_comm *tmp)
+{
+	if (tmp->count_node > 1 && tmp->next)
+		kind = MIDDLE;
+	if (kind == MIDDLE && (tmp->count_node > 1 && tmp->next->next == NULL))
+		kind = END;
+	return (kind);
+}
+
+static inline void close_in_out_file(t_comm *tmp)
+{
+	int err;
+
+	err = 0;
+	if (tmp->outfile != -2)
+		err = close(tmp->outfile);
+	if (tmp->infile != -2)
+		err = close(tmp->infile);
+	if (err != 0)
+		perror("close_in_out_file:");
+}
+
+static inline void redirect(t_comm *tmp)
+{
+	int err;
+
+	err = 0;
+	if (tmp->infile != FD_UNUSED)
+	{
+		err = dup2(tmp->infile, STDIN_FILENO);
+	}
+	if (tmp->outfile != FD_UNUSED)
+	{
+		err = dup2(tmp->outfile, STDOUT_FILENO);
+	}
+	if (err != 0)
+		perror("redirect:");
+}
+
+static inline int *open_pipes(t_comm *tmp)
+{
+	int i;
+	int	*pipes;
+
+	pipes = ft_calloc(sizeof(int), 2 * (tmp->count_node - 1));
+	if (!(pipes))
+		perror("open_pipes: can't malloc");
+	i = 0;
+	while (i < (tmp->count_node - 1))
+	{
+		if (pipe(pipes + 2 * i) == -1)
+			perror("open_pipes: can't open pipe");
+		i++;
+	}
+	return (pipes);
+}
+
+int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
 	// echo p | echo r | echo i | echo v | echo e | echo t
@@ -155,25 +212,14 @@ int pipex_alt(t_comm *lst, char **env)
 	int		kind;
 
 	tmp = lst;
+	pipes = open_pipes(tmp);
 /*	lst->outfile = -2;
-	lst->infile = -2;*/
-	pipes = ft_calloc(sizeof(int), 2 * (lst->count_node - 1));
-	if (!pipes)
-		return (EXIT_FAILURE);
-//	lst->outfile = open("ebashu.txt", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
-//	if (lst->outfile == -1)
-//		perror("Can't open");
-/*	i = 0;
-	while (i < (lst->count_node - 1))
-		pipes[i++] = 0;*/
+	lst->infile = -2;
+	lst->outfile = open("2.txt", O_CREAT |  O_WRONLY |  O_TRUNC,
+										 0644);
+	if (lst->outfile == -1)
+		perror("Can't open");*/
 	kind = START;
-	i = 0;
-	while (i < (lst->count_node - 1))
-	{
-		if (pipe(pipes + 2 * i) == -1)
-			error_n_exit("Can't create a pipe");
-		i++;
-	}
 	i = 0;
 	while (tmp != NULL)
 	{
@@ -188,19 +234,19 @@ int pipex_alt(t_comm *lst, char **env)
 					{
 						///    1 =>
 						dup2(pipes[1], STDOUT_FILENO);
-						if (lst->infile != -2)
-						{
-							dup2(lst->infile, STDIN_FILENO);
-						}
+//						if (lst->infile != -2)
+//						{
+//							dup2(lst->infile, STDIN_FILENO);
+//						}
 					}
 					else if (kind == END)
 					{
 						/// => 2
 						dup2(pipes[0], STDIN_FILENO);
-						if (lst->outfile != -2)
-						{
-							dup2(lst->outfile, STDOUT_FILENO);
-						}
+//						if (lst->outfile != -2)
+//						{
+//							dup2(lst->outfile, STDOUT_FILENO);
+//						}
 					}
 				}
 				else
@@ -210,48 +256,32 @@ int pipex_alt(t_comm *lst, char **env)
 					{
 						///    1 =>
 						dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
-						if (lst->infile != -2)
-						{
-							dup2(lst->infile, STDIN_FILENO);
-						}
+//						if (lst->infile != -2)
+//						{
+//							dup2(lst->infile, STDIN_FILENO);
+//						}
 					}
 					else if (kind == MIDDLE)
 					{
 						/// => 2 =>
 						dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
 						dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
-					} else if (kind == END)
+					}
+					else if (kind == END)
 					{
 						/// => 3
 						dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
-						if (lst->outfile != -2)
-						{
-							dup2(lst->outfile, STDOUT_FILENO);
-						}
+//						if (lst->outfile != -2)
+//						{
+//							dup2(lst->outfile, STDOUT_FILENO);
+//						}
 					}
 				}
 			}
-			else
-			{
-				if (lst->infile != -2)
-				{
-					dup2(lst->infile, STDIN_FILENO);
-				}
-				if (lst->outfile != -2)
-				{
-					dup2(lst->outfile, STDOUT_FILENO);
-				}
-			}
-
-
-			close_pipes(pipes, tmp->count_node - 1);
-
-/*			/// getpid last process
-			if (kind == END)
-			{
-				printf("%sPID %d | go to execve%s\n", YELLOW, getpid(), RESET);
-				fflush(NULL);
-			}*/
+			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+				redirect(tmp);
+			close_pipes(pipes, tmp->count_node);
+			close_in_out_file(tmp);
 			if (execve(find_command_path(tmp->command_str[0], env), \
 			tmp->command_str, env) == -1)
 			{
@@ -259,20 +289,13 @@ int pipex_alt(t_comm *lst, char **env)
 				exit(0);
 			}
 		}
-
-		if (tmp->count_node > 1 && tmp->next)
-		{
-			kind = MIDDLE;
-		}
-		if (kind == MIDDLE && (tmp->count_node > 1 && tmp->next->next == NULL))
-		{
-			kind = END;
-		}
-		i++;
+		kind = cmd_position(kind, tmp);
 		tmp = tmp->next;
+		i++;
 	}
 	tmp = lst;
-	close_pipes(pipes, tmp->count_node - 1);
+	close_pipes(pipes, tmp->count_node);
+	close_in_out_file(tmp);
 	wait_childs(status, tmp->count_node);
 	return (0);
 }

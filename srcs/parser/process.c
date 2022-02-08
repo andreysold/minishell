@@ -56,6 +56,8 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 		lst->command_str = ft_split(lst->last_str, ' ');
 		lst->command_str = ft_return_space(lst->command_str);
 		lst->count_node = c;
+		lst->infile = FD_UNUSED;
+		lst->outfile = FD_UNUSED;
 		free (lst->last_str);
 		lst->next = NULL;
 	}
@@ -72,6 +74,8 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
 			tmp->command_str = ft_split(tmp->last_str, ' ');
 			tmp->command_str = ft_return_space(tmp->command_str);
 			tmp->count_node = c;
+			tmp->infile = FD_UNUSED;
+			tmp->outfile = FD_UNUSED;
 			free(tmp->last_str);
 			tmp->next = lst;
 			lst = tmp;

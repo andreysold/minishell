@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <readline/history.h>
 
+#define FD_UNUSED	-2
+
 /**********COLOR**********/
 #define RESET	"\033[0m"
 #define RED		"\033[31m"
@@ -37,19 +39,19 @@ typedef struct s_redir
 
 typedef struct s_comm
 {
-    char **command_str; // двумернный массив из las_str(separator ' ')
-    char *last_str; // подмножество строки 
-    int infile;
-    int outfile;
-    int count_word;
-    int count_node;
-    char **envp;
-    t_iter t; // структура итераторов
-    struct  s_comm *next;
+	char			**command_str; // двумернный массив из las_str(separator ' ')
+	char			*last_str; // подмножество строки
+	int				infile;
+	int				outfile;
+	char			*here;
+	int				count_word;
+	int				count_node;
+	char			**envp;
+	t_iter			t; // структура итераторов
+	struct s_comm	*next;
+}	t_comm;
 
-}   t_comm;
-
-int pipex_alt(t_comm *lst, char **env);
+int pipex(t_comm *lst, char **env);
 int executor(t_comm * lst, char **env);
 
 int	ft_lexer(char *str);

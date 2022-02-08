@@ -121,26 +121,21 @@ void close_pipes(int *pipes, int count_node)
 		close(pipes[i++]);
 }
 
-void wait_childs(int status, int n)
+void wait_childs(int n)
 {
-	int i;
+	int	i;
+	int	status;
 
 	i = 0;
 	while (i < n)
 	{
-/*		printf("%sPID %d | cmd have %d status %s\n", GREEN, getpid(),
-			   status,   RESET);
-		fflush(NULL);*/
 		wait(&status);
-//		waitpid(NULL, &status, 0);
 		if (WIFEXITED(status))
 		{
 			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
 			fflush(NULL);
 		}
 		i++;
-//		printf("%s%d process exited%s\n", RED, i, RESET);
-//		fflush(NULL);
 	}
 }
 
@@ -166,6 +161,25 @@ static inline void close_in_out_file(t_comm *tmp)
 		perror("close_in_out_file:");
 }
 
+static inline void heredoc(t_comm *tmp)
+{
+	char	*str;
+	int		here_len;
+
+	here_len = (int)ft_strlen(tmp->here);
+	while (1)
+	{
+		str = readline("> ");
+		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
+		{
+			break ;
+		}
+		ft_putendl_fd(str, tmp->infile);
+		free(str);
+	}
+	free(str);
+}
+
 static inline void redirect(t_comm *tmp)
 {
 	int err;
@@ -173,6 +187,12 @@ static inline void redirect(t_comm *tmp)
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
 	{
+		if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
+		{
+			heredoc(tmp);
+			close(tmp->infile);
+			tmp->infile = open("tmp", O_RDONLY);
+		}
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
 	if (tmp->outfile != FD_UNUSED)
@@ -201,24 +221,79 @@ static inline int *open_pipes(t_comm *tmp)
 	return (pipes);
 }
 
+static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
+{
+	if (tmp->count_node == 2)
+	{
+		//todo second condition always true
+		if (kind == START && tmp->next != NULL)
+		{
+			///    1 =>
+			dup2(pipes[1], STDOUT_FILENO);
+//			if (lst->infile != -2)
+//			{
+//				dup2(lst->infile, STDIN_FILENO);
+//			}
+		}
+		else if (kind == END)
+		{
+			/// => 2
+			dup2(pipes[0], STDIN_FILENO);
+//			if (lst->outfile != -2)
+//			{
+//				dup2(lst->outfile, STDOUT_FILENO);
+//			}
+		}
+	}
+	else
+	{
+		//todo second condition always true
+		if (kind == START && tmp->next != NULL)
+		{
+			///    1 =>
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
+//			if (lst->infile != -2)
+//			{
+//				dup2(lst->infile, STDIN_FILENO);
+//			}
+		}
+		else if (kind == MIDDLE)
+		{
+			/// => 2 =>
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
+		}
+		else if (kind == END)
+		{
+			/// => 3
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
+//			if (lst->outfile != -2)
+//			{
+//				dup2(lst->outfile, STDOUT_FILENO);
+//			}
+		}
+	}
+}
+
 int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
 	// echo p | echo r | echo i | echo v | echo e | echo t
-	int		status = 0;
 	int		i;
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
 
+	lst->outfile = FD_UNUSED;
+	lst->infile = FD_UNUSED;
+	/// open file to write heredoc
+	lst->infile = open("tmp", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
+	if (lst->infile == -1)
+		perror("Can't open");
+	lst->here = ft_strdup("pop");
+
 	tmp = lst;
 	pipes = open_pipes(tmp);
-/*	lst->outfile = -2;
-	lst->infile = -2;
-	lst->outfile = open("2.txt", O_CREAT |  O_WRONLY |  O_TRUNC,
-										 0644);
-	if (lst->outfile == -1)
-		perror("Can't open");*/
 	kind = START;
 	i = 0;
 	while (tmp != NULL)
@@ -226,58 +301,7 @@ int pipex(t_comm *lst, char **env)
 		if (fork() == 0)
 		{
 			if (tmp->count_node > 1)
-			{
-				if (tmp->count_node == 2)
-				{
-					//todo second condition always true
-					if (kind == START && tmp->next != NULL)
-					{
-						///    1 =>
-						dup2(pipes[1], STDOUT_FILENO);
-//						if (lst->infile != -2)
-//						{
-//							dup2(lst->infile, STDIN_FILENO);
-//						}
-					}
-					else if (kind == END)
-					{
-						/// => 2
-						dup2(pipes[0], STDIN_FILENO);
-//						if (lst->outfile != -2)
-//						{
-//							dup2(lst->outfile, STDOUT_FILENO);
-//						}
-					}
-				}
-				else
-				{
-					//todo second condition always true
-					if (kind == START && tmp->next != NULL)
-					{
-						///    1 =>
-						dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
-//						if (lst->infile != -2)
-//						{
-//							dup2(lst->infile, STDIN_FILENO);
-//						}
-					}
-					else if (kind == MIDDLE)
-					{
-						/// => 2 =>
-						dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
-						dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
-					}
-					else if (kind == END)
-					{
-						/// => 3
-						dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
-//						if (lst->outfile != -2)
-//						{
-//							dup2(lst->outfile, STDOUT_FILENO);
-//						}
-					}
-				}
-			}
+				pipe_switch(i, kind, pipes, tmp);
 			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
 				redirect(tmp);
 			close_pipes(pipes, tmp->count_node);
@@ -295,7 +319,8 @@ int pipex(t_comm *lst, char **env)
 	}
 	tmp = lst;
 	close_pipes(pipes, tmp->count_node);
-	close_in_out_file(tmp);
-	wait_childs(status, tmp->count_node);
+	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
+	wait_childs( tmp->count_node);
+//	unlink("tmp");
 	return (0);
 }

@@ -89,6 +89,8 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
                 tmp = ft_substr(env[k], z + 1, ft_strlen(env[k]) - z);
                 break ;
             }
+            else
+                free (tmp2);
         }
     }
     if (fl == 0)

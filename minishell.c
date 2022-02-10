@@ -75,16 +75,7 @@ void	ft_free_list(t_comm *lst)
     {
         head = lst;
         if (lst->command_str)
-        {
-            int i = 0;
-            while (lst->command_str[i])
-			{
-				printf("|%s|\n", lst->command_str[i]);
-                free (lst->command_str[i]);
-				i++;
-			}
-            free (lst->command_str);
-        }
+			ft_no_malloc(lst->command_str);
         lst = lst->next;
         free (head);
     }
@@ -98,9 +89,9 @@ int ft_process4(char **env, char *str)
     if (!lst)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
-    lst = ft_parser4(lst, str, env);
-	lst = ft_check_redir(lst);
+   	lst = ft_parser4(lst, str, env);
 	executor(lst, env);
+//	printf("A\n");
 	ft_free_list(lst);
     return (0);
 }
@@ -145,13 +136,13 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	while (1)
-	{
+	// while (1)
+	// {
 		str = readline("bash:");
 		if (str && *str)
 		{
-			if (ft_lexer(str) != 1)
-				exit (0);
+			// if (ft_lexer(str) != 1)
+			// 	exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
 			if (ft_check_str(str) != -1)
@@ -159,8 +150,8 @@ int main(int ac, char **av, char **env)
 				if (ft_process4(envp, str) == -1)
 					exit (0);
 			}
-			free (str);
 			ft_no_malloc(envp);
+			//free (str);
 		}
-	}
+	// }
 }

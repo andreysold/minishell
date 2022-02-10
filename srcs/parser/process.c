@@ -63,7 +63,6 @@ char *ft_open_file(char *str, char *tmp, int *i, int *j, t_comm *lst)
         }
         else
             tmp[(*j)++] = str[(*i)++];
-     //   (*i)++;
     }
     return (tmp);
 }
@@ -90,7 +89,6 @@ char *ft_destroy_space4(char *str, char **env, t_comm *lst)
             tmp = ft_two_quotes(str, env, tmp, &i, &j);
         else if (str[i] == '>' || str[i] == '<')
             tmp = ft_open_file(str, tmp, &i, &j, lst);
-
         else if (str[i] == '$' && str[i + 1] != ' ')
         {
             i++;
@@ -104,7 +102,6 @@ char *ft_destroy_space4(char *str, char **env, t_comm *lst)
         }
         else
             tmp[j++] = str[i++];
-       // printf("A\n");
     }
     tmp[j] = '\0';
     free (str);
@@ -172,6 +169,7 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
             tmp->next = lst;
             lst = tmp;
         }
+        free (str);
         ft_no_malloc(str_tl);
     }
     else

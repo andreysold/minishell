@@ -19,9 +19,11 @@ char *ft_two_quotes(char *str, char **env, char *tmp, int *i, int *j) // no norm
 		{
 			(*i)++;
 			tmp = ft_shit_dollar(str, env, tmp, i, j);
+			continue ;
 		}
 		if (str[(*i)] != '\"')
-			tmp[(*j)++] = str[(*i)++];
+			tmp[(*j)++] = str[(*i)];
+		(*i)++;
 	}
 	return (tmp);
 }

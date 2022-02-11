@@ -65,13 +65,19 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
     int fl = 0;
 
     c = 0;
+    // (*i)--;
     z = (*i);
-    while (str[(*i)] && str[(*i)] != ' ' && str[(*i)] != '$' && str[(*i)] != '\"')
+    while (str[(*i)] && str[*i] != '\"')
     {
+        if (!(ft_iskey(str[(*i)])))
+            break ;
+        else
+            c++;
         (*i)++;
-        c++;
     }
+    printf("|%s|\n", str);
     tmp = ft_substr(str, z, c);
+    printf("%s\n", tmp);
     k = -1;
     while (env[++k])
     {
@@ -93,12 +99,15 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
                 free (tmp2);
         }
     }
-    if (fl == 0)
-        tmp = ft_strdup(" ");
-    l = 0;
-    while (tmp[l])
-        m_tmp[(*j)++] = tmp[l++];
-    free (tmp);
+    if (fl != 0)
+    {
+        l = 0;
+        while (tmp[l])
+            m_tmp[(*j)++] = tmp[l++];
+        free (tmp);
+    }
+    else
+        m_tmp = ft_strdup("");
     return (m_tmp);
 }
 
@@ -120,6 +129,7 @@ int ft_dol_str(char *str, char **env)
             count++;
         i++;
     }
+    printf("count = %d\n", count);
     return (count);
 }
 

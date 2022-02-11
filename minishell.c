@@ -4,7 +4,9 @@ int	ft_lexer(char *str)
 {
 	int i;
 	int len;
+    int j;
 
+    j = 0;
 	i = 0;
 	len = ft_strlen(str);
 	while (str[i])
@@ -27,6 +29,21 @@ int	ft_lexer(char *str)
 				return (-1);
 			}
 		}
+        if (str[i] == '|')
+        {
+            i++;
+            while (str[i] && str[i] == ' ')
+                i++;
+            j = i;
+            while (str[i] && (ft_isdigit(str[i]) || ft_isalpha(str[i])))
+                i++;
+            if (j == i)
+            {
+                write(1, "bash: syntax error in unclosed quoters\n", 40);
+                return (-1);
+            }
+        }
+
 		// if (str[i] == '>')
 		// {
 		// 	i++;
@@ -71,11 +88,16 @@ void	ft_free_list(t_comm *lst)
 {
 	t_comm *head;
 
-	while (lst != NULL)
+	while (lst)
     {
         head = lst;
         if (lst->command_str)
-			ft_no_malloc(lst->command_str);
+        {
+            int i = 0;
+            while (lst->command_str[i])
+                i++;
+            ft_no_malloc(lst->command_str);
+        }
         lst = lst->next;
         free (head);
     }
@@ -129,6 +151,24 @@ char **ft_get_envp(char **env)
 	return (envp);
 }
 
+int ft_check_str(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == '>' && !(ft_isdigit(str[i + 1])))
+        {
+            i += 2;
+            if (str[i] == '>')
+                return (-1);
+        }
+        i++;
+    }
+    return (1);
+}
+
 int main(int ac, char **av, char **env)
 {
 	char *str;
@@ -136,22 +176,23 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	// while (1)
-	// {
-		str = readline("bash:");
-		if (str && *str)
-		{
-			// if (ft_lexer(str) != 1)
-			// 	exit (0);
-			envp = ft_get_envp(env);
-			add_history(str);
-			if (ft_check_str(str) != -1)
-        	{
-				if (ft_process4(envp, str) == -1)
-					exit (0);
-			}
-			ft_no_malloc(envp);
-			//free (str);
-		}
-	// }
+//	 while (1)
+//     {
+        str = readline("bash:");
+        if (str && *str)
+        {
+             if (ft_lexer(str) != 1)
+                exit (0);
+            envp = ft_get_envp(env);
+            add_history(str);
+            if (ft_check_str(str) != -1)
+            {
+                if (ft_process4(envp, str) == -1)
+                    exit(0);
+            }
+            else
+                free (str);
+            ft_no_malloc(envp);
+        }
+//	 }
 }

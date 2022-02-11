@@ -43,10 +43,13 @@ typedef struct s_comm
 	char			*last_str; // подмножество строки
 	int				infile;
 	int				outfile;
+    char            **str_tl;
 	char			*here;
 	int				count_word;
 	int				count_node;
 	char			**envp;
+    char            *name;
+    int             c;
 	t_iter			t; // структура итераторов
 	struct s_comm	*next;
 }	t_comm;
@@ -72,5 +75,7 @@ char *ft_add_space(char *str);
 void ft_count_node2(char *str, int *i, char c);
 t_comm *ft_check_redir(t_comm *lst);
 int ft_check_str(char *str);
-
+char *ft_new_sub(int i, char *name, char *str, int begin);
+void    ft_skip_sp(char *str, int *i, int *begin);
+char *ft_open_file(char *str, char *tmp, int *i, int *j, t_comm *lst);
 #endif

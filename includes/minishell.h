@@ -66,7 +66,7 @@ char *ft_tream(char *str);
 char **ft_return_space(char **str);
 int ft_dol_str(char *str, char **env);
 t_comm *ft_parser4(t_comm *lst, char *str, char **env);
-char *ft_destroy_space4(char *str, char **env);
+char *ft_destroy_space4(char *str, char **env, t_comm *lst);
 char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j);
 char *ft_add_space(char *str);
 void ft_count_node2(char *str, int *i, char c);

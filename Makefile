@@ -6,8 +6,6 @@ RLFLAG	=	-lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
-
-
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
 			srcs/executor/builtins.c

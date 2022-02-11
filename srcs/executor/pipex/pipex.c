@@ -12,102 +12,6 @@
 
 #include "pipex.h"
 
-static inline void	close_fd_and_waitpid(int fd[3], int pid[2])
-{
-	close(fd[0]);
-	close(fd[1]);
-	close(fd[2]);
-	if (pid != NULL)
-	{
-		waitpid(pid[0], NULL, 0);
-		waitpid(pid[1], NULL, 0);
-	}
-}
-
-static inline void	process(int *pid, int *fd, char *cmd_argv, char **env)
-{
-/*	///redirects here
- * if (fd[2] == -1)
-	{
-		if (pid[0] == 0)
-			error_n_exit("Can't open file to read");
-		if (pid[1] == 0)
-			error_n_exit("Can't open file to write");
-	}
-	else
-	{
-		if (fd[2] != 0)
-		{
-			if (pid[0] == 0)
-				dup2(fd[2], STDIN_FILENO);
-			if (pid[1] == 0)
-				dup2(fd[2], STDOUT_FILENO);
-		}
-	}*/
-	if (pid[0] == 0)
-		dup2(fd[1], STDOUT_FILENO);
-	if (pid[1] == 0)
-		dup2(fd[0], STDIN_FILENO);
-	close_fd_and_waitpid(fd, NULL);
-	execve(find_command_path(cmd_argv, env), ft_split(cmd_argv, ' '), env);
-	if (errno != 0)
-		error_n_exit("Error");
-}
-
-/*
-///@param argv[1] –– infile. File can be used for cmd1. It will work only if
-/// you use redirect trigger in argv[6]
-///@param argv[2] –– cmd1. Imagine next is pipe, next to cmd1
-///@param argv[3] –– cmd2.
-///@param argv[4] –– outfile. u should use redirect in argv[5]
-///@param argv[5] –– necessary for outfile. use >
-///@param argv[6] –– necessary for infile. use <
-int	pipex(t_comm *lst, char **env)
-{
-	///@param fd[0] fd[1] -- for pipe i/o
-	///@param fd[2] -- using for infile/outfile(open fd)
-	int		fd[3];
-	pid_t	pid[2];
-
-	errno = 0;
-//	if (lst->command_str[0] == NULL)
-//		error_n_exit("You give 0 commands");
-//	printf("%s --- size -- %lu\n", lst->next->command_str[0], sizeof(pid));
-//	///added (to 5) 2 argc for infile/outfile trigger; now ac = 7
-//	if (argc > 7)
-//		error_n_exit("You should give four arguments");
-	ft_memset((void*)fd, 0, sizeof(fd));
-	ft_memset((void*)pid, 0, sizeof(pid));
-	if (pipe(fd) == -1)
-		error_n_exit("Can't create a pipe");
-
-	pid[0] = fork();
-	if (pid[0] < 0)
-		error_n_exit("Can't fork a new process");
-	if (pid[0] == 0)
-	{
-//		///infile will use file in argv[1]. if u have trigger in argv[5]
-//		if (argv[6][0] == '<')
-//			fd[2] = open(argv[1], O_RDONLY);
-//		else
-//			fd[2] = 0;
-		process(pid, fd, lst->command_str[0], env);
-	}
-	pid[1] = fork();
-	if (pid[1] < 0)
-		error_n_exit("Can't fork a new process");
-	if (pid[1] == 0)
-	{
-//		///this is for outfile
-//		if (argv[5][0] == '>')
-//			fd[2] = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
-		process(pid, fd, lst->next->command_str[0], env);
-	}
-	close_fd_and_waitpid(fd, pid);
-	return (0);
-}
-*/
-
 void close_pipes(int *pipes, int count_node)
 {
 	int i;
@@ -130,7 +34,7 @@ void wait_childs(int n)
 	while (i < n)
 	{
 		wait(&status);
-		if (WIFEXITED(status))
+		if (WIFEXITED(status) && status != 0)
 		{
 			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
 			fflush(NULL);
@@ -259,11 +163,13 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 	}
 }
 
-static inline void check_builtin(t_comm *tmp, char **env)
+static inline int check_builtin(t_comm *tmp, char **env)
 {
+	ft_putstr_fd("builtin detected -- ", 1);
+	ft_putendl_fd(tmp->command_str[0],1);
 	if (ft_strncmp(*tmp->command_str, "echo", 5) == 0) ///'-n' should work
 	{
-		//ft_echo();
+		return (ft_echo(tmp));
 	}
 	else if (ft_strncmp(*tmp->command_str, "cd", 3) == 0) ///'only a relative or absolute path'
 	{
@@ -289,6 +195,7 @@ static inline void check_builtin(t_comm *tmp, char **env)
 	{
 		//ft_exit();
 	}
+	return (EXIT_FAILURE);
 }
 
 int pipex(t_comm *lst, char **env)
@@ -316,18 +223,21 @@ int pipex(t_comm *lst, char **env)
 	{
 		if (fork() == 0)
 		{
-			check_builtin(tmp, env);
+			if (check_builtin(tmp, env) == EXIT_SUCCESS)
+				exit(EXIT_SUCCESS);
 			if (tmp->count_node > 1)
 				pipe_switch(i, kind, pipes, tmp);
 			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
 				redirect(tmp);
 			close_pipes(pipes, tmp->count_node);
 			close_in_out_file(tmp);
-			if (execve(find_command_path(tmp->command_str[0], env), \
-			tmp->command_str, env) == -1)
+			if (execve(find_command_path(tmp->command_str[0], env), tmp->command_str, env) == -1)
 			{
-				perror("Fail exec!!!!!!!");
-				exit(0);
+				errno = 0;
+				ft_putstr_fd("e-bash: ", 2);
+				ft_putstr_fd(tmp->command_str[0], 2);
+				ft_putendl_fd(": command not found", 2);
+				exit(EXIT_FAILURE);
 			}
 		}
 		if (tmp->here)

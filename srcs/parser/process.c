@@ -53,7 +53,7 @@ char *ft_open_file(char *str, char *tmp, int *i, int *j, t_comm *lst)
             lst->outfile = open(name, O_RDONLY | O_WRONLY | O_CREAT | O_APPEND, 0644);
             free (name);
         }
-        else if (str[(*i)] == '<' && str[(*i)] != '<')
+        else if (str[(*i)] == '<' && str[(*i) + 1] != '<')
         {
             ft_skip_sp(str, i, &begin);
             name = (char *)malloc(sizeof(char) * ((*i) - begin) + 1);
@@ -177,6 +177,8 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
         lst->last_str = ft_strdup(str);
         lst->last_str = ft_new_str(lst->last_str);
         lst->count_node = c;
+		lst->infile = -2;
+		lst->outfile = -2;
         lst->next = NULL;
         free (str);
     }

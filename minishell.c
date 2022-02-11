@@ -133,25 +133,29 @@ int main(int ac, char **av, char **env)
 {
 	char *str;
 	char **envp;
+	char *name;
 
 	(void)ac;
 	(void)av;
-	// while (1)
-	// {
-		str = readline("bash:");
+	while (1)
+	{
+		name = getenv("LOGNAME");
+		name = ft_strjoin(name, " \033[32me-bash$\033[0m ");
+		str = readline(name);
 		if (str && *str)
 		{
 			// if (ft_lexer(str) != 1)
 			// 	exit (0);
 			envp = ft_get_envp(env);
 			add_history(str);
-			if (ft_check_str(str) != -1)
-        	{
+//			if (ft_check_str(str) != -1)
+//        	{
 				if (ft_process4(envp, str) == -1)
 					exit (0);
-			}
+//			}
 			ft_no_malloc(envp);
-			//free (str);
+			free (str);
 		}
-	// }
+		free(name);
+	 }
 }

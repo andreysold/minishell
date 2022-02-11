@@ -7,6 +7,7 @@
 #include "../srcs/libft/libft.h"
 #include <fcntl.h>
 #include <errno.h>
+#include <readline/readline.h>
 #include <readline/history.h>
 
 #define FD_UNUSED	-2
@@ -54,6 +55,9 @@ typedef struct s_comm
 int pipex(t_comm *lst, char **env);
 int executor(t_comm * lst, char **env);
 
+/**********BUILTIN**********/
+int ft_echo(t_comm *tmp);
+
 int	ft_lexer(char *str);
 int ft_process4(char **env, char *str);
 int ft_count_node(char *str);
@@ -71,6 +75,6 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j);
 char *ft_add_space(char *str);
 void ft_count_node2(char *str, int *i, char c);
 t_comm *ft_check_redir(t_comm *lst);
-int ft_check_str(char *str);
+//int ft_check_str(char *str);
 
 #endif

@@ -193,45 +193,6 @@ t_comm *ft_parser4(t_comm *lst, char *str, char **env)
         lst = lst->next;
     }
     lst = head;
-=======
-    str = ft_add_space(str);
-    str = ft_destroy_space4(str, env);
-	if (count_nd > 1)
-		str_tl = ft_split(str, '|');
-	if (count_nd == 1)
-	{
-		lst->last_str = ft_strdup(str);
-		lst->command_str = ft_split(lst->last_str, ' ');
-		lst->command_str = ft_return_space(lst->command_str);
-		lst->count_node = c;
-		lst->infile = FD_UNUSED;
-		lst->outfile = FD_UNUSED;
-		free (lst->last_str);
-		lst->next = NULL;
-	}
-	else
-	{
-		lst = NULL;
-		while (count_nd-- > 0)
-		{
-			tmp = malloc(sizeof(t_comm));
-			if (!tmp)
-				return (NULL);
-			ft_memset((void *) tmp, 0, sizeof(t_comm));
-			tmp->last_str = ft_strdup(str_tl[count_nd]);
-			tmp->command_str = ft_split(tmp->last_str, ' ');
-			tmp->command_str = ft_return_space(tmp->command_str);
-			tmp->count_node = c;
-			tmp->infile = FD_UNUSED;
-			tmp->outfile = FD_UNUSED;
-			free(tmp->last_str);
-			tmp->next = lst;
-			lst = tmp;
-		}
-		ft_no_malloc(str_tl);
-	}
-    free (str);
->>>>>>> origin/executor
     return (lst);
 }
 

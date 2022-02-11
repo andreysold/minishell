@@ -195,6 +195,9 @@ static inline void redirect(t_comm *tmp)
 		}
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
+    if (err != 0)
+        perror("redirect:");
+
 	if (tmp->outfile != FD_UNUSED)
 	{
 		err = dup2(tmp->outfile, STDOUT_FILENO);

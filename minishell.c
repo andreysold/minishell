@@ -1,3 +1,4 @@
+#include <sys/stat.h> //fixme delete
 #include "minishell.h"
 
 int	ft_lexer(char *str)
@@ -129,24 +130,29 @@ char **ft_get_envp(char **env)
 	return (envp);
 }
 
-int main(int ac, char **av, char **env)
+int main(void)
 {
-	char *str;
-	char **envp;
-	char *name;
+	char		*str;
+	char		*name;
+	char		**envp;
+	extern char	**environ;
 
-	(void)ac;
-	(void)av;
+	char *sd;
 	while (1)
 	{
+		sd = getenv("SHLVL");
+		printf("LV == %s\n", sd);
 		name = getenv("LOGNAME");
-		name = ft_strjoin(name, " \033[32me-bash$\033[0m ");
+		if (name)
+			name = ft_strjoin(name, " \033[32me-bash$\033[0m ");
+		else
+			name = ft_strdup("\033[32me-bash$\033[0m ");
 		str = readline(name);
 		if (str && *str)
 		{
 			// if (ft_lexer(str) != 1)
 			// 	exit (0);
-			envp = ft_get_envp(env);
+			envp = ft_get_envp(environ);
 			add_history(str);
 //			if (ft_check_str(str) != -1)
 //        	{

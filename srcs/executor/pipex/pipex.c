@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <crt_externs.h>
 #include "pipex.h"
 
 void close_pipes(int *pipes, int count_node)
@@ -95,7 +96,7 @@ static inline void redirect(t_comm *tmp)
 		{
 			heredoc(tmp);
 			close(tmp->infile);
-			tmp->infile = open("tmp", O_RDONLY);
+			tmp->infile = open(".tmp", O_RDONLY);
 		}
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
@@ -163,6 +164,7 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 	}
 }
 
+
 static inline int check_builtin(t_comm *tmp, char **env)
 {
 	ft_putstr_fd("builtin detected -- ", 1);
@@ -173,11 +175,11 @@ static inline int check_builtin(t_comm *tmp, char **env)
 	}
 	else if (ft_strncmp(*tmp->command_str, "cd", 3) == 0) ///'only a relative or absolute path'
 	{
-		//ft_cd();
+		return (ft_cd(tmp));
 	}
 	else if (ft_strncmp(*tmp->command_str, "pwd", 4) == 0)
 	{
-		//ft_pwd();
+		return (ft_pwd(tmp));
 	}
 	else if (ft_strncmp(*tmp->command_str, "export", 7) == 0)
 	{
@@ -241,7 +243,7 @@ int pipex(t_comm *lst, char **env)
 			}
 		}
 		if (tmp->here)
-			unlink("tmp");
+			unlink(".tmp");
 		kind = cmd_position(kind, tmp);
 		tmp = tmp->next;
 		i++;

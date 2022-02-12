@@ -21,22 +21,22 @@
 
 typedef struct s_iterat // итераторы для подгонки под норму
 {
-    int i;
-    int j;
-    int k;
-    int z;
-    int l;
-    int pos;
-    int foq; // flag on quotes
-}   t_iter;
+	int i;
+	int j;
+	int k;
+	int z;
+	int l;
+	int pos;
+	int foq; // flag on quotes
+}	t_iter;
 
 typedef struct s_redir
 {
-    char *tmp1;
-    char *tmp2;
-    char *tmp3;
-    char *tmp4;
-}   t_redir;
+	char	*tmp1;
+	char	*tmp2;
+	char	*tmp3;
+	char	*tmp4;
+}	t_redir;
 
 typedef struct s_comm
 {
@@ -52,15 +52,17 @@ typedef struct s_comm
 	struct s_comm	*next;
 }	t_comm;
 
-int pipex(t_comm *lst, char **env);
-int executor(t_comm * lst, char **env);
+int	pipex(t_comm *lst, char **env);
+int	executor(t_comm * lst, char **env);
 
 /**********BUILTIN**********/
-int ft_echo(t_comm *tmp);
+int	ft_echo(t_comm *tmp);
+int	ft_cd(t_comm *tmp);
+int	ft_pwd(t_comm *tmp);
 
 int	ft_lexer(char *str);
-int ft_process4(char **env, char *str);
-int ft_count_node(char *str);
+int	ft_process4(char **env, char *str);
+int	ft_count_node(char *str);
 
 void ft_no_malloc(char **str);
 

@@ -7,17 +7,19 @@ int ft_iskey(char c)
     return (0);
 }
 
-int ft_func(char *str, int i, char **env)
+int ft_func(char *str, int i, t_comm *lst)
 {
-    int z;
-    int k;
     int count;
+    int z;
     char *tmp;
     char *tmp2;
-    int fl = 0;
+    int fl;
+    t_envp *head;
 
+    fl = 0;
     count = 0;
     z = (i);
+    head = lst->e;
     while (str[(i)] && str[i] != '\"')
     {
         if (!(ft_iskey(str[(i)])))
@@ -27,34 +29,25 @@ int ft_func(char *str, int i, char **env)
         i++;
     }
     tmp = ft_substr(str, z, count);
-    k = -1;
-    while (env[++k])
+    while (head != NULL)
     {
-        if (ft_strnstr(env[k], tmp, ft_strlen(tmp)))
+        if (ft_strncmp(head->key, tmp, ft_strlen(head->key)) == 0)
         {
-            z = 0;
-            while (env[k][z] && env[k][z] != '=')
-                z++;
-            tmp2 = ft_substr(env[k], 0, z);
-            if (ft_strncmp(tmp, tmp2, ft_strlen(tmp)) == 0)
-            {
-                fl = 1;
-                free (tmp2);
-                free (tmp);
-                tmp = ft_substr(env[k], z + 1, ft_strlen(env[k]) - z);
-                k = ft_strlen(tmp);
-                free (tmp);
-                return (k);
-            }
+            fl = 1;
+            free (tmp);
+            tmp = ft_strdup(head->value);
+            fl = ft_strlen(tmp);
+            free (tmp);
+            return (fl);
         }
+        head = head->next;
     }
-    if (fl == 0)
-        k = ft_strlen(tmp);
+    fl = ft_strlen(tmp);
     free (tmp);
-    return (k);
+    return (fl);
 }
 
-char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
+char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
 {
     int z;
     int k;
@@ -62,10 +55,11 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
     int l;
     char *tmp2;
     char *tmp;
-    int fl = 0;
+    t_envp *head;
 
+    int fl = 0;
+    head = lst->e;
     c = 0;
-    // (*i)--;
     z = (*i);
     while (str[(*i)] && str[*i] != '\"')
     {
@@ -75,61 +69,45 @@ char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j)
             c++;
         (*i)++;
     }
-    printf("|%s|\n", str);
     tmp = ft_substr(str, z, c);
-    printf("%s\n", tmp);
-    k = -1;
-    while (env[++k])
+    while (head != NULL)
     {
-        if (ft_strnstr(env[k], tmp, ft_strlen(tmp)))
+        if (ft_strncmp(head->key, tmp, ft_strlen(head->key)) == 0)
         {
-            z = 0;
-            while (env[k][z] && env[k][z] != '=')
-                z++;
-            tmp2 = ft_substr(env[k], 0, z);
-            if (ft_strncmp(tmp, tmp2, ft_strlen(tmp2)) == 0)
-            {
-                fl = 1;
-                free (tmp2);
-                free (tmp);
-                tmp = ft_substr(env[k], z + 1, ft_strlen(env[k]) - z);
-                break ;
-            }
-            else
-                free (tmp2);
+            fl = 1;
+            free (tmp);
+            tmp = ft_strdup(head->value);
+            break;
         }
+        head = head->next;
     }
-    if (fl != 0)
+    l = 0;
+    if (fl == 1)
     {
-        l = 0;
-        while (tmp[l])
-            m_tmp[(*j)++] = tmp[l++];
-        free (tmp);
+    while (tmp[l])
+        lst->tmp[(*j)++] = tmp[l++];
     }
-    else
-        m_tmp = ft_strdup("");
-    return (m_tmp);
+    free (tmp);
+    return (lst->tmp);
 }
 
-int ft_dol_str(char *str, char **env)
+int ft_dol_str(char *str, t_comm *lst)
 {
-   int i;
-   int count;
+    int i;
+    int count;
 
-   i = 0;
-   count = 0;
+    i = 0;
+    count = 0;
     while (str[i])
     {
         if (str[i] == '$')
         {
             i++;
-            count += ft_func(str, i, env);
+            count += ft_func(str, i, lst);
         }
         else
             count++;
         i++;
     }
-    printf("count = %d\n", count);
     return (count);
 }
-

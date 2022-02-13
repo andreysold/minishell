@@ -103,11 +103,7 @@ t_comm *ft_check_redir(t_comm *lst)
 	lst->outfile = -2;
 	lst->infile = -2;
 	head = lst;	
-<<<<<<< HEAD
 	while (lst)
-=======
-	while (lst != NULL)
->>>>>>> origin/executor
 	{
 //        lst->outfile = -2;
 //        lst->infile = -2;

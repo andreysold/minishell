@@ -37,6 +37,14 @@ typedef struct s_redir
     char *tmp4;
 }   t_redir;
 
+typedef struct s_envp 
+{
+    char *key;
+    char *value;
+    int pos;
+    struct s_envp *next;
+}   t_envp;
+
 typedef struct s_comm
 {
 	char			**command_str; // двумернный массив из las_str(separator ' ')
@@ -47,9 +55,9 @@ typedef struct s_comm
 	char			*here;
 	int				count_word;
 	int				count_node;
-	char			**envp;
-    char            *name;
-    int             c;
+    char            *tmp; 
+    t_envp          *e;
+    char            *name; // name of files
 	t_iter			t; // структура итераторов
 	struct s_comm	*next;
 }	t_comm;
@@ -63,19 +71,19 @@ int ft_count_node(char *str);
 
 void ft_no_malloc(char **str);
 
-char *ft_one_quotes(char *str, char *tmp, int *i, int *j);
-char *ft_two_quotes(char *str, char **env,char *tmp, int *i, int *j);
+char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
+char *ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
 char *ft_tream(char *str);
 char **ft_return_space(char **str);
-int ft_dol_str(char *str, char **env);
-t_comm *ft_parser4(t_comm *lst, char *str, char **env);
-char *ft_destroy_space4(char *str, char **env, t_comm *lst);
-char *ft_shit_dollar(char *str, char **env, char *m_tmp, int *i, int *j);
+int ft_dol_str(char *str, t_comm *lst);
+t_comm *ft_parser4(t_comm *lst, char *str,  t_envp *e);
+char *ft_destroy_space4(char *str, t_comm *lst);
+char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j);
 char *ft_add_space(char *str);
 void ft_count_node2(char *str, int *i, char c);
 t_comm *ft_check_redir(t_comm *lst);
 int ft_check_str(char *str);
-char *ft_new_sub(int i, char *name, char *str, int begin);
+char *ft_new_sub(int i, t_comm *lst, char *str, int begin);
 void    ft_skip_sp(char *str, int *i, int *begin);
-char *ft_open_file(char *str, char *tmp, int *i, int *j, t_comm *lst);
+char *ft_open_file(char *str, int *i, int *j, t_comm *lst);
 #endif

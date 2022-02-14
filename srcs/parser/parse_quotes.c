@@ -13,7 +13,7 @@ char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j)
 char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
 {
 	(*i)++;
-	while (str[(*i)] && str[(*i)] != '\"')
+	while (str[(*i)] && str[(*i)] != '\"' && str[(*i)] != '\'')
 	{
 		if (str[(*i)] == '$' && str[(*i) + 1] != ' ')
 		{

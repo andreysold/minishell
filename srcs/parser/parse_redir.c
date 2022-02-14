@@ -59,12 +59,14 @@ void    ft_skip_sp(char *str, int *i, int *begin)
         (*i)++;
 }
 
-void    ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
+int ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
 {
     ft_skip_sp(str, i, begin);
     lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
     lst->name = ft_new_sub(*i, lst, str, *begin);
     lst->outfile = open(lst->name,  O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (!lst->outfile)
+        return (-1);
     if (lst->outfile == -1)
     {
         write(1, "bash: ", 6);
@@ -73,14 +75,17 @@ void    ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
         perror("");
     }
     free (lst->name);
+    return (0);
 }
 
-void    ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
+int ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
 {
     ft_skip_sp(str, i, begin);
     lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
     lst->name = ft_new_sub(*i, lst, str, *begin);
     lst->infile = open(lst->name, O_RDONLY , 0644);
+    if (!lst->infile)
+        return (-1);
     if (lst->infile == -1)
     {
         write(1, "bash: ", 6);
@@ -90,15 +95,18 @@ void    ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
         exit (0);
     }
     free (lst->name);
+    return (0);
 }
 
-void    ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
+int ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 {
     (*i)++;
     ft_skip_sp(str, i, begin);
-    lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
+    lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin) + 1));
     lst->name = ft_new_sub(*i, lst, str, *begin);
     lst->outfile = open(lst->name, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (!lst->outfile)
+        return (-1);
     if (lst->outfile == -1)
     {
         write(1, "bash: ", 6);
@@ -107,8 +115,18 @@ void    ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
         perror("");
     }
     free (lst->name);
+    return (0);
 }
 
+int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
+{
+    (*i)++;
+    ft_skip_sp(str, i, begin);
+    lst->here = (char *)malloc(sizeof(char) * ((*i) - (*begin) + 1));
+    if (!lst->outfile)
+        return (-1);
+    return (0);
+}
 char *ft_open_file(char *str, int *i, int *j, t_comm *lst)
 {
     int begin;
@@ -126,6 +144,8 @@ char *ft_open_file(char *str, int *i, int *j, t_comm *lst)
             ft_add_redir(lst, str, i, &begin);
         else if (str[(*i)] == '<' && str[(*i) + 1] != '<')
             ft_back_redir(lst, str, i, &begin);
+        else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
+            ft_herdok(lst, str, i, &begin);
         else
             lst->tmp[(*j)++] = str[(*i)++];
     }

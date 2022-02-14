@@ -1,106 +1,20 @@
 #include "minishell.h"
 
-int	ft_lexer(char *str)
-{
-	int i;
-	int len;
-    int j;
-
-    j = 0;
-	i = 0;
-	len = ft_strlen(str);
-	while (str[i])
-	{
-		if (str[i] == '\'')
-		{
-			ft_count_node2(str, &i, '\'');
-			if (str[i] != '\'')
-			{
-				write(1, "bash: syntax error in unclosed quoters\n", 40);
-				return (-1);
-			}
-		}
-		if (str[i] == '\"')
-		{
-			ft_count_node2(str, &i, '\"');
-			if (str[i] != '\"')
-			{
-				write(1, "bash: syntax error in unclosed quoters\n", 40);
-				return (-1);
-			}
-		}
-        if (str[i] == '|')
-        {
-            i++;
-            while (str[i] && str[i] == ' ')
-                i++;
-            j = i;
-            while (str[i] && (ft_isdigit(str[i]) || ft_isalpha(str[i])))
-                i++;
-            if (j == i)
-            {
-                write(1, "bash: syntax error in unclosed quoters\n", 40);
-                return (-1);
-            }
-        }
-		if (str[i] == '>')
-		{
-			i++;
-			while (str[i] && str[i] == ' ')
-				i++;
-			if (str[i] == '>')
-				i++;
-			else if (str[i] == '<')
-				return (-1);
-			if (ft_isdigit(str[i] && (!(ft_isdigit(str[i + 1]) || ft_isalpha(str[i + 1])))))
-				return (-1);
-		}
-		// if (str[i] == '>')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (str[i] != )
-		// }
-		// if (str[i] == '|')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (i == len)
-		// 	{
-		// 		write(1, "bash: syntax error in the absence of commands\n", 47);
-		// 		return (-1);
-		// 	}
-		// }
-		// if (str[i] == '>' || str[i] == '<')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (i == len)
-		// 	{
-		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-		// 		return (-1);
-		// 	}
-		// 	else
-		// 	{
-		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-		// 		return (-1);
-		// 	}
-		// }
-		i++;
-	}
-	//printf("A\n");
-	return (1);
-}
 
 void	ft_free_list(t_comm *lst)
 {
 	t_comm *head;
-
-	if (lst->e)
-		free (lst->e);
+	t_envp *head2;
+	while (lst->e)
+	{
+		head2 = lst->e;
+		if (lst->e->key)
+			free (lst->e->key);
+		if (lst->e->value)
+			free (lst->e->value);
+		lst->e = lst->e->next;
+		free (head2);
+	}
 	while (lst)
     {
         head = lst;
@@ -259,18 +173,16 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	 while (1)
+	while (1)
     {
         str = readline("bash:");
         if (str && *str)
         {
-            if (ft_lexer(str) == -1)
-                exit (0);
             envp = ft_get_envp(env);
             add_history(str);
-            if (ft_check_str(str) != -1)
+            if (ft_lexer(str) != -1)
             {
-                if (ft_process4(env, str) == -1)
+                if (ft_process4(envp, str) == -1)
                     exit(0);
             }
             else

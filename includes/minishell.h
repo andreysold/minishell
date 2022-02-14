@@ -55,7 +55,8 @@ typedef struct s_comm
 	char			*here;
 	int				count_word;
 	int				count_node;
-    char            *tmp; 
+    char            *tmp;
+    int             fl;
     t_envp          *e;
     char            *name; // name of files
 	t_iter			t; // структура итераторов
@@ -70,7 +71,7 @@ int ft_process4(char **env, char *str);
 int ft_count_node(char *str);
 
 void ft_no_malloc(char **str);
-
+int	ft_lexer(char *str);
 char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
 char *ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
 char *ft_tream(char *str);

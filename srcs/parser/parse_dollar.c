@@ -13,10 +13,9 @@ int ft_func(char *str, int i, t_comm *lst)
     int z;
     char *tmp;
     char *tmp2;
-    int fl;
     t_envp *head;
 
-    fl = 0;
+    lst->fl = 0;
     count = 0;
     z = (i);
     head = lst->e;
@@ -31,20 +30,20 @@ int ft_func(char *str, int i, t_comm *lst)
     tmp = ft_substr(str, z, count);
     while (head != NULL)
     {
-        if (ft_strncmp(head->key, tmp, ft_strlen(head->key)) == 0)
+        if (ft_strncmp(head->key, tmp, ft_strlen(tmp)) == 0)
         {
-            fl = 1;
+            lst->fl = 1;
             free (tmp);
             tmp = ft_strdup(head->value);
-            fl = ft_strlen(tmp);
+            lst->fl = ft_strlen(tmp);
             free (tmp);
-            return (fl);
+            return (lst->fl);
         }
         head = head->next;
     }
-    fl = ft_strlen(tmp);
+    lst->fl = ft_strlen(tmp);
     free (tmp);
-    return (fl);
+    return (lst->fl);
 }
 
 char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
@@ -57,11 +56,11 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
     char *tmp;
     t_envp *head;
 
-    int fl = 0;
+    lst->fl = 0;
     head = lst->e;
     c = 0;
     z = (*i);
-    while (str[(*i)] && str[*i] != '\"')
+    while (str[(*i)] && str[*i] != '\"' && str[(*i)] != '\'')
     {
         if (!(ft_iskey(str[(*i)])))
             break ;
@@ -72,9 +71,9 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
     tmp = ft_substr(str, z, c);
     while (head != NULL)
     {
-        if (ft_strncmp(head->key, tmp, ft_strlen(head->key)) == 0)
+        if (ft_strncmp(head->key, tmp, ft_strlen(tmp)) == 0)
         {
-            fl = 1;
+            lst->fl = 1;
             free (tmp);
             tmp = ft_strdup(head->value);
             break;
@@ -82,11 +81,12 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
         head = head->next;
     }
     l = 0;
-    if (fl == 1)
+    if (lst->fl == 1)
     {
-    while (tmp[l])
-        lst->tmp[(*j)++] = tmp[l++];
+        while (tmp[l])
+            lst->tmp[(*j)++] = tmp[l++];
     }
+    // lst = ft_str_dollar(tmp, lst)
     free (tmp);
     return (lst->tmp);
 }

@@ -80,7 +80,7 @@ t_envp *ft_node_env(t_envp *e, char **env)
 	t_envp *tmp;
 
 	count = 0;
-	i = 0;
+	i = 0; //fixme useless value
 	while (env[count])
 		count++;
 	e = NULL;
@@ -101,7 +101,11 @@ int ft_process4(char **env, char *str)
 {
     t_comm *lst;
 	t_envp *envp;
+	t_envp  *orig_env;
 
+	orig_env = malloc(sizeof(t_envp));
+	if (!orig_env)
+		return (-1);
 	envp = malloc(sizeof(t_envp));
 	if (!envp)
 		return (-1);
@@ -109,6 +113,7 @@ int ft_process4(char **env, char *str)
     if (!lst)
         return (-1);
 	envp = ft_node_env(envp, env);
+	orig_env = ft_node_env(orig_env, env);
     ft_memset((void *)lst, 0, sizeof(t_comm));
    	lst = ft_parser4(lst, str, envp);
 	executor(lst, env);
@@ -176,12 +181,12 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	envp = ft_get_envp(env);
 	while (1)
     {
         str = readline("bash:");
         if (str && *str)
         {
-            envp = ft_get_envp(env);
             add_history(str);
             if (ft_lexer(str) != -1)
             {

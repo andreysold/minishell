@@ -59,6 +59,7 @@ typedef struct s_comm
     char            *tmp;
     int             fl;
     t_envp          *e;
+    t_envp          *orig_e;
     char            *name; // name of files
 	t_iter			t; // структура итераторов
 	struct s_comm	*next;
@@ -72,6 +73,11 @@ int	check_builtin(t_comm *tmp, char **env);
 int	ft_echo(t_comm *tmp);
 int	ft_cd(t_comm *tmp);
 int	ft_pwd(t_comm *tmp);
+
+int		locate_env_key(t_envp *envp, char *key);
+void	add_to_env(t_envp *envp, char *new_key, char *new_value);
+void	upd_env_value(t_envp *envp, char *value, int location);
+char	*get_env_value(t_envp *envp, int location);
 
 int	ft_lexer(char *str);
 int	ft_process4(char **env, char *str);

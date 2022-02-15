@@ -100,12 +100,15 @@ static inline void redirect(t_comm *tmp)
 		}
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
+	if (err != 0)
+		perror("1redirect:");
+	err = 0;
 	if (tmp->outfile != FD_UNUSED)
 	{
 		err = dup2(tmp->outfile, STDOUT_FILENO);
 	}
 	if (err != 0)
-		perror("redirect:");
+		perror("2redirect:");
 }
 
 static inline int *open_pipes(t_comm *tmp)
@@ -175,6 +178,7 @@ int pipex(t_comm *lst, char **env)
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
+	pid_t pid;
 
 /*	lst->outfile = FD_UNUSED;
 	lst->infile = FD_UNUSED;
@@ -190,27 +194,43 @@ int pipex(t_comm *lst, char **env)
 	i = 0;
 	while (tmp != NULL)
 	{
-		if (tmp->count_node  == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
-			exit(EXIT_SUCCESS);
-		if (fork() == 0)
+/*		if (tmp->count_node == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
 		{
-			if (check_builtin(tmp, env) == EXIT_SUCCESS)
-				exit(EXIT_SUCCESS);
-			if (tmp->count_node > 1)
-				pipe_switch(i, kind, pipes, tmp);
-			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
-				redirect(tmp);
-			close_pipes(pipes, tmp->count_node);
-			close_in_out_file(tmp);
-			if (execve(find_command_path(tmp->command_str[0], env), tmp->command_str, env) == -1)
-			{
-				errno = 0;
-				ft_putstr_fd("e-bash: ", 2);
-				ft_putstr_fd(tmp->command_str[0], 2);
-				ft_putendl_fd(": command not found", 2);
-				exit(EXIT_FAILURE);
-			}
+			ft_putstr_fd("1 builtin detected -- ", 1);
+			ft_putendl_fd(tmp->command_str[0], 1);
+//			lst = tmp;
+			return (EXIT_SUCCESS);
 		}
+		else
+		{*/
+			pid = fork();
+			if (pid == 0)
+			{
+
+				if (tmp->count_node > 1)
+					pipe_switch(i, kind, pipes, tmp);
+				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+					redirect(tmp);
+
+				close_pipes(pipes, tmp->count_node);
+				close_in_out_file(tmp);
+
+				if (check_builtin(tmp, env) == EXIT_SUCCESS)
+				{
+					ft_putstr_fd("2 builtin detected -- ", 2);
+					ft_putendl_fd(tmp->command_str[0], 2);
+					exit(EXIT_SUCCESS);
+				}
+				if (execve(find_command_path(tmp->command_str[0], env),
+						   tmp->command_str, env) == -1)
+				{
+					ft_putstr_fd("bash: ", 2);
+					ft_putstr_fd(tmp->command_str[0], 2);
+					ft_putendl_fd(": command not found", 2);
+					exit(EXIT_FAILURE);
+				}
+			}
+//		}
 		if (tmp->here)
 			unlink(".tmp");
 		kind = cmd_position(kind, tmp);
@@ -221,5 +241,5 @@ int pipex(t_comm *lst, char **env)
 	close_pipes(pipes, tmp->count_node);
 	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs( tmp->count_node);
-	return (0);
+	return (EXIT_SUCCESS);
 }

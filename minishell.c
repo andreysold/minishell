@@ -1,3 +1,4 @@
+#include <sys/stat.h> //fixme delete
 #include "minishell.h"
 
 
@@ -168,8 +169,10 @@ int ft_check_str(char *str)
 
 int main(int ac, char **av, char **env)
 {
-	char *str;
-	char **envp;
+	char		*str;
+	char		*name;
+	char		**envp;
+	extern char	**environ;
 
 	(void)ac;
 	(void)av;

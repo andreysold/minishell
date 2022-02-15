@@ -115,7 +115,7 @@ int ft_process4(char **env, char *str)
     return (0);
 }
 
-void ft_no_malloc(char **str)
+void	ft_no_malloc(char **str)
 {
 	int i;
 

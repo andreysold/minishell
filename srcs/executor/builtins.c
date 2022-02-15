@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/09 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/15 18:53:53 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	ft_echo(t_comm *tmp)
 	while (tmp->command_str[i])
 	{
 		ft_putstr_fd(tmp->command_str[i], 1);
+		write(1, " ", 1);
 		i++;
 	}
 	if (n_flag == 0)

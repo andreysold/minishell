@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/15 15:09:24 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ void wait_childs(int n)
 	while (i < n)
 	{
 		wait(&status);
-		if (WIFEXITED(status) && status != 0)
-		{
-			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
-			fflush(NULL);
-		}
+		// if (WIFEXITED(status) && status != 0)
+		// {
+		// 	printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
+		// 	fflush(NULL);
+		// }
 		i++;
 	}
 }
@@ -167,8 +167,8 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 
 static inline int check_builtin(t_comm *tmp, char **env)
 {
-	ft_putstr_fd("builtin detected -- ", 1);
-	ft_putendl_fd(tmp->command_str[0],1);
+	// ft_putstr_fd("builtin detected -- ", 1);
+	// ft_putendl_fd(tmp->command_str[0],1);
 	if (ft_strncmp(*tmp->command_str, "echo", 5) == 0) ///'-n' should work
 	{
 		return (ft_echo(tmp));
@@ -239,7 +239,7 @@ int pipex(t_comm *lst, char **env)
 				ft_putstr_fd("e-bash: ", 2);
 				ft_putstr_fd(tmp->command_str[0], 2);
 				ft_putendl_fd(": command not found", 2);
-				exit(EXIT_FAILURE);
+				return (-1);
 			}
 		}
 		if (tmp->here)

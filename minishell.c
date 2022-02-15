@@ -6,8 +6,10 @@ void	ft_free_list(t_comm *lst)
 {
 	t_comm *head;
 	t_envp *head2;
+
 	while (lst->e)
 	{
+		// printf("")
 		head2 = lst->e;
 		if (lst->e->key)
 			free (lst->e->key);
@@ -111,7 +113,9 @@ int ft_process4(char **env, char *str)
 	envp = ft_node_env(envp, env);
     ft_memset((void *)lst, 0, sizeof(t_comm));
    	lst = ft_parser4(lst, str, envp);
-	executor(lst, env);
+	// if (executor(lst, env) == -1)
+	//  	return (1);
+	//executor(lst, env);
 	ft_free_list(lst);
     return (0);
 }

@@ -194,7 +194,7 @@ int pipex(t_comm *lst, char **env)
 	i = 0;
 	while (tmp != NULL)
 	{
-/*		if (tmp->count_node == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
+		if (tmp->count_node == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
 		{
 			ft_putstr_fd("1 builtin detected -- ", 1);
 			ft_putendl_fd(tmp->command_str[0], 1);
@@ -202,7 +202,7 @@ int pipex(t_comm *lst, char **env)
 			return (EXIT_SUCCESS);
 		}
 		else
-		{*/
+		{
 			pid = fork();
 			if (pid == 0)
 			{
@@ -221,6 +221,12 @@ int pipex(t_comm *lst, char **env)
 					ft_putendl_fd(tmp->command_str[0], 2);
 					exit(EXIT_SUCCESS);
 				}
+//				int j = 0;
+//				while (env[j])
+//				{
+//					printf("%d - %s\n", j, env[j]);
+//					j++;
+//				}
 				if (execve(find_command_path(tmp->command_str[0], env),
 						   tmp->command_str, env) == -1)
 				{
@@ -230,7 +236,7 @@ int pipex(t_comm *lst, char **env)
 					exit(EXIT_FAILURE);
 				}
 			}
-//		}
+		}
 		if (tmp->here)
 			unlink(".tmp");
 		kind = cmd_position(kind, tmp);

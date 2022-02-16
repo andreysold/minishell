@@ -93,6 +93,8 @@ t_envp *ft_node_env(t_envp *e, char **env)
 			return (NULL);
 		tmp->key = ft_get_key(count, env);
 		tmp->value = ft_get_value(count, env);
+		tmp->key_orig = ft_get_key(count, env);
+		tmp->value_orig = ft_get_value(count, env);
 		tmp->count = count;
 		tmp->next = e;
 		e = tmp;
@@ -104,26 +106,28 @@ char	**ft_update_env(t_envp *l_envp)
 {
 	char **new_env;
 	int i;
-	t_envp *head;
+	t_envp *tmp;
 
-	head = l_envp;
+	tmp = l_envp;
 	i = 0;
-	new_env = (char **)malloc(sizeof(char *) * l_envp->count + 1);
+	new_env = (char **)malloc(sizeof(char *) * tmp->count + 1);
 	if (!new_env)
 		return (NULL);
-	while (l_envp)
+	while (tmp)
 	{
-		if (l_envp->key)
+		if (tmp->key && tmp->value)
 		{
-			new_env[i] = ft_strdup(l_envp->key);
+			new_env[i] = ft_strdup(tmp->key);
 			new_env[i] = ft_strjoin(new_env[i], "=");
+			new_env[i] = ft_strjoin(new_env[i], tmp->value);
 		}
-		if (l_envp->value)
-			new_env[i] = ft_strjoin(new_env[i], l_envp->value);
+//		if (tmp->value)
+//			new_env[i] = ft_strjoin(new_env[i], tmp->value);
 		i++;
-		l_envp = l_envp->next;
+//		printf("|%s| |%s|\n", tmp->key, tmp->value);
+		tmp = tmp->next;
 	}
-	l_envp = head;
+	new_env[i] = NULL;
 	return (new_env);
 }
 
@@ -138,10 +142,10 @@ int ft_process4(char *str, t_envp *envp)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
    	lst = ft_parser4(lst, str, envp);
-	// if (executor(lst, env) == -1)
-	//  	return (1);
+	if (executor(lst, env) == -1)
+		return (1);
 	// executor(lst, env);
-	env = ft_update_env(envp); /////
+	//env = ft_update_env(envp); /////
 	// ft_free_list(lst);
     return (0);
 }

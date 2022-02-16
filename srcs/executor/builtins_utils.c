@@ -1,0 +1,125 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/02/09 17:53:20 by wjonatho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+/** @param origin: \c 1 for search key_origin, \c 0 for 'fake' key
+ * @return \c NULL if can't find location
+**/
+char	*get_env_value(t_envp *envp, int location, int origin) //mb there's no need (*tmp+i)
+{
+	int		i;
+	t_envp	*tmp;
+
+	i = 0;
+	tmp = envp;
+	while (tmp)
+	{
+		if (i == location)
+		{
+			if (origin)
+				return (tmp->value_orig);
+			return (tmp->value);
+		}
+		i++;
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
+/** @param origin: \c 1 for search key_origin, \c 0 for 'fake' key
+**/
+void	upd_env_value(t_envp *envp, char *value, int location, int origin)
+{
+	int		i;
+	t_envp	*tmp;
+
+	i = 0;
+	tmp = envp;
+	while (tmp)
+	{
+
+		if (i == location)
+		{
+			printf("!!! upd val %s\n", tmp->key);
+			fflush(NULL);
+			break ;
+		}
+		i++;
+		tmp = tmp->next;
+	}
+	if (tmp)
+	{
+		if (origin)
+			tmp->value_orig = ft_strdup(value);
+		else
+			tmp->value = ft_strdup(value); //todo do i need strdup?
+	}
+}
+
+/** @param origin: \c 1 for search key_origin, \c 0 for 'fake' key
+**/
+void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin)
+{
+	t_envp	*node;
+	t_envp	*tmp;
+
+	///fixme if t_envp is empty
+	node = malloc(sizeof(t_envp));
+	if (node == NULL)
+		exit(0);
+	if (origin)
+	{
+		node->key_orig = new_key;
+		node->value_orig = new_value;
+	}
+	else
+	{
+		node->key = new_key;
+		node->value = new_value;
+	}
+	node->next = NULL;
+	tmp = envp;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = node;
+}
+
+/** @param origin: \c 1 for search key_origin, \c 0 for 'fake' key
+ * @return key \c position in list \n
+ * \c-1 if fails */
+int	locate_env_key(t_envp *envp, char *key, int origin)
+{
+	int		i;
+	size_t	key_len;
+	t_envp	*tmp;
+
+	i = 0;
+	key_len = ft_strlen(key);
+	tmp = envp;
+	while (tmp)
+	{
+		if (origin)
+		{
+			if (ft_strncmp(key, tmp->key_orig, key_len) == 0)
+				return (i);
+		}
+		else
+		{
+			if (ft_strncmp(key, tmp->key, key_len) == 0)
+				return (i);
+		}
+		i++;
+		tmp = tmp->next;
+	}
+	return (-1);
+}

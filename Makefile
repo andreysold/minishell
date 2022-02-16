@@ -1,14 +1,15 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -g #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -ggdb3 #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins.c
+			srcs/executor/builtins.c \
+			srcs/executor/builtins_utils.c
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \

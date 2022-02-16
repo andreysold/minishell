@@ -23,11 +23,13 @@ char *ft_destroy_space4(char *str, t_comm *lst)
             lst->tmp = ft_two_quotes(str, lst, &i, &j);
         else if (str[i] == '>' || str[i] == '<')
             lst->tmp = ft_open_file(str, &i, &j, lst);
-        else if (str[i] == '$' && str[i + 1] != ' ')
+        else if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))   // (ft_isalnum(str[i + 1]) || str[i + 1] == '_')
         {
             i++;
             lst->tmp = ft_shit_dollar(str, lst, &i, &j);
         }
+        // else if (str[i] == '$' && str[i + 1] == ' ')
+        //     lst->tmp[j++] = str[i++];
         else if (str[i] == ' ')
         {
             while (str[i] && str[i] == ' ')

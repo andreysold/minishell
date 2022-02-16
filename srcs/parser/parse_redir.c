@@ -45,7 +45,7 @@ char *ft_new_sub(int i, t_comm *lst, char *str, int begin)
         }
         i++;
     }
-    printf("%s\n", lst->name);
+   // printf("%s\n", lst->name);
     return (lst->name);
 }
 
@@ -92,7 +92,7 @@ int ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
         write(2, lst->name, ft_strlen(lst->name));
         write(1, ":", 1);
         perror("");
-        exit (0);
+        
     }
     free (lst->name);
     return (0);
@@ -120,13 +120,22 @@ int ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 
 int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 {
-    (*i)++;
-    ft_skip_sp(str, i, begin);
-    lst->here = (char *)malloc(sizeof(char) * ((*i) - (*begin) + 1));
-    if (!lst->outfile)
-        return (-1);
+    (*i) += 2;
+    while (str[(*i)] && str[(*i)] == ' ')
+        (*i)++;
+    lst->here = ft_strdup(str + (*i));
+    (*i) += ft_strlen(lst->here);
+    lst->infile = open(".tmp", O_TRUNC | O_WRONLY | O_CREAT, 0644);
+    if (lst->infile == -1)
+    {
+        write(1, "bash: ", 6);
+        write(2, lst->name, ft_strlen(lst->name));
+        write(1, ":", 1);
+        perror("");
+    }
     return (0);
 }
+
 char *ft_open_file(char *str, int *i, int *j, t_comm *lst)
 {
     int begin;

@@ -42,7 +42,9 @@ typedef struct s_envp
 {
     char *key;
     char *value;
-    int pos;
+	char *key_orig;
+	char *value_orig;
+	int	 count;
     struct s_envp *next;
 }   t_envp;
 
@@ -80,7 +82,7 @@ void	upd_env_value(t_envp *envp, char *value, int location);
 char	*get_env_value(t_envp *envp, int location);
 
 int	ft_lexer(char *str);
-int	ft_process4(char **env, char *str);
+int	ft_process4(char *str, t_envp *envp);
 int	ft_count_node(char *str);
 
 void ft_no_malloc(char **str);

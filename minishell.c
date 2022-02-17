@@ -53,9 +53,6 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-
-
-
 void	handler(int sig)
 {
 	(void)sig;

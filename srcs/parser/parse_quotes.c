@@ -12,8 +12,11 @@ char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j)
 
 char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
 {
+	int flag;
+
+	flag = (*i);
 	(*i)++;
-	while (str[(*i)] && str[(*i)] != '\"' && str[(*i)] != '\'')
+	while (str[(*i)] && str[(*i)] != '\"')
 	{
 		if (str[(*i)] == '$' && str[(*i) + 1] != ' ')
 		{
@@ -21,9 +24,10 @@ char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
 			lst->tmp = ft_shit_dollar(str, lst, i, j);
 			continue ;
 		}
-		if (str[(*i)] != '\"')
-			lst->tmp[(*j)++] = str[(*i)];
-		(*i)++;
+		else
+			lst->tmp[(*j)++] = str[(*i)++];
 	}
+	if (str[(*i)] == '\"')
+		(*i)++;
 	return (lst->tmp);
 }

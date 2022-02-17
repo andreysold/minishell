@@ -100,11 +100,13 @@ int ft_dol_str(char *str, t_comm *lst)
     count = 0;
     while (str[i])
     {
-        if (str[i] == '$')
+        if (str[i] == '$' && str[i + 1] != '?')
         {
             i++;
             count += ft_func(str, i, lst);
         }
+        else if (str[i] == '$' && str[i + 1] == '?')
+            count += 3;
         else
             count++;
         i++;

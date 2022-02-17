@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/15 15:09:24 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/17 17:01:15 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,7 @@ int pipex(t_comm *lst, char **env)
 				ft_putstr_fd("e-bash: ", 2);
 				ft_putstr_fd(tmp->command_str[0], 2);
 				ft_putendl_fd(": command not found", 2);
+				g_error_status = 127;
 				return (-1);
 			}
 		}

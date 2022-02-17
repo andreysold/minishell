@@ -1,7 +1,7 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -g #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -g  -I../../.brew/opt/readline/include  -I./ #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
@@ -21,6 +21,7 @@ SRCS	+=	srcs/parser/parse_dollar.c \
             srcs/parser/parse_utils.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
+			srcs/parser/env.c\
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
@@ -29,7 +30,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
+			$(CC) -L/.brew/opt/readline/lib -lreadline  -o $(NAME) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h
@@ -51,3 +52,48 @@ run:		all
 			./$(NAME)
 
 .PHONY: all clean fclean re run
+
+# LIBFT = ./libft/libft.a
+
+# CFLAGS = -Wall -Werror -Wextra -I../../.brew/opt/readline/include  -I./
+# NAME = minishell srcs/parser/parse_dollar.c \
+#             srcs/parser/process.c \
+#             srcs/parser/parse_quotes.c \
+#             srcs/parser/parse_utils.c \
+# 			srcs/parser/parse_redir.c\
+# 			srcs/parser/pre_parser.c\
+# 			srcs/parser/env.c\
+
+# # NAME_B = minishell_bonus
+
+# SRC = minishell.c 
+
+# CC = gcc
+
+# LIB = ar -rcs $(NAME)
+
+# OBJ = $(SRC:.c=.o)
+
+# all: $(NAME)
+
+# $(NAME): $(OBJ)
+# 		$(MAKE) -C ./srcs/libft
+# 		$(CC) -lreadline -L ../../.brew/opt/readline/lib  $(CFLAGS) -o $(NAME) $(OBJ) ./srcs/libft/libft.a
+
+# #$(NAME1): $(OBJ1)
+# #		$(MAKE) -C ./libft
+# #		$(CC) $(CFLAGS) -o $(NAME_B) $(OBJ1) ./libft/libft.a
+
+# %.o: %.c
+# 		gcc -c $< -o $@
+
+# clean:
+# 		$(MAKE) clean -C ./libft
+# 		rm -rf $(OBJ)
+
+# fclean: clean
+# 		$(MAKE) fclean -C ./libft
+# 		rm -rf $(NAME)
+# re: fclean all
+
+# .PHONY:	all clean fclean re

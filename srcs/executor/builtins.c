@@ -40,6 +40,7 @@ static inline void	upd_oldpwd(const t_comm *lst)
 	int		location;
 	char	*old_path;
 
+
 	location = locate_env_key(lst->e, "PWD", 1); //updating OLDPWD
 	old_path = get_env_value(lst->e, location, 1); //get str for OLDPWD
 	if (location == -1) //if there is no OLDPWD1
@@ -54,6 +55,7 @@ static inline void	upd_oldpwd(const t_comm *lst)
 
 static inline int	search_path(const t_comm *lst, char	**new_path)
 {
+	int		i;
 	int		pos;
 	char	*home;
 
@@ -69,19 +71,17 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 		}
 		else
 		{
-			home = get_env_value(lst->e, pos, 0); //here is PWD
-			pos = locate_env_key(lst->e,"PWD", 1);
-			upd_env_value(lst->e, home, pos, 1); //todo orig=0
+			home = get_env_value(lst->e, pos, 0);
+			*new_path = home;
+			pos = locate_env_key(lst->e,"PWD", 0);
+			if (pos != -1)
+				upd_env_value(lst->e, home, pos, 0);
 		}
 	}
-	else if (ft_strncmp(lst->command_str[1], "..", 2) == 0)
-	{
-
-	}
-	else if (ft_strncmp(lst->command_str[1], "/", 1) == 0) //
-	{
-
-	}
+	else if (ft_strncmp(lst->command_str[1], "", 1) == 0) //FIXME doesn't work
+		return (EXIT_FAILURE);
+	else
+		*new_path = lst->command_str[1];
 	return (EXIT_SUCCESS);
 }
 
@@ -95,12 +95,21 @@ int	ft_cd(t_comm *lst)
 	char	*new_path;
 	char	*old_path;
 	int		location;
-	char	*clean;
+	char	*buf;
 
-	upd_oldpwd(lst);
+	printf("|>%s<|\n", lst->command_str[1]);
+	buf = NULL;
+	location = locate_env_key(lst->e, "OLDPWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+	printf("%s - before origa\n", getcwd(buf, 0));
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	chdir(new_path);
+	location = locate_env_key(lst->e, "PWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+	printf("%s - after origa\n", getcwd(buf, 0));
 /*	location = locate_env_key(lst->e, "PWD", 1);
 	old_path = get_env_value(lst->e, location, 1);
 	new_path = ft_strjoin(old_path, "/");
@@ -128,11 +137,96 @@ int	ft_cd(t_comm *lst)
 int	ft_pwd(t_comm *lst)
 {
 	char	*pwd;
+	char	*buf;
+	int		location;
+
+	buf = NULL;
+	pwd = getcwd(buf, 0);
+	ft_putendl_fd(pwd, STDOUT_FILENO);
+	location = locate_env_key(lst->e, "PWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, pwd, location, 0);
+	return (EXIT_SUCCESS);
+	/*char	*pwd; //alterinative version if something broke use it
 	int		location;
 
 	location = locate_env_key(lst->e, "PWD", 1);
 	pwd = get_env_value(lst->e, location, 1);
 	ft_putendl_fd(pwd, STDOUT_FILENO);
+	return (EXIT_SUCCESS);*/
+}
+
+//int check_valid_key(char c)
+//{
+//	if (ft_isalpha(c) || ft_)
+//		return (1);
+//}
+int check_export_args(t_comm *copy)
+{
+	int	i;
+	int	j;
+
+	i = 1;
+	j = 0;
+	while (copy->command_str[i])
+	{
+		while (copy->command_str[i][j])
+		{
+			if (ft_isalpha(copy->command_str[i][0]) == 0)
+			{
+				ft_putstr_fd("bash: export: \'", 2);
+				ft_putstr_fd(copy->command_str[i], 2);
+				ft_putendl_fd("\': not a valid identifier", 2);
+				return (EXIT_FAILURE);
+			}
+			else
+			{
+				if (ft_isalnum(copy->command_str[i][j]) == 0)
+				{
+					ft_putstr_fd("bash: export: \'", 2);
+					ft_putstr_fd(copy->command_str[i], 2);
+					ft_putendl_fd("\': not a valid identifier", 2);
+					return (EXIT_FAILURE);
+				}
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+int	ft_export(t_comm *lst) //todo there is no ascii output
+{
+	t_comm	*copy;
+	t_envp	*tmp;
+	int		i;
+	int		j;
+
+	if (lst->command_str[1] == NULL)
+	{
+		tmp = lst->e;
+		while (tmp)
+		{
+			if (tmp->key)
+			{
+				ft_putstr_fd("declare -x ", STDOUT_FILENO);
+				ft_putstr_fd(tmp->key,STDOUT_FILENO);
+				if (tmp->value)
+				{
+					ft_putstr_fd("=\"", STDOUT_FILENO);
+					ft_putstr_fd(tmp->value, STDOUT_FILENO);
+					ft_putendl_fd("\"", STDOUT_FILENO);
+				}
+			}
+			tmp = tmp->next;
+		}
+	}
+	else
+	{
+		copy = lst;
+		check_export_args(copy);
+	}
+
 	return (EXIT_SUCCESS);
 }
 
@@ -170,7 +264,7 @@ int check_builtin(t_comm *lst, char **env)
 	}
 	else if (ft_strncmp(*lst->command_str, "export", 7) == 0)
 	{
-		//ft_export();
+		return (ft_export(lst));
 	}
 	else if (ft_strncmp(*lst->command_str, "unset", 6) == 0)
 	{

@@ -142,9 +142,9 @@ int ft_process4(char *str, t_envp *envp)
         return (-1);
     ft_memset((void *)lst, 0, sizeof(t_comm));
    	lst = ft_parser4(lst, str, envp);
-	if (executor(lst, env) == -1)
-		return (1);
-	// executor(lst, env);
+/*	if (executor(lst, env) == -1)
+		return (1);*/
+	 executor(lst, env);
 	//env = ft_update_env(envp); /////
 	// ft_free_list(lst);
     return (0);

@@ -42,6 +42,7 @@ char *ft_destroy_space4(char *str, t_comm *lst)
             lst->tmp[j++] = str[i++];
     }
     lst->tmp[j] = '\0';
+	printf("|%s|\n", lst->tmp);
     free (str);
     return (lst->tmp);
 }
@@ -104,6 +105,7 @@ t_comm *ft_create_nodes(t_comm *lst, char **str_tl, int count_nd, t_envp *e)
     int c;
 
     c = count_nd;
+	lst = NULL;
     while (count_nd-- > 0)
     {
         tmp = malloc(sizeof(t_comm));

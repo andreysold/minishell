@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/09 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/18 17:21:18 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,14 @@ int ft_env(t_comm *lst)
 	return (EXIT_SUCCESS);
 }
 
+
+int	ft_exit(t_comm *lst)
+{
+	// int locate = locate_env_key(lst->e, "SHLVL", 0);
+	int shlvl;
+	char *tmp;
+	exit (0);
+}
 int check_builtin(t_comm *lst, char **env)
 {
 	if (ft_strncmp(*lst->command_str, "echo", 5) == 0) ///'-n' should work
@@ -182,7 +190,7 @@ int check_builtin(t_comm *lst, char **env)
 	}
 	else if (ft_strncmp(*lst->command_str, "exit", 5) == 0)
 	{
-		//ft_exit();
+		return (ft_exit(lst));
 	}
 	return (EXIT_FAILURE);
 }

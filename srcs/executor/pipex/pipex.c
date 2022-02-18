@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/18 17:41:34 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,21 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 
 
 
-
+void	handler2(int sig)
+{
+	if (sig == SIGINT)
+	{
+		(void) sig;
+		write(2, "\n", 1);
+		g_error_status = 130;
+	}
+	if (sig == SIGQUIT)
+	{
+		(void) sig;
+		write(2, "Quit: 3\n", 8);
+		g_error_status = 131;
+	}
+}
 int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
@@ -187,7 +201,6 @@ int pipex(t_comm *lst, char **env)
 	if (lst->infile == -1)
 		perror("Can't open");
 	lst->here = ft_strdup("pop");*/
-
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;
@@ -198,15 +211,16 @@ int pipex(t_comm *lst, char **env)
 		{
 			ft_putstr_fd("1 builtin detected -- ", 1);
 			ft_putendl_fd(tmp->command_str[0], 1);
-//			lst = tmp;
+			// lst = tmp;
 			return (EXIT_SUCCESS);
 		}
 		else
 		{
 			pid = fork();
+			signal(SIGINT, handler2);
+			signal(SIGQUIT, handler2);
 			if (pid == 0)
 			{
-
 				if (tmp->count_node > 1)
 					pipe_switch(i, kind, pipes, tmp);
 				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
@@ -221,24 +235,21 @@ int pipex(t_comm *lst, char **env)
 					ft_putendl_fd(tmp->command_str[0], 2);
 					exit(EXIT_SUCCESS);
 				}
-//				int j = 0;
-//				while (env[j])
-//				{
-//					printf("%d - %s\n", j, env[j]);
-//					j++;
-//				}
 				if (execve(find_command_path(tmp->command_str[0], env),
 						   tmp->command_str, env) == -1)
 				{
 					ft_putstr_fd("bash: ", 2);
 					ft_putstr_fd(tmp->command_str[0], 2);
 					ft_putendl_fd(": command not found", 2);
-					exit(EXIT_FAILURE);
+					g_error_status = 258;
+					//exit(EXIT_FAILURE);
 				}
 			}
 		}
 		if (tmp->here)
+		{
 			unlink(".tmp");
+		}
 		kind = cmd_position(kind, tmp);
 		tmp = tmp->next;
 		i++;

@@ -86,7 +86,7 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
         while (tmp[l])
             lst->tmp[(*j)++] = tmp[l++];
     }
-    // lst = ft_str_dollar(tmp, lst)
+
     free (tmp);
     return (lst->tmp);
 }
@@ -100,11 +100,13 @@ int ft_dol_str(char *str, t_comm *lst)
     count = 0;
     while (str[i])
     {
-        if (str[i] == '$')
+        if (str[i] == '$' && str[i + 1] != '?')
         {
             i++;
             count += ft_func(str, i, lst);
         }
+        else if (str[i] == '$' && str[i + 1] == '?')
+            count += 3;
         else
             count++;
         i++;

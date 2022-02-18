@@ -1,7 +1,50 @@
 #include "../../includes/minishell.h"
 #include <string.h>
 
+size_t	segments(char const *s, char c)
+{
+	size_t	i;
+	size_t	j;
+	size_t	len;
 
+	i = 0;
+	j = 0;
+	len = 0;
+	while (s[j])
+	{
+		while (s[j] != c && s[j])
+		{
+			j++;
+			len++;
+		}
+		while (s[j] == c && s[j])
+			j++;
+		if (len > 0)
+		{
+			i++;
+			len = 0;
+		}
+	}
+	return (i);
+}
+
+
+
+
+char *ft_global_value(char *str, t_comm *lst, int *i, int *j)
+{
+    char *tmp;
+    int k;
+
+    k = 0;
+    (*i) += 2;
+    tmp = ft_itoa(g_error_status);
+    while(tmp[k])
+        lst->tmp[(*j)++] = tmp[k++];
+    free (tmp);
+    g_error_status = 0;
+    return (lst->tmp);
+}
 char *ft_destroy_space4(char *str, t_comm *lst)
 {
     int i;
@@ -10,7 +53,7 @@ char *ft_destroy_space4(char *str, t_comm *lst)
 
     len_dollar = 0;
     len_dollar = ft_dol_str(str, lst);
-    lst->tmp = (char *)malloc(sizeof(char) * (len_dollar + 2));
+    lst->tmp = ft_calloc(len_dollar + 2, sizeof(char));
     if (!(lst->tmp))
         return (NULL);
     i = 0;
@@ -23,6 +66,8 @@ char *ft_destroy_space4(char *str, t_comm *lst)
             lst->tmp = ft_two_quotes(str, lst, &i, &j);
         else if (str[i] == '>' || str[i] == '<')
             lst->tmp = ft_open_file(str, &i, &j, lst);
+        else if (str[i] == '$' && str[i + 1] == '?')
+            lst->tmp = ft_global_value(str, lst, &i, &j);
         else if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))   // (ft_isalnum(str[i + 1]) || str[i + 1] == '_')
         {
             i++;
@@ -104,6 +149,7 @@ t_comm *ft_create_nodes(t_comm *lst, char **str_tl, int count_nd, t_envp *e)
     int c;
 
     c = count_nd;
+    lst = NULL;
     while (count_nd-- > 0)
     {
         tmp = malloc(sizeof(t_comm));
@@ -112,6 +158,7 @@ t_comm *ft_create_nodes(t_comm *lst, char **str_tl, int count_nd, t_envp *e)
         tmp->last_str = ft_strdup(str_tl[count_nd]);
         tmp->last_str = ft_new_str(tmp->last_str);
         tmp->count_node = c;
+        // lst->count_word = segments(lst->last_str. ' ');
         tmp->infile = -2;
         tmp->outfile = -2;
         tmp->e = e;
@@ -127,6 +174,7 @@ t_comm *ft_create_node(t_comm *lst, char *str, int c, t_envp *e)
     lst->last_str = ft_strdup(str);
     lst->last_str = ft_new_str(lst->last_str);
     lst->count_node = c;
+    // lst->count_word = segments(lst->last_str. ' ');
     lst->outfile = -2;
     lst->infile = -2;
     lst->e = e;

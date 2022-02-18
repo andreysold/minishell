@@ -161,42 +161,56 @@ int	ft_pwd(t_comm *lst)
 //	if (ft_isalpha(c) || ft_)
 //		return (1);
 //}
-int check_export_args(t_comm *copy)
+int check_export_arg(t_comm *copy, int i, char **key, char **value)
 {
-	int	i;
 	int	j;
+	int	value_start;
 
-	i = 1;
 	j = 0;
-	while (copy->command_str[i])
+	value_start = 0;
+	while (copy->command_str[i][j])
 	{
-		while (copy->command_str[i][j])
+		//word should start with letter
+		if (j == 0 && ft_isalpha(copy->command_str[i][j]) == 0)
 		{
-			if (ft_isalpha(copy->command_str[i][0]) == 0)
-			{
-				ft_putstr_fd("bash: export: \'", 2);
-				ft_putstr_fd(copy->command_str[i], 2);
-				ft_putendl_fd("\': not a valid identifier", 2);
-				return (EXIT_FAILURE);
-			}
-			else
-			{
-				if (ft_isalnum(copy->command_str[i][j]) == 0)
-				{
-					ft_putstr_fd("bash: export: \'", 2);
-					ft_putstr_fd(copy->command_str[i], 2);
-					ft_putendl_fd("\': not a valid identifier", 2);
-					return (EXIT_FAILURE);
-				}
-			}
-			j++;
+			return (EXIT_FAILURE);
 		}
-		i++;
+		else if (j != 0)
+		{
+			if (copy->command_str[i][j] == '=')
+			{
+				if (copy->command_str[i][j++])
+				{
+//					j++;
+					value_start = j;
+					while (copy->command_str[i][j])
+						j++;
+					*value = ft_substr(copy->command_str[i], value_start, j + 1);
+					//fixme free
+				}
+				else
+					break ;
+
+			}
+			else if ((copy->command_str[i][j + 1] && copy->command_str[i][j + 1] == '=') || !copy->command_str[i][j + 1])
+			{
+				*key = ft_substr(copy->command_str[i], 0, j + 1); //fixme free
+			}
+			else if (ft_isalnum(copy->command_str[i][j]) == 0)
+				return (EXIT_FAILURE);
+//			else //todo check condition, if alnum fail go to error
+//				break ; //feel it could stop all while
+		}
+		j++;
 	}
+	return (EXIT_SUCCESS);
 }
 
 int	ft_export(t_comm *lst) //todo there is no ascii output
 {
+	int location;
+	char *key;
+	char *value;
 	t_comm	*copy;
 	t_envp	*tmp;
 	int		i;
@@ -215,19 +229,96 @@ int	ft_export(t_comm *lst) //todo there is no ascii output
 				{
 					ft_putstr_fd("=\"", STDOUT_FILENO);
 					ft_putstr_fd(tmp->value, STDOUT_FILENO);
-					ft_putendl_fd("\"", STDOUT_FILENO);
+					ft_putchar_fd('\"', STDOUT_FILENO);
 				}
+				ft_putchar_fd('\n', STDOUT_FILENO);
 			}
 			tmp = tmp->next;
 		}
 	}
 	else
 	{
+		i = 1;
 		copy = lst;
-		check_export_args(copy);
+		while (copy->command_str[i])
+		{
+			key = NULL;
+			value = NULL;
+			if (check_export_arg(copy, i, &key, &value))
+			{
+				ft_putstr_fd("bash: export: \'", 2);
+				ft_putstr_fd(copy->command_str[i], 2);
+				ft_putendl_fd("\': not a valid identifier", 2);
+			}
+//			printf("<key>-<value> :: <%s>-<%s>\n", key, value);
+			if (key)
+			{
+				location = locate_env_key(copy->e, key, 0);
+				//todo check if copy may move
+				if (location == -1)
+					add_to_env(copy->e, key, value, 0);
+				else
+					upd_env_value(copy->e, value, location, 0);
+				free(key);
+				if (value)
+					free(value);
+			}
+			i++;
+		}
 	}
-
 	return (EXIT_SUCCESS);
+}
+
+size_t	ft_listlen(t_envp *head)
+{
+	size_t	len;
+	t_envp	*buf;
+
+	len = 0;
+	buf = head;
+	while (buf)
+	{
+		buf = buf->next;
+		len++;
+	}
+	return (len);
+}
+
+int	ft_unset(t_comm *lst)
+{
+	int		j;
+	int		len;
+	int		location;
+	t_envp	*e;
+	t_envp	*prev;
+	t_envp	*del;
+	t_envp	*nex;
+
+	e = lst->e;
+	if (e)
+	{
+		prev = e;
+		del = e;
+		nex = e;
+		j = 1;
+		len = (int)ft_listlen(e);
+		location = locate_env_key(e, lst->command_str[1], 0);
+		if (location != -1 && len > 0 && location + 1 > len)
+			return (EXIT_FAILURE);
+//		if ()
+		/*buf = e;
+		while (j <= len - 2)
+		{
+			buf = buf->next;
+			j++;
+		}
+		last_elem = buf;
+		last_elem = last_elem->next;
+		free(last_elem);
+		buf->next = NULL;*/
+		return (EXIT_SUCCESS);
+	}
+	return (EXIT_FAILURE);
 }
 
 int ft_env(t_comm *lst)
@@ -268,7 +359,7 @@ int check_builtin(t_comm *lst, char **env)
 	}
 	else if (ft_strncmp(*lst->command_str, "unset", 6) == 0)
 	{
-		//ft_unset();
+		return (ft_unset(lst));
 	}
 	else if (ft_strncmp(*lst->command_str, "env", 4) == 0) /// 'no arguments'
 	{

@@ -40,6 +40,7 @@ static inline void	upd_oldpwd(const t_comm *lst)
 	int		location;
 	char	*old_path;
 
+
 	location = locate_env_key(lst->e, "PWD", 1); //updating OLDPWD
 	old_path = get_env_value(lst->e, location, 1); //get str for OLDPWD
 	if (location == -1) //if there is no OLDPWD1
@@ -54,6 +55,7 @@ static inline void	upd_oldpwd(const t_comm *lst)
 
 static inline int	search_path(const t_comm *lst, char	**new_path)
 {
+	int		i;
 	int		pos;
 	char	*home;
 
@@ -69,19 +71,17 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 		}
 		else
 		{
-			home = get_env_value(lst->e, pos, 0); //here is PWD
-			pos = locate_env_key(lst->e,"PWD", 1);
-			upd_env_value(lst->e, home, pos, 1); //todo orig=0
+			home = get_env_value(lst->e, pos, 0);
+			*new_path = home;
+			pos = locate_env_key(lst->e,"PWD", 0);
+			if (pos != -1)
+				upd_env_value(lst->e, home, pos, 0);
 		}
 	}
-	else if (ft_strncmp(lst->command_str[1], "..", 2) == 0)
-	{
-
-	}
-	else if (ft_strncmp(lst->command_str[1], "/", 1) == 0) //
-	{
-
-	}
+	else if (ft_strncmp(lst->command_str[1], "", 1) == 0) //FIXME doesn't work
+		return (EXIT_FAILURE);
+	else
+		*new_path = lst->command_str[1];
 	return (EXIT_SUCCESS);
 }
 
@@ -95,12 +95,21 @@ int	ft_cd(t_comm *lst)
 	char	*new_path;
 	char	*old_path;
 	int		location;
-	char	*clean;
+	char	*buf;
 
-	upd_oldpwd(lst);
+	printf("|>%s<|\n", lst->command_str[1]);
+	buf = NULL;
+	location = locate_env_key(lst->e, "OLDPWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+	printf("%s - before origa\n", getcwd(buf, 0));
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	chdir(new_path);
+	location = locate_env_key(lst->e, "PWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+	printf("%s - after origa\n", getcwd(buf, 0));
 /*	location = locate_env_key(lst->e, "PWD", 1);
 	old_path = get_env_value(lst->e, location, 1);
 	new_path = ft_strjoin(old_path, "/");
@@ -128,12 +137,188 @@ int	ft_cd(t_comm *lst)
 int	ft_pwd(t_comm *lst)
 {
 	char	*pwd;
+	char	*buf;
+	int		location;
+
+	buf = NULL;
+	pwd = getcwd(buf, 0);
+	ft_putendl_fd(pwd, STDOUT_FILENO);
+	location = locate_env_key(lst->e, "PWD", 0);
+	if (location != -1)
+		upd_env_value(lst->e, pwd, location, 0);
+	return (EXIT_SUCCESS);
+	/*char	*pwd; //alterinative version if something broke use it
 	int		location;
 
 	location = locate_env_key(lst->e, "PWD", 1);
 	pwd = get_env_value(lst->e, location, 1);
 	ft_putendl_fd(pwd, STDOUT_FILENO);
+	return (EXIT_SUCCESS);*/
+}
+
+//int check_valid_key(char c)
+//{
+//	if (ft_isalpha(c) || ft_)
+//		return (1);
+//}
+int check_export_arg(t_comm *copy, int i, char **key, char **value)
+{
+	int	j;
+	int	value_start;
+
+	j = 0;
+	value_start = 0;
+	while (copy->command_str[i][j])
+	{
+		//word should start with letter
+		if (j == 0 && ft_isalpha(copy->command_str[i][j]) == 0)
+		{
+			return (EXIT_FAILURE);
+		}
+		else if (j != 0)
+		{
+			if (copy->command_str[i][j] == '=')
+			{
+				if (copy->command_str[i][j++])
+				{
+//					j++;
+					value_start = j;
+					while (copy->command_str[i][j])
+						j++;
+					*value = ft_substr(copy->command_str[i], value_start, j + 1);
+					//fixme free
+				}
+				else
+					break ;
+
+			}
+			else if ((copy->command_str[i][j + 1] && copy->command_str[i][j + 1] == '=') || !copy->command_str[i][j + 1])
+			{
+				*key = ft_substr(copy->command_str[i], 0, j + 1); //fixme free
+			}
+			else if (ft_isalnum(copy->command_str[i][j]) == 0)
+				return (EXIT_FAILURE);
+//			else //todo check condition, if alnum fail go to error
+//				break ; //feel it could stop all while
+		}
+		j++;
+	}
 	return (EXIT_SUCCESS);
+}
+
+int	ft_export(t_comm *lst) //todo there is no ascii output
+{
+	int location;
+	char *key;
+	char *value;
+	t_comm	*copy;
+	t_envp	*tmp;
+	int		i;
+	int		j;
+
+	if (lst->command_str[1] == NULL)
+	{
+		tmp = lst->e;
+		while (tmp)
+		{
+			if (tmp->key)
+			{
+				ft_putstr_fd("declare -x ", STDOUT_FILENO);
+				ft_putstr_fd(tmp->key,STDOUT_FILENO);
+				if (tmp->value)
+				{
+					ft_putstr_fd("=\"", STDOUT_FILENO);
+					ft_putstr_fd(tmp->value, STDOUT_FILENO);
+					ft_putchar_fd('\"', STDOUT_FILENO);
+				}
+				ft_putchar_fd('\n', STDOUT_FILENO);
+			}
+			tmp = tmp->next;
+		}
+	}
+	else
+	{
+		i = 1;
+		copy = lst;
+		while (copy->command_str[i])
+		{
+			key = NULL;
+			value = NULL;
+			if (check_export_arg(copy, i, &key, &value))
+			{
+				ft_putstr_fd("bash: export: \'", 2);
+				ft_putstr_fd(copy->command_str[i], 2);
+				ft_putendl_fd("\': not a valid identifier", 2);
+			}
+//			printf("<key>-<value> :: <%s>-<%s>\n", key, value);
+			if (key)
+			{
+				location = locate_env_key(copy->e, key, 0);
+				//todo check if copy may move
+				if (location == -1)
+					add_to_env(copy->e, key, value, 0);
+				else
+					upd_env_value(copy->e, value, location, 0);
+				free(key);
+				if (value)
+					free(value);
+			}
+			i++;
+		}
+	}
+	return (EXIT_SUCCESS);
+}
+
+size_t	ft_listlen(t_envp *head)
+{
+	size_t	len;
+	t_envp	*buf;
+
+	len = 0;
+	buf = head;
+	while (buf)
+	{
+		buf = buf->next;
+		len++;
+	}
+	return (len);
+}
+
+int	ft_unset(t_comm *lst)
+{
+	int		j;
+	int		len;
+	int		location;
+	t_envp	*e;
+	t_envp	*prev;
+	t_envp	*del;
+	t_envp	*nex;
+
+	e = lst->e;
+	if (e)
+	{
+		prev = e;
+		del = e;
+		nex = e;
+		j = 1;
+		len = (int)ft_listlen(e);
+		location = locate_env_key(e, lst->command_str[1], 0);
+		if (location != -1 && len > 0 && location + 1 > len)
+			return (EXIT_FAILURE);
+//		if ()
+		/*buf = e;
+		while (j <= len - 2)
+		{
+			buf = buf->next;
+			j++;
+		}
+		last_elem = buf;
+		last_elem = last_elem->next;
+		free(last_elem);
+		buf->next = NULL;*/
+		return (EXIT_SUCCESS);
+	}
+	return (EXIT_FAILURE);
 }
 
 int ft_env(t_comm *lst)
@@ -178,11 +363,11 @@ int check_builtin(t_comm *lst, char **env)
 	}
 	else if (ft_strncmp(*lst->command_str, "export", 7) == 0)
 	{
-		//ft_export();
+		return (ft_export(lst));
 	}
 	else if (ft_strncmp(*lst->command_str, "unset", 6) == 0)
 	{
-		//ft_unset();
+		return (ft_unset(lst));
 	}
 	else if (ft_strncmp(*lst->command_str, "env", 4) == 0) /// 'no arguments'
 	{

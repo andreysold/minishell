@@ -87,6 +87,7 @@ char *ft_destroy_space4(char *str, t_comm *lst)
             lst->tmp[j++] = str[i++];
     }
     lst->tmp[j] = '\0';
+	printf("|%s|\n", lst->tmp);
     free (str);
     return (lst->tmp);
 }

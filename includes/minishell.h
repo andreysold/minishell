@@ -83,7 +83,7 @@ int	ft_pwd(t_comm *lst);
 
 /**********BUILTIN_UTILS****/
 char	*get_env_value(t_envp *envp, int location, int origin);
-void	upd_env_value(t_envp *envp, char *value, int location, int origin);
+void	upd_env_value(t_envp *envp, char *new_value, int location, int origin);
 void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
 int		locate_env_key(t_envp *envp, char *key, int origin);
 

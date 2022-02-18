@@ -38,7 +38,7 @@ char	*get_env_value(t_envp *envp, int location, int origin) //mb there's no need
 
 /** @param origin: \c 1 for search key_origin, \c 0 for 'fake' key
 **/
-void	upd_env_value(t_envp *envp, char *value, int location, int origin)
+void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 {
 	int		i;
 	t_envp	*tmp;
@@ -60,9 +60,9 @@ void	upd_env_value(t_envp *envp, char *value, int location, int origin)
 	if (tmp)
 	{
 		if (origin)
-			tmp->value_orig = ft_strdup(value);
+			tmp->value_orig = ft_strdup(new_value);
 		else
-			tmp->value = ft_strdup(value); //todo do i need strdup?
+			tmp->value = ft_strdup(new_value); //todo do i need strdup?
 	}
 }
 
@@ -80,12 +80,14 @@ void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin)
 	if (origin)
 	{
 		node->key_orig = new_key;
-		node->value_orig = new_value;
+		if (new_value)
+			node->value_orig = new_value;
 	}
 	else
 	{
 		node->key = new_key;
-		node->value = new_value;
+		if (new_value)
+			node->value = new_value;
 	}
 	node->next = NULL;
 	tmp = envp;
@@ -104,6 +106,8 @@ int	locate_env_key(t_envp *envp, char *key, int origin)
 	t_envp	*tmp;
 
 	i = 0;
+	if (!key)
+		return (-1);
 	key_len = ft_strlen(key);
 	tmp = envp;
 	while (tmp)

@@ -1,15 +1,15 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -ggdb3  -I../../../.brew/opt/readline/include  -I./ #-Wall -Wextra -Werror
 RLFLAG	=	-lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins.c \
-			srcs/executor/builtins_utils.c
+			srcs/executor/builtins.c\
+			srcs/executor/builtins_utils.c\
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \
@@ -22,6 +22,7 @@ SRCS	+=	srcs/parser/parse_dollar.c \
             srcs/parser/parse_utils.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
+			srcs/parser/env.c\
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
@@ -30,7 +31,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
+			$(CC) -lreadline  -L ../../../.brew/opt/readline/lib  -o $(NAME) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h

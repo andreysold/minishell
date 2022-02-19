@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/18 17:21:18 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/19 14:45:16 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,14 +337,105 @@ int ft_env(t_comm *lst)
 	return (EXIT_SUCCESS);
 }
 
+int ft_count_strings(t_comm *lst)
+{
+	int count;
+
+	count = 0;
+	while (lst->command_str[count])
+		count++;
+	return (count);	
+}
+
+int	ft_new_value_error(char *str)
+{
+	int i;
+	unsigned long long  	n;
+	int new_val;
+	int sign;
+
+	sign = 1;
+	i = 0;
+	n = 0;
+	if (str && str[i] == '-')
+	{
+		sign = -1;
+		i++;
+	}
+	while (str && ft_isdigit(str[i]))
+	{
+		n = 10 * n + (str[i] - 48);
+		i++;
+	}
+	n *= sign;
+	if (n > 9223372036854775807 || n < -9223372036854775807)
+	{
+		printf("A\n");
+		write(2, "bash: exit: ",12);
+		write(2, str, ft_strlen(str));
+		write(2, " numeric argument required\n", 28);
+		return (255);
+	}
+	n = n % 256;
+	while (n < 0)
+		n = n + 256;
+	return (n);
+}
+
+int	ft_check_exit_numeric(t_comm *lst)
+{
+	t_comm *head;
+
+	int count_min;
+	int j;
+	j = 0;
+	count_min = 0;
+	while (lst->command_str[1][j])
+	{
+		if (lst->command_str[1][j] == '-' && count_min == 0)
+		{
+			count_min = 1;
+			j++;
+		}
+		if (!(ft_isdigit(lst->command_str[1][j])))
+		{
+			write(2, "bash: exit: ", 12);
+			write(2, lst->command_str[1], ft_strlen(lst->command_str[1]));
+			write(2, ": numeric argument required\n", 29);
+			g_error_status = 1;
+			return (0);
+		}
+		j++;
+	}
+	g_error_status = ft_new_value_error(lst->command_str[1]);
+	return (0);
+}
+
+void	ft_exit_many_args(void)
+{
+	write(2, "bash: exit: ", 12);
+	write(2, ": too many arguments\n", 22);
+	g_error_status = 1;
+}
 
 int	ft_exit(t_comm *lst)
 {
-	// int locate = locate_env_key(lst->e, "SHLVL", 0);
 	int shlvl;
 	char *tmp;
-	exit (0);
+	int count;
+
+	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	count = ft_count_strings(lst);
+	if (count == 2)
+		ft_check_exit_numeric(lst);
+	else if (count > 2)
+		ft_exit_many_args();
+	else
+		exit (0);
+	// exit (0);
+	return (EXIT_SUCCESS);
 }
+
 int check_builtin(t_comm *lst, char **env)
 {
 	if (ft_strncmp(*lst->command_str, "echo", 5) == 0) ///'-n' should work

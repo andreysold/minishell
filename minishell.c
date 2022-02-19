@@ -36,7 +36,7 @@ int ft_process4(char *str, t_envp *list_env)
 	// if (executor(lst, new_env) == -1)
 	//  	return (1);
 	// printf("ABC\n");
-	executor(lst, new_env);
+	//executor(lst, new_env);
 	// ft_free_list(lst);
     return (0);
 }
@@ -87,7 +87,6 @@ void	ft_up_shlvl(t_envp *list_env)
 		tmp = ft_itoa(shlvl);
 		upd_env_value(list_env, tmp, locate, 0);
 	}
-	// printf("%s\n", get_env_value(list_env, locate, 0));
 }
 int main(int ac, char **av, char **env)
 {
@@ -101,13 +100,13 @@ int main(int ac, char **av, char **env)
 		return (-1);
 	envp = ft_get_envp(env);
 	list_env = ft_node_env(list_env, envp);
-	// ft_up_shlvl(list_env);
+	ft_up_shlvl(list_env);
+//	signal(SIGQUIT, SIG_IGN);
 	while (1)
     {
-		signal(SIGINT, handler);
-		signal(SIGQUIT, SIG_IGN);
+//		signal(SIGINT, handler);
         str = readline("bash:");
-        if (str && *str) 
+        if (str && *str)
         {
            	add_history(str);
             if (ft_lexer(str) != -1)
@@ -118,6 +117,9 @@ int main(int ac, char **av, char **env)
             else
                 free (str);
         }
+		else
+			exit(0);
+
 	}
 	return (0);
 }

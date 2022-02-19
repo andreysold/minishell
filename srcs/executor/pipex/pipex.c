@@ -6,12 +6,28 @@
 /*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/18 17:41:34 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <crt_externs.h>
 #include "pipex.h"
+
+//void	handler2(int sig)
+//{
+//	if (sig == SIGINT)
+//	{
+//		(void) sig;
+//		write(2, "\n", 1);
+//		g_error_status = 130;
+//	}
+//	if (sig == SIGQUIT)
+//	{
+//		(void) sig;
+//		write(2, "Quit: 3\n", 8);
+//		g_error_status = 131;
+//	}
+//}
 
 void close_pipes(int *pipes, int count_node)
 {
@@ -35,8 +51,9 @@ void wait_childs(int n)
 	while (i < n)
 	{
 		wait(&status);
-		if (WIFEXITED(status) && status != 0)
+		if (WEXITSTATUS(status) && status != 0)
 		{
+			g_error_status = 127;
 			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
 			fflush(NULL);
 		}
@@ -76,9 +93,7 @@ static inline void heredoc(t_comm *tmp)
 	{
 		str = readline("> ");
 		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
-		{
 			break ;
-		}
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
@@ -202,7 +217,6 @@ int pipex(t_comm *lst, char **env)
 	if (lst->infile == -1)
 		perror("Can't open");
 	lst->here = ft_strdup("pop");*/
-
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;

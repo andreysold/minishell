@@ -36,7 +36,7 @@ int ft_process4(char *str, t_envp *list_env)
 	// if (executor(lst, new_env) == -1)
 	//  	return (1);
 	// printf("ABC\n");
-	//executor(lst, new_env);
+	executor(lst, new_env);
 	// ft_free_list(lst);
     return (0);
 }
@@ -63,7 +63,7 @@ void	handler(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 1);
 	rl_redisplay();
-	// g_error_status = 
+	g_error_status = 1;
 	// g_error = 1;
 }
 
@@ -104,7 +104,8 @@ int main(int ac, char **av, char **env)
 //	signal(SIGQUIT, SIG_IGN);
 	while (1)
     {
-//		signal(SIGINT, handler);
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, handler);
         str = readline("bash:");
         if (str && *str)
         {
@@ -117,7 +118,7 @@ int main(int ac, char **av, char **env)
             else
                 free (str);
         }
-		else
+		else if (str == NULL)
 			exit(0);
 
 	}

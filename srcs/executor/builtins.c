@@ -32,6 +32,7 @@ int	ft_echo(t_comm *lst)
 	}
 	if (n_flag == 0)
 		ft_putchar_fd('\n', 1);
+	g_error_status = 0;
 	return (EXIT_SUCCESS);
 }
 
@@ -353,7 +354,9 @@ int	ft_new_value_error(char *str)
 	unsigned long long  	n;
 	int new_val;
 	int sign;
+	unsigned long long		max;
 
+	max = 9223372036854775807;
 	sign = 1;
 	i = 0;
 	n = 0;
@@ -368,14 +371,22 @@ int	ft_new_value_error(char *str)
 		i++;
 	}
 	n *= sign;
-	if (n > 9223372036854775807 || n < -9223372036854775807)
+	if (n > max)
 	{
-		printf("A\n");
+		printf("B\n");
 		write(2, "bash: exit: ",12);
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
 		return (255);
 	}
+	// else if (n < min && sign)
+	// {
+	// 	printf("A\n");
+	// 	write(2, "bash: exit: ",12);
+	// 	write(2, str, ft_strlen(str));
+	// 	write(2, " numeric argument required\n", 28);
+	// 	return (255);
+	// }
 	n = n % 256;
 	while (n < 0)
 		n = n + 256;

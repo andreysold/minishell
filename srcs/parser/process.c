@@ -28,9 +28,6 @@ size_t	segments(char const *s, char c)
 	return (i);
 }
 
-
-
-
 char *ft_global_value(char *str, t_comm *lst, int *i, int *j)
 {
     char *tmp;
@@ -42,7 +39,6 @@ char *ft_global_value(char *str, t_comm *lst, int *i, int *j)
     while(tmp[k])
         lst->tmp[(*j)++] = tmp[k++];
     free (tmp);
-    g_error_status = 0;
     return (lst->tmp);
 }
 char *ft_destroy_space4(char *str, t_comm *lst)
@@ -58,6 +54,7 @@ char *ft_destroy_space4(char *str, t_comm *lst)
         return (NULL);
     i = 0;
     j = 0;
+    // g_error_status = 0;
     while (str[i])
     {
         if (str[i] == '\'')

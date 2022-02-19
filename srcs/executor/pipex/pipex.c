@@ -13,21 +13,28 @@
 #include <crt_externs.h>
 #include "pipex.h"
 
-//void	handler2(int sig)
-//{
-//	if (sig == SIGINT)
-//	{
-//		(void) sig;
-//		write(2, "\n", 1);
-//		g_error_status = 130;
-//	}
-//	if (sig == SIGQUIT)
-//	{
-//		(void) sig;
-//		write(2, "Quit: 3\n", 8);
-//		g_error_status = 131;
-//	}
-//}
+void	handler22(int sig)
+{
+	if (sig == SIGINT)
+	{
+		(void) sig;
+		write(2, "\n", 1);
+		g_error_status = 130;
+	}
+	if (sig == SIGQUIT)
+	{
+		(void) sig;
+		write(2, "Quit: 3\n", 8);
+		g_error_status = 131;
+	}
+}
+
+
+void	ft_handler_herdoc(int sig)
+{
+	(void) sig;
+	exit (0);
+}
 
 void close_pipes(int *pipes, int count_node)
 {
@@ -54,7 +61,7 @@ void wait_childs(int n)
 		if (WEXITSTATUS(status) && status != 0)
 		{
 			g_error_status = 127;
-			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
+			// printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
 			fflush(NULL);
 		}
 		i++;
@@ -83,20 +90,36 @@ static inline void close_in_out_file(t_comm *tmp)
 		perror("close_in_out_file:");
 }
 
+void	handler_her(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
+	write(1,"\b\n", 2);
+	rl_on_new_line();
+	rl_replace_line("", 1);
+	rl_redisplay();
+	g_error_status = 1;
+	exit (g_error_status);
+}
 static inline void heredoc(t_comm *tmp)
 {
 	char	*str;
 	int		here_len;
 
 	here_len = (int)ft_strlen(tmp->here);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, handler_her);
 	while (1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 		str = readline("> ");
 		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
 			break ;
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
+	//signal(SIGQUIT, handler);
 	free(str);
 }
 
@@ -107,6 +130,7 @@ static inline void redirect(t_comm *tmp)
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
 	{
+	//	signal(SIGQUIT, handler);
 		if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
 		{
 			heredoc(tmp);
@@ -230,6 +254,8 @@ int pipex(t_comm *lst, char **env)
 				return (bool);
 		}
 		pid = fork();
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, handler22);
 		if (pid == 0)
 		{
 			if (tmp->count_node > 1)
@@ -247,6 +273,7 @@ int pipex(t_comm *lst, char **env)
 				ft_putstr_fd("bash: ", 2);
 				ft_putstr_fd(tmp->command_str[0], 2);
 				ft_putendl_fd(": command not found", 2);
+				// g_error_status = 255;
 				exit(EXIT_FAILURE);
 			}
 		}

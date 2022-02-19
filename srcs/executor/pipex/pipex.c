@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
+/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/18 17:41:34 by galetha          ###   ########.fr       */
+/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,7 @@ int pipex(t_comm *lst, char **env)
 	t_comm	*tmp;
 	int		kind;
 	pid_t pid;
+	int bool;
 
 /*	lst->outfile = FD_UNUSED;
 	lst->infile = FD_UNUSED;
@@ -201,55 +202,42 @@ int pipex(t_comm *lst, char **env)
 	if (lst->infile == -1)
 		perror("Can't open");
 	lst->here = ft_strdup("pop");*/
+
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
 	while (tmp != NULL)
 	{
-		if (tmp->count_node == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
+		if (tmp->count_node == 1)
 		{
-			ft_putstr_fd("1 builtin detected -- ", 1);
-			ft_putendl_fd(tmp->command_str[0], 1);
-			// lst = tmp;
-			return (EXIT_SUCCESS);
+			bool = builtins(tmp, env);
+			if (bool != -1)
+				return (bool);
 		}
-		else
+		pid = fork();
+		if (pid == 0)
 		{
-			pid = fork();
-			signal(SIGINT, handler2);
-			signal(SIGQUIT, handler2);
-			if (pid == 0)
+			if (tmp->count_node > 1)
+				pipe_switch(i, kind, pipes, tmp);
+			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+				redirect(tmp);
+			close_pipes(pipes, tmp->count_node);
+			close_in_out_file(tmp);
+			bool = builtins(tmp, env);
+			if (bool != -1)
+				exit (bool);
+			if (execve(find_command_path(tmp->command_str[0], env),
+					   tmp->command_str, env) == -1)
 			{
-				if (tmp->count_node > 1)
-					pipe_switch(i, kind, pipes, tmp);
-				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
-					redirect(tmp);
-
-				close_pipes(pipes, tmp->count_node);
-				close_in_out_file(tmp);
-
-				if (check_builtin(tmp, env) == EXIT_SUCCESS)
-				{
-					ft_putstr_fd("2 builtin detected -- ", 2);
-					ft_putendl_fd(tmp->command_str[0], 2);
-					exit(EXIT_SUCCESS);
-				}
-				if (execve(find_command_path(tmp->command_str[0], env),
-						   tmp->command_str, env) == -1)
-				{
-					ft_putstr_fd("bash: ", 2);
-					ft_putstr_fd(tmp->command_str[0], 2);
-					ft_putendl_fd(": command not found", 2);
-					g_error_status = 258;
-					//exit(EXIT_FAILURE);
-				}
+				ft_putstr_fd("bash: ", 2);
+				ft_putstr_fd(tmp->command_str[0], 2);
+				ft_putendl_fd(": command not found", 2);
+				exit(EXIT_FAILURE);
 			}
 		}
 		if (tmp->here)
-		{
 			unlink(".tmp");
-		}
 		kind = cmd_position(kind, tmp);
 		tmp = tmp->next;
 		i++;

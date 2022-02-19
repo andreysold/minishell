@@ -109,28 +109,6 @@ int	ft_cd(t_comm *lst)
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
 		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
-//	printf("%s - after origa\n", getcwd(buf, 0));
-/*	location = locate_env_key(lst->e, "PWD", 1);
-	old_path = get_env_value(lst->e, location, 1);
-	new_path = ft_strjoin(old_path, "/");
-	clean = new_path;
-	new_path = ft_strjoin(new_path, lst->command_str[1]);
-	free(clean);
-	if (location != -1)
-		upd_env_value(lst->e, new_path, location, 1);
-//	printf("!!! upd val path %s\n", lst->value);
-//	fflush(NULL);
-	location = locate_env_key(lst->e, "OLDPWD", 1);
-	if (location == -1)
-		add_to_env(lst->e, "OLDPWD", old_path, 1);
-	else
-		upd_env_value(lst->e, old_path, location, 1);
-	printf("!!! oldpwd %s\n", get_env_value(lst->e, locate_env_key(lst->e,
-																   "OLDPWD",
-																   1),1));
-	fflush(NULL);
-	chdir(new_path);
-	free(new_path);*/
 	return (EXIT_SUCCESS);
 }
 
@@ -147,20 +125,8 @@ int	ft_pwd(t_comm *lst)
 	if (location != -1)
 		upd_env_value(lst->e, pwd, location, 0);
 	return (EXIT_SUCCESS);
-	/*char	*pwd; //alterinative version if something broke use it
-	int		location;
-
-	location = locate_env_key(lst->e, "PWD", 1);
-	pwd = get_env_value(lst->e, location, 1);
-	ft_putendl_fd(pwd, STDOUT_FILENO);
-	return (EXIT_SUCCESS);*/
 }
 
-//int check_valid_key(char c)
-//{
-//	if (ft_isalpha(c) || ft_)
-//		return (1);
-//}
 int check_export_arg(t_comm *copy, int i, char **key, char **value)
 {
 	int	j;
@@ -286,6 +252,7 @@ size_t	ft_listlen(t_envp *head)
 
 int	ft_unset(t_comm *lst)
 {
+	int		i;
 	int		j;
 	int		len;
 	int		location;
@@ -299,7 +266,7 @@ int	ft_unset(t_comm *lst)
 		len = (int)ft_listlen(prev);
 		printf("%s len - %d\n", RED, len);
 		location = locate_env_key(prev, lst->command_str[1], 0);
-		if (location != -1 && len > 0 && location + 1 > len)
+		if (location == -1 || len <= 0 || location + 1 > len)
 			return (EXIT_FAILURE);
 		printf("%s locat - %d\n", GREEN, location);
 		while (j <= location - 1)

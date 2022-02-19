@@ -181,14 +181,6 @@ int pipex(t_comm *lst, char **env)
 	pid_t pid;
 	int bool;
 
-/*	lst->outfile = FD_UNUSED;
-	lst->infile = FD_UNUSED;
-	/// open file to write heredoc
-	lst->infile = open("tmp", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
-	if (lst->infile == -1)
-		perror("Can't open");
-	lst->here = ft_strdup("pop");*/
-
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;

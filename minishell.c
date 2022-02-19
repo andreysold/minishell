@@ -205,29 +205,30 @@ int main(void)
 {
 	char		*str;
 	char		*name;
-	//char		**env;
 	t_envp		*l_envp;
 	extern char	**environ;
 	
 	l_envp = malloc(sizeof(t_envp));
 	if (!l_envp)
 		return (-1);
-//	env = ft_get_envp(environ);
 	l_envp = ft_node_env(l_envp, environ);
+
 	while (1)
-    {
-        str = readline("bash:");
-        if (str && *str)
-        {
-            add_history(str);
-            // if (ft_lexer(str) != -1)
-            // {
-            if (ft_process4(str, l_envp) == -1)
-                exit(0);
-            // }
-            // else
-                // free (str);
-        }
+	{
+		str = readline("bash:");
+		if (str && *str)
+		{
+			add_history(str);
+			// if (ft_lexer(str) != -1)
+			// {
+			if (ft_process4(str, l_envp) == -1)
+				exit(0);
+			// }
+			// else
+				// free (str);
+		}
+		else if (str == NULL)
+			exit (0);
 	}
 	//ft_n//o_malloc(l_envp); //fixme
 }

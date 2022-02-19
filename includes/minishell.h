@@ -70,7 +70,8 @@ int	pipex(t_comm *lst, char **env);
 int	executor(t_comm * lst, char **env);
 
 /**********BUILTIN**********/
-int	check_builtin(t_comm *tmp, char **env);
+int	builtins(t_comm *lst, char **env);
+int	check_builtin(t_comm *lst, char **env);
 int	ft_echo(t_comm *tmp);
 int	ft_cd(t_comm *lst);
 int	ft_pwd(t_comm *lst);

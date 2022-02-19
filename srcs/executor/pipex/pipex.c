@@ -179,6 +179,7 @@ int pipex(t_comm *lst, char **env)
 	t_comm	*tmp;
 	int		kind;
 	pid_t pid;
+	int bool;
 
 /*	lst->outfile = FD_UNUSED;
 	lst->infile = FD_UNUSED;
@@ -194,47 +195,31 @@ int pipex(t_comm *lst, char **env)
 	i = 0;
 	while (tmp != NULL)
 	{
-		if (tmp->count_node == 1 && check_builtin(tmp, env) == EXIT_SUCCESS)
+		if (tmp->count_node == 1)
 		{
-			ft_putstr_fd("1 builtin detected -- ", 1);
-			ft_putendl_fd(tmp->command_str[0], 1);
-//			lst = tmp;
-			return (EXIT_SUCCESS);
+			bool = builtins(tmp, env);
+			if (bool != -1)
+				return (bool);
 		}
-		else
+		pid = fork();
+		if (pid == 0)
 		{
-			pid = fork();
-			if (pid == 0)
+			if (tmp->count_node > 1)
+				pipe_switch(i, kind, pipes, tmp);
+			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+				redirect(tmp);
+			close_pipes(pipes, tmp->count_node);
+			close_in_out_file(tmp);
+			bool = builtins(tmp, env);
+			if (bool != -1)
+				exit (bool);
+			if (execve(find_command_path(tmp->command_str[0], env),
+					   tmp->command_str, env) == -1)
 			{
-
-				if (tmp->count_node > 1)
-					pipe_switch(i, kind, pipes, tmp);
-				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
-					redirect(tmp);
-
-				close_pipes(pipes, tmp->count_node);
-				close_in_out_file(tmp);
-
-				if (check_builtin(tmp, env) == EXIT_SUCCESS)
-				{
-					ft_putstr_fd("2 builtin detected -- ", 2);
-					ft_putendl_fd(tmp->command_str[0], 2);
-					exit(EXIT_SUCCESS);
-				}
-//				int j = 0;
-//				while (env[j])
-//				{
-//					printf("%d - %s\n", j, env[j]);
-//					j++;
-//				}
-				if (execve(find_command_path(tmp->command_str[0], env),
-						   tmp->command_str, env) == -1)
-				{
-					ft_putstr_fd("bash: ", 2);
-					ft_putstr_fd(tmp->command_str[0], 2);
-					ft_putendl_fd(": command not found", 2);
-					exit(EXIT_FAILURE);
-				}
+				ft_putstr_fd("bash: ", 2);
+				ft_putstr_fd(tmp->command_str[0], 2);
+				ft_putendl_fd(": command not found", 2);
+				exit(EXIT_FAILURE);
 			}
 		}
 		if (tmp->here)

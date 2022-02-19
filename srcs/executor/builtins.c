@@ -66,7 +66,7 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 		{
 			ft_putstr_fd("bash: ", 2);
 			ft_putstr_fd(lst->command_str[0], 2);
-			ft_putendl_fd(": command not found", 2);
+			ft_putendl_fd(": HOME not set", 2);
 			return (EXIT_FAILURE);
 		}
 		else
@@ -97,19 +97,19 @@ int	ft_cd(t_comm *lst)
 	int		location;
 	char	*buf;
 
-	printf("|>%s<|\n", lst->command_str[1]);
+//	printf("|>%s<|\n", lst->command_str[1]);
 	buf = NULL;
 	location = locate_env_key(lst->e, "OLDPWD", 0);
 	if (location != -1)
 		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
-	printf("%s - before origa\n", getcwd(buf, 0));
+//	printf("%s - before origa\n", getcwd(buf, 0));
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	chdir(new_path);
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
 		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
-	printf("%s - after origa\n", getcwd(buf, 0));
+//	printf("%s - after origa\n", getcwd(buf, 0));
 /*	location = locate_env_key(lst->e, "PWD", 1);
 	old_path = get_env_value(lst->e, location, 1);
 	new_path = ft_strjoin(old_path, "/");
@@ -289,33 +289,31 @@ int	ft_unset(t_comm *lst)
 	int		j;
 	int		len;
 	int		location;
-	t_envp	*e;
 	t_envp	*prev;
 	t_envp	*del;
-	t_envp	*nex;
 
-	e = lst->e;
-	if (e)
+	prev = lst->e;
+	if (prev)
 	{
-		prev = e;
-		del = e;
-		nex = e;
 		j = 1;
-		len = (int)ft_listlen(e);
-		location = locate_env_key(e, lst->command_str[1], 0);
+		len = (int)ft_listlen(prev);
+		printf("%s len - %d\n", RED, len);
+		location = locate_env_key(prev, lst->command_str[1], 0);
 		if (location != -1 && len > 0 && location + 1 > len)
 			return (EXIT_FAILURE);
-//		if ()
-		/*buf = e;
-		while (j <= len - 2)
+		printf("%s locat - %d\n", GREEN, location);
+		while (j <= location - 1)
 		{
-			buf = buf->next;
+			prev = prev->next;
 			j++;
 		}
-		last_elem = buf;
-		last_elem = last_elem->next;
-		free(last_elem);
-		buf->next = NULL;*/
+		printf("%s j - %d\n", YELLOW, location);
+		del = prev;
+		del = del->next;
+		prev->next = del->next;
+		printf("%s j - %s%s\n", BLUE, del->key, RESET);
+		free(del);
+//		prev->next = NULL;
 		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
@@ -369,5 +367,21 @@ int check_builtin(t_comm *lst, char **env)
 	{
 		//ft_exit();
 	}
-	return (EXIT_FAILURE);
+	return (-1);
+}
+
+int builtins(t_comm *lst, char **env)
+{
+	int	bool;
+
+	bool = check_builtin(lst, env);
+	if (bool == EXIT_SUCCESS)
+	{
+		ft_putstr_fd("1 check_builtin detected -- ", 1);
+		ft_putendl_fd(lst->command_str[0], 1);
+		return (EXIT_SUCCESS);
+	}
+	else if (bool == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	return (-1);
 }

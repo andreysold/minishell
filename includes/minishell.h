@@ -9,8 +9,10 @@
 #include <errno.h>
 // #include <readline/readline.h>
 // #include <readline/history.h>
-#include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
-#include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
+// #include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
+// #include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 // void rl_replace_line (const char *text, int clear_undo);
 // #include "../readline/readline.h"
 // #include "../readline/history.h"

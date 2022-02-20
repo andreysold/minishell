@@ -64,9 +64,7 @@ void	handler(int sig)
 	rl_replace_line("", 1);
 	rl_redisplay();
 	g_error_status = 1;
-	// g_error = 1;
 }
-
 
 void	ft_up_shlvl(t_envp *list_env)
 {
@@ -88,6 +86,7 @@ void	ft_up_shlvl(t_envp *list_env)
 		upd_env_value(list_env, tmp, locate, 0);
 	}
 }
+
 int main(int ac, char **av, char **env)
 {
 	char		*str;
@@ -101,11 +100,11 @@ int main(int ac, char **av, char **env)
 	envp = ft_get_envp(env);
 	list_env = ft_node_env(list_env, envp);
 	ft_up_shlvl(list_env);
-//	signal(SIGQUIT, SIG_IGN);
+	// signal(SIGQUIT, SIG_IGN);
 	while (1)
     {
-		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, handler);
+		signal(SIGQUIT, SIG_IGN);
         str = readline("bash:");
         if (str && *str)
         {

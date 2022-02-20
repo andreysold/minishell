@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/19 14:45:16 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/20 14:12:37 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -486,11 +486,7 @@ int builtins(t_comm *lst, char **env)
 
 	bool = check_builtin(lst, env);
 	if (bool == EXIT_SUCCESS)
-	{
-		ft_putstr_fd("1 check_builtin detected -- ", 1);
-		ft_putendl_fd(lst->command_str[0], 1);
 		return (EXIT_SUCCESS);
-	}
 	else if (bool == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (-1);

@@ -35,7 +35,7 @@ int	ft_echo(t_comm *lst)
 	return (EXIT_SUCCESS);
 }
 
-static inline void	upd_oldpwd(const t_comm *lst)
+/*static inline void	upd_oldpwd(const t_comm *lst)
 {
 	int		location;
 	char	*old_path;
@@ -51,7 +51,7 @@ static inline void	upd_oldpwd(const t_comm *lst)
 	{
 		upd_env_value(lst->e, old_path, location, 1);
 	}
-}
+}*/
 
 static inline int	search_path(const t_comm *lst, char	**new_path)
 {

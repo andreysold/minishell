@@ -102,15 +102,34 @@ t_envp *ft_node_env(t_envp *e, char **env)
 	return (e);
 }
 
+int ft_cnode(t_envp *l)
+{
+	int i;
+	t_envp *tmp;
+
+	i = 0;
+	tmp = l;
+	while (tmp)
+	{
+		i++;
+		tmp= tmp->next;
+	}
+	return (i);
+}
+
+
 char	**ft_update_env(t_envp *l_envp)
 {
 	int		i;
 	t_envp	*tmp;
 	char	*clean;
 	char	**new_env;
+	int count;
 
+	count = ft_cnode(l_envp);
+	l_envp->count = count;
 	tmp = l_envp;
-	new_env = malloc(sizeof(char *) * tmp->count + 1);
+	new_env = malloc(sizeof(char *) * count + 1);
 	if (!new_env)
 		return (NULL);
 	i = 0;
@@ -140,40 +159,19 @@ char	**ft_update_env(t_envp *l_envp)
 void	clean_env(char **env, t_comm *lst)
 {
 	int	i;
+	int	len;
 
 	i = 0;
 	if (env)
 	{
 		while (i < lst->e->count) //todo mb + 1
 		{
-
 			free(env[i]);
 			i++;
 		}
 		free(env[i]);
 		free(env);
 	}
-}
-
-int ft_process4(char *str, t_envp *envp)
-{
-	t_comm	*lst;
-	char	**env;
-
-	env = ft_update_env(envp);
-	lst = malloc(sizeof(t_comm));
-	if (!lst)
-		return (-1);
-	ft_memset((void *)lst, 0, sizeof(t_comm));
-	lst = ft_parser4(lst, str, envp);
-/*	if (executor(lst, env) == -1)
-		return (1);*/
-	executor(lst, env);
-	if (env)
-		clean_env(env, lst);
-	//env = ft_update_env(envp); /////
-	// ft_free_list(lst);
-	return (0);
 }
 
 void	ft_no_malloc(char **str)
@@ -227,13 +225,34 @@ int ft_check_str(char *str)
     return (1);
 }
 
+int ft_process4(char *str, t_envp *envp)
+{
+	t_comm	*lst;
+	char	**env;
+
+	env = ft_update_env(envp);
+	lst = malloc(sizeof(t_comm));
+	if (!lst)
+		return (-1);
+	ft_memset((void *)lst, 0, sizeof(t_comm));
+	lst = ft_parser4(lst, str, envp);
+/*	if (executor(lst, env) == -1)
+		return (1);*/
+	executor(lst, env);
+	if (env)
+		clean_env(env, lst);
+	//env = ft_update_env(envp); /////
+	// ft_free_list(lst);
+	return (0);
+}
+
 int main(void)
 {
 	char		*str;
 	char		*name;
 	t_envp		*l_envp;
 	extern char	**environ;
-	
+
 	l_envp = malloc(sizeof(t_envp));
 	if (!l_envp)
 		return (-1);

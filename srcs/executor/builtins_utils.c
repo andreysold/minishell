@@ -47,7 +47,6 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 	tmp = envp;
 	while (tmp)
 	{
-
 		if (i == location)
 		{
 			printf("!!! upd val %s\n", tmp->key);
@@ -62,7 +61,8 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 		if (origin)
 			tmp->value_orig = ft_strdup(new_value);
 		else
-			tmp->value = ft_strdup(new_value); //todo do i need strdup?
+			tmp->value = new_value;
+//			tmp->value = ft_strdup(new_value); //todo do i need strdup?
 	}
 }
 

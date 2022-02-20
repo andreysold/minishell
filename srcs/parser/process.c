@@ -89,9 +89,9 @@ t_comm *ft_return_node(t_comm *lst)
         if (lst->last_str)
         {
             lst->last_str = ft_destroy_space4(lst->last_str, lst);
-            lst->command_str = ft_split(lst->last_str, ' ');
+            lst->cmd = ft_split(lst->last_str, ' ');
             free (lst->last_str);
-            lst->command_str = ft_return_space(lst->command_str);
+            lst->cmd = ft_return_space(lst->cmd);
         }
         lst = lst->next;
     }

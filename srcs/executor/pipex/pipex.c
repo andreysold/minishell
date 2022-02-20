@@ -73,10 +73,10 @@ static inline void heredoc(t_comm *tmp)
 	while (1)
 	{
 		str = readline("> ");
-		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
-		{
+		if (ft_strncmp(str, tmp->here, here_len + 1) == 0)
 			break ;
-		}
+		else if (str == NULL)
+			break ;
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
@@ -165,6 +165,13 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 	}
 }
 
+void	bash_error(char *first_part, char *cmd, char *last_part)
+{
+	ft_putstr_fd(first_part, 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putendl_fd(last_part, 2);
+}
+
 int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
@@ -200,12 +207,10 @@ int pipex(t_comm *lst, char **env)
 			bool = builtins(tmp, env);
 			if (bool != -1)
 				exit (bool);
-			if (execve(find_command_path(tmp->command_str[0], env),
-					   tmp->command_str, env) == -1)
+			if (execve(find_command_path(tmp->cmd[0], env),
+					   tmp->cmd, env) == -1)
 			{
-				ft_putstr_fd("bash: ", 2);
-				ft_putstr_fd(tmp->command_str[0], 2);
-				ft_putendl_fd(": command not found", 2);
+				bash_error("bash: ", tmp->cmd[0], ": command not found");
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -218,7 +223,7 @@ int pipex(t_comm *lst, char **env)
 	tmp = lst;
 	close_pipes(pipes, tmp->count_node);
 	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
-	wait_childs( tmp->count_node);
+	wait_childs(tmp->count_node);
 //	i = 0;
 //	while (i < 2 * (lst->count_node - 1))
 	free(pipes);

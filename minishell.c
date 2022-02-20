@@ -1,11 +1,22 @@
-#include <sys/stat.h> //fixme delete
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/02/20 20:46:12 by wjonatho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "minishell.h"
 
 void	ft_free_list(t_comm *lst)
 {
-	t_comm *head;
-	t_envp *head2;
+	int		i;
+	t_comm	*head;
+	t_envp	*head2;
 
 	// while (lst->e)
 	// {
@@ -19,31 +30,32 @@ void	ft_free_list(t_comm *lst)
 	// 	free (head2);
 	// }
 	while (lst)
-    {
-        head = lst;
-        if (lst->command_str)
-        {
-            int i = 0;
-            while (lst->command_str[i])
-                i++;
-            ft_no_malloc(lst->command_str);
-        }
-        lst = lst->next;
-        free (head);
-    }
+	{
+		head = lst;
+		if (lst->cmd)
+		{
+			i = 0;
+			while (lst->cmd[i])
+				i++;
+			ft_no_malloc(lst->cmd);
+		}
+		lst = lst->next;
+		free (head);
+	}
 }
 
-char *ft_get_key(int count, char **env)
+char	*ft_get_key(int count, char **env)
 {
-	char *str;
-	int i;
+	char	*str;
+	int		i;
+	int		z;
 
 	i = 0;
 	while (env[i])
 	{
 		if (i == count)
 		{
-			int z = 0;
+			z = 0;
 			while (env[i][z] && env[i][z] != '=')
 				z++;
 			str = ft_substr(env[i], 0, z);
@@ -54,17 +66,18 @@ char *ft_get_key(int count, char **env)
 	return (str);
 }
 
-char *ft_get_value(int count, char **env)
+char	*ft_get_value(int count, char **env)
 {
-	char *str;
-	int i;
+	char	*str;
+	int		i;
+	int		z;
 
 	i = 0;
 	while (env[i])
 	{
 		if (i == count)
 		{
-			int z = 0;
+			z = 0;
 			while (env[i][z] && env[i][z] != '=')
 				z++;
 			str = ft_substr(env[i], z + 1, ft_strlen(env[i]) - z);
@@ -75,14 +88,12 @@ char *ft_get_value(int count, char **env)
 	return (str);
 }
 
-t_envp *ft_node_env(t_envp *e, char **env)
+t_envp	*ft_node_env(t_envp *e, char **env)
 {
-	int i;
-	int count;
-	t_envp *tmp;
+	int		count;
+	t_envp	*tmp;
 
 	count = 0;
-	i = 0;
 	while (env[count])
 		count++;
 	e = NULL;
@@ -102,21 +113,20 @@ t_envp *ft_node_env(t_envp *e, char **env)
 	return (e);
 }
 
-int ft_cnode(t_envp *l)
+int	ft_cnode(t_envp *l)
 {
-	int i;
-	t_envp *tmp;
+	int	i;
+	t_envp	*tmp;
 
 	i = 0;
 	tmp = l;
 	while (tmp)
 	{
 		i++;
-		tmp= tmp->next;
+		tmp = tmp->next;
 	}
 	return (i);
 }
-
 
 char	**ft_update_env(t_envp *l_envp)
 {
@@ -176,7 +186,7 @@ void	clean_env(char **env, t_comm *lst)
 
 void	ft_no_malloc(char **str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -187,11 +197,12 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-char **ft_get_envp(char **env)
+char	**ft_get_envp(char **env)
 {
-	char **envp;
-	int i = 0;
+	int		i;
+	char	**envp;
 
+	i = 0;
 	while (env[i])
 		i++;
 	envp = (char **)malloc(sizeof(char *) * i + 1);
@@ -207,25 +218,25 @@ char **ft_get_envp(char **env)
 	return (envp);
 }
 
-int ft_check_str(char *str)
+int	ft_check_str(char *str)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (str[i])
-    {
-        if (str[i] == '>' && !(ft_isdigit(str[i + 1])))
-        {
-            i += 2;
-            if (str[i] == '>')
-                return (-1);
-        }
-        i++;
-    }
-    return (1);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '>' && !(ft_isdigit(str[i + 1])))
+		{
+			i += 2;
+			if (str[i] == '>')
+				return (-1);
+		}
+		i++;
+	}
+	return (1);
 }
 
-int ft_process4(char *str, t_envp *envp)
+int	ft_process4(char *str, t_envp *envp)
 {
 	t_comm	*lst;
 	char	**env;
@@ -246,7 +257,7 @@ int ft_process4(char *str, t_envp *envp)
 	return (0);
 }
 
-int main(void)
+int	main(void)
 {
 	char		*str;
 	char		*name;
@@ -271,9 +282,11 @@ int main(void)
 			// }
 			// else
 				// free (str);
+
 		}
 		else if (str == NULL)
 			exit (0);
 	}
+	free(str);
 	//ft_n//o_malloc(l_envp); //fixme
 }

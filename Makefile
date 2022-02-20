@@ -8,8 +8,9 @@ SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins.c \
-			srcs/executor/builtins_utils.c
+			srcs/executor/builtins/ft_export.c \
+			srcs/executor/builtins/builtins.c \
+			srcs/executor/builtins/builtins_utils.c
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \

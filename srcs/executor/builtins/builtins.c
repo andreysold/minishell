@@ -19,14 +19,14 @@ int	ft_echo(t_comm *lst)
 
 	i = 1;
 	n_flag = 0;
-	while(lst->command_str[i] && !ft_strncmp(lst->command_str[i], "-n", 3))
+	while (lst->cmd[i] && !ft_strncmp(lst->cmd[i], "-n", 3))
 	{
 		n_flag = 1;
 		i++;
 	}
-	while (lst->command_str[i])
+	while (lst->cmd[i])
 	{
-		ft_putstr_fd(lst->command_str[i], 1);
+		ft_putstr_fd(lst->cmd[i], 1);
 		ft_putchar_fd(' ', 1);
 		i++;
 	}
@@ -59,13 +59,13 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 	int		pos;
 	char	*home;
 
-	if (lst->command_str[1] == NULL) //todo check is there NULL
+	if (lst->cmd[1] == NULL) //todo check is there NULL
 	{
 		pos = locate_env_key(lst->e,"HOME", 0);
 		if (pos == -1)
 		{
 			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(lst->command_str[0], 2);
+			ft_putstr_fd(lst->cmd[0], 2);
 			ft_putendl_fd(": HOME not set", 2);
 			return (EXIT_FAILURE);
 		}
@@ -78,10 +78,10 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 				upd_env_value(lst->e, home, pos, 0);
 		}
 	}
-	else if (ft_strncmp(lst->command_str[1], "", 1) == 0) //FIXME doesn't work
+	else if (ft_strncmp(lst->cmd[1], "", 1) == 0) //FIXME doesn't work
 		return (EXIT_FAILURE);
 	else
-		*new_path = lst->command_str[1];
+		*new_path = lst->cmd[1];
 	return (EXIT_SUCCESS);
 }
 
@@ -97,7 +97,7 @@ int	ft_cd(t_comm *lst)
 	int		location;
 	char	*buf;
 
-//	printf("|>%s<|\n", lst->command_str[1]);
+//	printf("|>%s<|\n", lst->cmd[1]);
 	buf = NULL;
 	location = locate_env_key(lst->e, "OLDPWD", 0);
 	if (location != -1)
@@ -124,114 +124,6 @@ int	ft_pwd(t_comm *lst)
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
 		upd_env_value(lst->e, pwd, location, 0);
-	return (EXIT_SUCCESS);
-}
-
-int check_export_arg(t_comm *copy, int i, char **key, char **value)
-{
-	int	j;
-	int	value_start;
-
-	j = 0;
-	value_start = 0;
-	while (copy->command_str[i][j])
-	{
-		//word should start with letter
-		if (j == 0 && ft_isalpha(copy->command_str[i][j]) == 0)
-		{
-			return (EXIT_FAILURE);
-		}
-		else if (j != 0)
-		{
-			if (copy->command_str[i][j] == '=')
-			{
-				if (copy->command_str[i][j++])
-				{
-//					j++;
-					value_start = j;
-					while (copy->command_str[i][j])
-						j++;
-					*value = ft_substr(copy->command_str[i], value_start, j + 1);
-					//fixme free
-				}
-				else
-					break ;
-
-			}
-			else if ((copy->command_str[i][j + 1] && copy->command_str[i][j + 1] == '=') || !copy->command_str[i][j + 1])
-			{
-				*key = ft_substr(copy->command_str[i], 0, j + 1); //fixme free
-			}
-			else if (ft_isalnum(copy->command_str[i][j]) == 0)
-				return (EXIT_FAILURE);
-//			else //todo check condition, if alnum fail go to error
-//				break ; //feel it could stop all while
-		}
-		j++;
-	}
-	return (EXIT_SUCCESS);
-}
-
-int	ft_export(t_comm *lst) //todo there is no ascii output
-{
-	int location;
-	char *key;
-	char *value;
-	t_comm	*copy;
-	t_envp	*tmp;
-	int		i;
-	int		j;
-
-	if (lst->command_str[1] == NULL)
-	{
-		tmp = lst->e;
-		while (tmp)
-		{
-			if (tmp->key)
-			{
-				ft_putstr_fd("declare -x ", STDOUT_FILENO);
-				ft_putstr_fd(tmp->key,STDOUT_FILENO);
-				if (tmp->value)
-				{
-					ft_putstr_fd("=\"", STDOUT_FILENO);
-					ft_putstr_fd(tmp->value, STDOUT_FILENO);
-					ft_putchar_fd('\"', STDOUT_FILENO);
-				}
-				ft_putchar_fd('\n', STDOUT_FILENO);
-			}
-			tmp = tmp->next;
-		}
-	}
-	else
-	{
-		i = 1;
-		copy = lst;
-		while (copy->command_str[i])
-		{
-			key = NULL;
-			value = NULL;
-			if (check_export_arg(copy, i, &key, &value))
-			{
-				ft_putstr_fd("bash: export: \'", 2);
-				ft_putstr_fd(copy->command_str[i], 2);
-				ft_putendl_fd("\': not a valid identifier", 2);
-			}
-//			printf("<key>-<value> :: <%s>-<%s>\n", key, value);
-			if (key)
-			{
-				location = locate_env_key(copy->e, key, 0);
-				//todo check if copy may move
-				if (location == -1)
-					add_to_env(copy->e, key, value, 0);
-				else
-					upd_env_value(copy->e, value, location, 0);
-				free(key);
-				if (value)
-					free(value);
-			}
-			i++;
-		}
-	}
 	return (EXIT_SUCCESS);
 }
 
@@ -265,7 +157,7 @@ int	ft_unset(t_comm *lst)
 		j = 1;
 		len = (int)ft_listlen(prev);
 		printf("%s len - %d\n", RED, len);
-		location = locate_env_key(prev, lst->command_str[1], 0);
+		location = locate_env_key(prev, lst->cmd[1], 0);
 		if (location == -1 || len <= 0 || location + 1 > len)
 			return (EXIT_FAILURE);
 		printf("%s locat - %d\n", GREEN, location);
@@ -306,31 +198,31 @@ int ft_env(t_comm *lst)
 
 int check_builtin(t_comm *lst, char **env)
 {
-	if (ft_strncmp(*lst->command_str, "echo", 5) == 0) ///'-n' should work
+	if (ft_strncmp(*lst->cmd, "echo", 5) == 0) ///'-n' should work
 	{
 		return (ft_echo(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "cd", 3) == 0) ///'only a relative or absolute path'
+	else if (ft_strncmp(*lst->cmd, "cd", 3) == 0) ///'only a relative or absolute path'
 	{
 		return (ft_cd(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "pwd", 4) == 0)
+	else if (ft_strncmp(*lst->cmd, "pwd", 4) == 0)
 	{
 		return (ft_pwd(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "export", 7) == 0)
+	else if (ft_strncmp(*lst->cmd, "export", 7) == 0)
 	{
 		return (ft_export(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "unset", 6) == 0)
+	else if (ft_strncmp(*lst->cmd, "unset", 6) == 0)
 	{
 		return (ft_unset(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "env", 4) == 0) /// 'no arguments'
+	else if (ft_strncmp(*lst->cmd, "env", 4) == 0) /// 'no arguments'
 	{
 		return (ft_env(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "exit", 5) == 0)
+	else if (ft_strncmp(*lst->cmd, "exit", 5) == 0)
 	{
 		//ft_exit();
 	}
@@ -345,7 +237,7 @@ int builtins(t_comm *lst, char **env)
 	if (bool == EXIT_SUCCESS)
 	{
 		ft_putstr_fd("1 check_builtin detected -- ", 1);
-		ft_putendl_fd(lst->command_str[0], 1);
+		ft_putendl_fd(lst->cmd[0], 1);
 		return (EXIT_SUCCESS);
 	}
 	else if (bool == EXIT_FAILURE)

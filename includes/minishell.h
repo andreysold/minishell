@@ -1,33 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/20 20:40:14 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/02/20 20:40:20 by wjonatho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "../srcs/libft/libft.h"
-#include <fcntl.h>
-#include <errno.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include "../srcs/libft/libft.h"
+# include <fcntl.h>
+# include <errno.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
-#define FD_UNUSED	-2
+# define FD_UNUSED	-2
 
 /**********COLOR**********/
-#define RESET	"\033[0m"
-#define RED		"\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
+# define RESET	"\033[0m"
+# define RED		"\033[31m"
+# define GREEN   "\033[32m"
+# define YELLOW  "\033[33m"
+# define BLUE    "\033[34m"
 
 typedef struct s_iterat // итераторы для подгонки под норму
 {
-	int i;
-	int j;
-	int k;
-	int z;
-	int l;
-	int pos;
-	int foq; // flag on quotes
+	int	i;
+	int	j;
+	int	k;
+	int	z;
+	int	l;
+	int	pos;
+	int	foq; // flag on quotes
 }	t_iter;
 
 typedef struct s_redir
@@ -38,7 +50,7 @@ typedef struct s_redir
 	char	*tmp4;
 }	t_redir;
 
-typedef struct s_envp 
+typedef struct s_envp
 {
 	char			*key;
 	char			*value;
@@ -50,7 +62,7 @@ typedef struct s_envp
 
 typedef struct s_comm
 {
-	char			**command_str; // двумернный массив из las_str(separator ' ')
+	char			**cmd; // двумернный массив из las_str(separator ' ')
 	char			*last_str; // подмножество строки
 	int				infile;
 	int				outfile;
@@ -67,7 +79,8 @@ typedef struct s_comm
 }	t_comm;
 
 int		pipex(t_comm *lst, char **env);
-int		executor(t_comm * lst, char **env);
+int		executor(t_comm *lst, char **env);
+void	bash_error(char *first_part, char *cmd, char *last_part);
 
 /**********BUILTIN**********/
 int		builtins(t_comm *lst, char **env);
@@ -75,6 +88,7 @@ int		check_builtin(t_comm *lst, char **env);
 int		ft_echo(t_comm *tmp);
 int		ft_cd(t_comm *lst);
 int		ft_pwd(t_comm *lst);
+int		ft_export(t_comm *lst);
 
 /**********BUILTIN_UTILS****/
 char	*get_env_value(t_envp *envp, int location, int origin);
@@ -82,19 +96,17 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin);
 void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
 int		locate_env_key(t_envp *envp, char *key, int origin);
 
-
 int		ft_lexer(char *str);
 int		ft_process4(char *str, t_envp *envp);
 int		ft_count_node(char *str);
 
 void	ft_no_malloc(char **str);
-int		ft_lexer(char *str);
 char	*ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
 char	*ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
 char	*ft_tream(char *str);
 char	**ft_return_space(char **str);
 int		ft_dol_str(char *str, t_comm *lst);
-t_comm	*ft_parser4(t_comm *lst, char *str,  t_envp *e);
+t_comm	*ft_parser4(t_comm *lst, char *str, t_envp *e);
 char	*ft_destroy_space4(char *str, t_comm *lst);
 char	*ft_shit_dollar(char *str, t_comm *lst, int *i, int *j);
 char	*ft_add_space(char *str);

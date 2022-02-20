@@ -20,8 +20,6 @@ void close_pipes(int *pipes, int count_node)
 
 	i = 0;
 	n = 2 * (count_node - 1);
-	/*printf("%s!! %d %s\n", RED, n,   RESET);
-	fflush(NULL);*/
 	while (i < n)
 		close(pipes[i++]);
 }
@@ -167,9 +165,6 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 	}
 }
 
-
-
-
 int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
@@ -182,7 +177,7 @@ int pipex(t_comm *lst, char **env)
 	int bool;
 
 	tmp = lst;
-	pipes = open_pipes(tmp);
+	pipes = open_pipes(tmp); //todo malloc
 	kind = START;
 	i = 0;
 	while (tmp != NULL)
@@ -224,5 +219,8 @@ int pipex(t_comm *lst, char **env)
 	close_pipes(pipes, tmp->count_node);
 	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs( tmp->count_node);
+//	i = 0;
+//	while (i < 2 * (lst->count_node - 1))
+	free(pipes);
 	return (EXIT_SUCCESS);
 }

@@ -40,13 +40,13 @@ typedef struct s_redir
 
 typedef struct s_envp 
 {
-    char *key;
-    char *value;
-	char *key_orig;
-	char *value_orig;
-	int	 count;
-    struct s_envp *next;
-}   t_envp;
+	char			*key;
+	char			*value;
+	char			*key_orig;
+	char			*value_orig;
+	int				count;
+	struct s_envp	*next;
+}	t_envp;
 
 typedef struct s_comm
 {
@@ -54,27 +54,27 @@ typedef struct s_comm
 	char			*last_str; // подмножество строки
 	int				infile;
 	int				outfile;
-    char            **str_tl;
+	char			**str_tl;
 	char			*here;
 	int				count_word;
 	int				count_node;
-    char            *tmp;
-    int             fl;
-    t_envp          *e;
-    char            *name; // name of files
+	char			*tmp;
+	int				fl;
+	t_envp			*e;
+	char			*name; // name of files
 	t_iter			t; // структура итераторов
 	struct s_comm	*next;
 }	t_comm;
 
-int	pipex(t_comm *lst, char **env);
-int	executor(t_comm * lst, char **env);
+int		pipex(t_comm *lst, char **env);
+int		executor(t_comm * lst, char **env);
 
 /**********BUILTIN**********/
-int	builtins(t_comm *lst, char **env);
-int	check_builtin(t_comm *lst, char **env);
-int	ft_echo(t_comm *tmp);
-int	ft_cd(t_comm *lst);
-int	ft_pwd(t_comm *lst);
+int		builtins(t_comm *lst, char **env);
+int		check_builtin(t_comm *lst, char **env);
+int		ft_echo(t_comm *tmp);
+int		ft_cd(t_comm *lst);
+int		ft_pwd(t_comm *lst);
 
 /**********BUILTIN_UTILS****/
 char	*get_env_value(t_envp *envp, int location, int origin);
@@ -83,25 +83,25 @@ void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
 int		locate_env_key(t_envp *envp, char *key, int origin);
 
 
-int	ft_lexer(char *str);
-int	ft_process4(char *str, t_envp *envp);
-int	ft_count_node(char *str);
+int		ft_lexer(char *str);
+int		ft_process4(char *str, t_envp *envp);
+int		ft_count_node(char *str);
 
-void ft_no_malloc(char **str);
-int	ft_lexer(char *str);
-char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
-char *ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
-char *ft_tream(char *str);
-char **ft_return_space(char **str);
-int ft_dol_str(char *str, t_comm *lst);
-t_comm *ft_parser4(t_comm *lst, char *str,  t_envp *e);
-char *ft_destroy_space4(char *str, t_comm *lst);
-char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j);
-char *ft_add_space(char *str);
-void ft_count_node2(char *str, int *i, char c);
-t_comm *ft_check_redir(t_comm *lst);
-int ft_check_str(char *str);
-char *ft_new_sub(int i, t_comm *lst, char *str, int begin);
-void    ft_skip_sp(char *str, int *i, int *begin);
-char *ft_open_file(char *str, int *i, int *j, t_comm *lst);
+void	ft_no_malloc(char **str);
+int		ft_lexer(char *str);
+char	*ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
+char	*ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
+char	*ft_tream(char *str);
+char	**ft_return_space(char **str);
+int		ft_dol_str(char *str, t_comm *lst);
+t_comm	*ft_parser4(t_comm *lst, char *str,  t_envp *e);
+char	*ft_destroy_space4(char *str, t_comm *lst);
+char	*ft_shit_dollar(char *str, t_comm *lst, int *i, int *j);
+char	*ft_add_space(char *str);
+void	ft_count_node2(char *str, int *i, char c);
+t_comm	*ft_check_redir(t_comm *lst);
+int		ft_check_str(char *str);
+char	*ft_new_sub(int i, t_comm *lst, char *str, int begin);
+void	ft_skip_sp(char *str, int *i, int *begin);
+char	*ft_open_file(char *str, int *i, int *j, t_comm *lst);
 #endif

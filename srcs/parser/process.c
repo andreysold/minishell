@@ -78,12 +78,9 @@ char *ft_destroy_space4(char *str, t_comm *lst)
                 i++;
             lst->tmp[j++] = ' ';
         }
-        // else if (str[i] == '\\')  
-        //     i++;
         else
             lst->tmp[j++] = str[i++];
     }
-    
     lst->tmp[j] = '\0';
     free (str);
     return (lst->tmp);
@@ -153,6 +150,7 @@ t_comm *ft_create_nodes(t_comm *lst, char **str_tl, int count_nd, t_envp *e)
         tmp = malloc(sizeof(t_comm));
         if (!tmp)
             return (NULL);
+        ft_memset((void *)tmp, 0, sizeof(t_comm));
         tmp->last_str = ft_strdup(str_tl[count_nd]);
         tmp->last_str = ft_new_str(tmp->last_str);
         tmp->count_node = c;

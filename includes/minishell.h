@@ -89,7 +89,7 @@ char	*get_env_value(t_envp *envp, int location, int origin);
 void	upd_env_value(t_envp *envp, char *new_value, int location, int origin);
 void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
 int		locate_env_key(t_envp *envp, char *key, int origin);
-
+char *ft_global_value(char *str, t_comm *lst, int *i, int *j);
 
 int	ft_lexer(char *str);
 int	ft_process4(char *str, t_envp *list_env);

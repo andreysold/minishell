@@ -6,12 +6,16 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 18:36:18 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/21 18:43:33 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <crt_externs.h>
 #include "pipex.h"
+#include <termios.h>
+
+#include <sys/types.h>
+#include <unistd.h>
 
 void	handler22(int sig)
 {
@@ -105,14 +109,24 @@ void	handler_her(int sig)
 void	ff(int sig)
 {
 	(void) sig;
+	write(1, "\n", 1);
 	rl_on_new_line();
-	rl_redisplay();
-	write(1,"  \b\b\n", 5);
-	rl_on_new_line();
-	rl_replace_line("", 1);
-	rl_redisplay();
+	// rl_on_new_line();
+	// rl_redisplay();
+	// write(1,"  \b\b\n", 5);
+	// rl_on_new_line();
+	// rl_replace_line("", 0);
+	// rl_redisplay();
 	g_error_status = 1;
+	// write(1, "a\n", 2);
+	exit (g_error_status);
 }
+
+
+
+
+
+
 static inline void heredoc(t_comm *tmp)
 {
 	char	*str;
@@ -121,19 +135,17 @@ static inline void heredoc(t_comm *tmp)
 	here_len = (int)ft_strlen(tmp->here);
 	while (1)
 	{
-		// signal(SIGQUIT, SIG_IGN);
-		// signal(SIGINT, ff);
-		signal(SIGINT, ff);
 		str = readline("> ");
 		if (str == NULL)
 			break ;
-		else if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
+		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
 			break ;
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
 	free(str);
 }
+
 
 static inline void redirect(t_comm *tmp)
 {
@@ -154,9 +166,7 @@ static inline void redirect(t_comm *tmp)
 		perror("1redirect:");
 	err = 0;
 	if (tmp->outfile != FD_UNUSED)
-	{
 		err = dup2(tmp->outfile, STDOUT_FILENO);
-	}
 	if (err != 0)
 		perror("2redirect:");
 }
@@ -238,26 +248,21 @@ void	handler2(int sig)
 }
 int pipex(t_comm *lst, char **env)
 {
-	//for test:  ls -l | head -6 | cut -b 1-10
-	// echo p | echo r | echo i | echo v | echo e | echo t
+
 	int		i;
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
-	pid_t pid;
+	pid_t 	pid;
 	int bool;
+	int status;
 
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	// signal(SIGQUIT, handler22);
-	// signal(SIGINT, handler22);
-	// signal(SIGQUIT, handler22);
 	while (tmp != NULL)
 	{
-		// signal(SIGINT, handler22);
-		// signal(SIGQUIT, handler22);
 		if (tmp->count_node == 1)
 		{
 			bool = builtins(tmp, env);
@@ -265,23 +270,26 @@ int pipex(t_comm *lst, char **env)
 				return (bool);
 			if (tmp->here != NULL)
 			{
-				// signal(SIGINT, SIG_DFL);
-				// signal(SIGQUIT, SIG_IGN);
-				// signal(SIGINT, ff);
-				if (fork() == 0) /// test cmd < 21 << pop | cmd << pop < 21
+				pid = fork();
+				if (pid != 0)
+					signal(SIGINT, SIG_IGN);
+				if (pid == 0) /// test cmd < 21 << pop | cmd << pop < 21
 				{
-					// signal(SIGINT, SIG_DFL);
+					signal(SIGINT, ff);
 					heredoc(tmp);
 					close(tmp->infile);
+					unlink(".tmp");
+					exit(0);
 				}
-				wait(NULL);
+				wait(&status);
+				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+					return (g_error_status);
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}
 		signal(SIGINT, handler22);
 		signal(SIGQUIT, handler22);
-		pid = fork();
-		if (pid == 0)
+		if (fork() == 0)
 		{
 			if (tmp->count_node > 1)
 				pipe_switch(i, kind, pipes, tmp);
@@ -303,7 +311,6 @@ int pipex(t_comm *lst, char **env)
 			}
 			// signal(SIGQUIT, SIG_IGN);
 		}
-
 		if (tmp->here)
 			unlink(".tmp");
 		kind = cmd_position(kind, tmp);

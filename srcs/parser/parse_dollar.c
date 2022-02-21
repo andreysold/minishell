@@ -30,7 +30,7 @@ int ft_func(char *str, int i, t_comm *lst)
     tmp = ft_substr(str, z, count);
     while (head != NULL)
     {
-        if (ft_strncmp(tmp, head->key, ft_strlen(tmp)) == 0)
+        if (ft_strncmp(tmp, head->key, ft_strlen(head->key)) == 0)
         {
             lst->fl = 1;
             free (tmp);
@@ -71,7 +71,7 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
     tmp = ft_substr(str, z, c);
     while (head != NULL)
     {
-        if (ft_strncmp(tmp, head->key, ft_strlen(tmp)) == 0)
+        if (ft_strncmp(tmp, head->key, ft_strlen(head->key)) == 0)
         {
             lst->fl = 1;
             free (tmp);

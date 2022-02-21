@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/21 18:43:33 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/21 19:24:28 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,10 @@ int pipex(t_comm *lst, char **env)
 				}
 				wait(&status);
 				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+				{
+					g_error_status = 1;
 					return (g_error_status);
+				}
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}

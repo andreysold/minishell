@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <crt_externs.h>
 #include "pipex.h"
 
 void close_pipes(int *pipes, int count_node)
@@ -114,15 +113,18 @@ static inline int *open_pipes(t_comm *tmp)
 	int i;
 	int	*pipes;
 
-	pipes = ft_calloc(sizeof(int), 2 * (tmp->count_node - 1));
-	if (!(pipes))
-		perror("open_pipes: can't malloc");
-	i = 0;
-	while (i < (tmp->count_node - 1))
+	if (tmp->count_node > 1)
 	{
-		if (pipe(pipes + 2 * i) == -1)
-			perror("open_pipes: can't open pipe");
-		i++;
+		pipes = ft_calloc(sizeof(int), 2 * (tmp->count_node - 1));
+		if (!(pipes))
+			perror("open_pipes: can't malloc");
+		i = 0;
+		while (i < (tmp->count_node - 1))
+		{
+			if (pipe(pipes + 2 * i) == -1)
+				perror("open_pipes: can't open pipe");
+			i++;
+		}
 	}
 	return (pipes);
 }
@@ -224,8 +226,7 @@ int pipex(t_comm *lst, char **env)
 	close_pipes(pipes, tmp->count_node);
 	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs(tmp->count_node);
-//	i = 0;
-//	while (i < 2 * (lst->count_node - 1))
-	free(pipes);
+	if (lst->count_node > 1)
+		free(pipes);
 	return (EXIT_SUCCESS);
 }

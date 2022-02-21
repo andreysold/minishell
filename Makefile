@@ -1,8 +1,8 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 #-Wall -Wextra -Werror
-RLFLAG	=	-lreadline
+CFLAGS	=	-I./includes -ggdb3 -I../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline  #-Wall -Wextra -Werror
+RLFLAG	=	-L../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/lib -lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
@@ -31,7 +31,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
+			$(CC) -o $(NAME) $(OBJS) $(RLFLAG) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h

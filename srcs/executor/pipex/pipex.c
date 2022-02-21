@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/18 17:41:34 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/20 18:36:18 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void close_pipes(int *pipes, int count_node)
 
 	i = 0;
 	n = 2 * (count_node - 1);
-	/*printf("%s!! %d %s\n", RED, n,   RESET);
-	fflush(NULL);*/
 	while (i < n)
 		close(pipes[i++]);
 }
@@ -92,15 +90,28 @@ static inline void close_in_out_file(t_comm *tmp)
 
 void	handler_her(int sig)
 {
-	(void)sig;
+	// (void)sig;
+	if (sig == SIGINT)
+	{
+	// printf("A\n");
+		g_error_status = 1;
+		exit (g_error_status);
+	}
+	// if (sig == SIGQUIT)
+	// {
+
+	// }
+}
+void	ff(int sig)
+{
+	(void) sig;
 	rl_on_new_line();
 	rl_redisplay();
-	write(1,"\b\n", 2);
+	write(1,"  \b\b\n", 5);
 	rl_on_new_line();
 	rl_replace_line("", 1);
 	rl_redisplay();
 	g_error_status = 1;
-	exit (g_error_status);
 }
 static inline void heredoc(t_comm *tmp)
 {
@@ -108,18 +119,19 @@ static inline void heredoc(t_comm *tmp)
 	int		here_len;
 
 	here_len = (int)ft_strlen(tmp->here);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, handler_her);
 	while (1)
 	{
-		signal(SIGQUIT, SIG_IGN);
+		// signal(SIGQUIT, SIG_IGN);
+		// signal(SIGINT, ff);
+		signal(SIGINT, ff);
 		str = readline("> ");
-		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
+		if (str == NULL)
+			break ;
+		else if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
 			break ;
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
-	//signal(SIGQUIT, handler);
 	free(str);
 }
 
@@ -130,13 +142,12 @@ static inline void redirect(t_comm *tmp)
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
 	{
-	//	signal(SIGQUIT, handler);
-		if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
-		{
-			heredoc(tmp);
-			close(tmp->infile);
-			tmp->infile = open(".tmp", O_RDONLY);
-		}
+		// if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
+		// {
+		// 	heredoc(tmp);
+		// 	close(tmp->infile);
+		// 	tmp->infile = open(".tmp", O_RDONLY);
+		// }
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
 	if (err != 0)
@@ -215,12 +226,14 @@ void	handler2(int sig)
 		(void) sig;
 		write(2, "\n", 1);
 		g_error_status = 130;
+		// exit (0);
 	}
 	if (sig == SIGQUIT)
 	{
 		(void) sig;
 		write(2, "Quit: 3\n", 8);
 		g_error_status = 131;
+		// exit (0);
 	}
 }
 int pipex(t_comm *lst, char **env)
@@ -234,28 +247,40 @@ int pipex(t_comm *lst, char **env)
 	pid_t pid;
 	int bool;
 
-/*	lst->outfile = FD_UNUSED;
-	lst->infile = FD_UNUSED;
-	/// open file to write heredoc
-	lst->infile = open("tmp", O_CREAT |  O_WRONLY |  O_TRUNC, 0644);
-	if (lst->infile == -1)
-		perror("Can't open");
-	lst->here = ft_strdup("pop");*/
 	tmp = lst;
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
+	// signal(SIGQUIT, handler22);
+	// signal(SIGINT, handler22);
+	// signal(SIGQUIT, handler22);
 	while (tmp != NULL)
 	{
+		// signal(SIGINT, handler22);
+		// signal(SIGQUIT, handler22);
 		if (tmp->count_node == 1)
 		{
 			bool = builtins(tmp, env);
 			if (bool != -1)
 				return (bool);
+			if (tmp->here != NULL)
+			{
+				// signal(SIGINT, SIG_DFL);
+				// signal(SIGQUIT, SIG_IGN);
+				// signal(SIGINT, ff);
+				if (fork() == 0) /// test cmd < 21 << pop | cmd << pop < 21
+				{
+					// signal(SIGINT, SIG_DFL);
+					heredoc(tmp);
+					close(tmp->infile);
+				}
+				wait(NULL);
+				tmp->infile = open(".tmp", O_RDONLY);
+			}
 		}
-		pid = fork();
-		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, handler22);
+		signal(SIGQUIT, handler22);
+		pid = fork();
 		if (pid == 0)
 		{
 			if (tmp->count_node > 1)
@@ -276,7 +301,9 @@ int pipex(t_comm *lst, char **env)
 				// g_error_status = 255;
 				exit(EXIT_FAILURE);
 			}
+			// signal(SIGQUIT, SIG_IGN);
 		}
+
 		if (tmp->here)
 			unlink(".tmp");
 		kind = cmd_position(kind, tmp);

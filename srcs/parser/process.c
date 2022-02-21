@@ -41,6 +41,31 @@ char *ft_global_value(char *str, t_comm *lst, int *i, int *j)
     free (tmp);
     return (lst->tmp);
 }
+
+char *ft_parse_condition(char *str, t_comm *lst, int *i, int *j)
+{
+    if (str[(*i)] == '\'')
+        lst->tmp = ft_one_quotes(str, lst, i, j);
+    else if (str[(*i)] == '\"')
+        lst->tmp = ft_two_quotes(str, lst, i, j);
+    else if (str[(*i)] == '>' || str[(*i)] == '<')
+        lst->tmp = ft_open_file(str, i, j, lst);
+    else if (str[(*i)] == '$' && str[(*i) + 1] == '?')
+        lst->tmp = ft_global_value(str, lst, i, j);
+    else if (str[(*i)] == '$' && (ft_isalnum(str[(*i) + 1]) || str[(*i) + 1] == '_'))   // (ft_isalnum(str[i + 1]) || str[i + 1] == '_')
+    {
+        (*i)++;
+        lst->tmp = ft_shit_dollar(str, lst, i, j);
+    }
+    else if (str[(*i)] == ' ')
+    {
+        ft_skip_space(str, i);
+        lst->tmp[(*j)++] = ' ';
+    }
+    else
+        lst->tmp[(*j)++] = str[(*i)++];
+    return (lst->tmp);
+}
 char *ft_destroy_space4(char *str, t_comm *lst)
 {
     int i;
@@ -54,33 +79,8 @@ char *ft_destroy_space4(char *str, t_comm *lst)
         return (NULL);
     i = 0;
     j = 0;
-    // g_error_status = 0;
     while (str[i])
-    {
-        if (str[i] == '\'')
-            lst->tmp = ft_one_quotes(str, lst, &i, &j);
-        else if (str[i] == '\"')
-            lst->tmp = ft_two_quotes(str, lst, &i, &j);
-        else if (str[i] == '>' || str[i] == '<')
-            lst->tmp = ft_open_file(str, &i, &j, lst);
-        else if (str[i] == '$' && str[i + 1] == '?')
-            lst->tmp = ft_global_value(str, lst, &i, &j);
-        else if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))   // (ft_isalnum(str[i + 1]) || str[i + 1] == '_')
-        {
-            i++;
-            lst->tmp = ft_shit_dollar(str, lst, &i, &j);
-        }
-        // else if (str[i] == '$' && str[i + 1] == ' ')
-        //     lst->tmp[j++] = str[i++];
-        else if (str[i] == ' ')
-        {
-            while (str[i] && str[i] == ' ')
-                i++;
-            lst->tmp[j++] = ' ';
-        }
-        else
-            lst->tmp[j++] = str[i++];
-    }
+        ft_parse_condition(str, lst, &i, &j);
     lst->tmp[j] = '\0';
     free (str);
     return (lst->tmp);

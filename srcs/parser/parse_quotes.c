@@ -20,7 +20,6 @@ char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
 	{
 		if (str[(*i)] == '$' && str[(*i) + 1] == '?')
 		{
-			// (*i)++;
 			lst->tmp = ft_global_value(str, lst, i, j);
 			continue ;
 		}

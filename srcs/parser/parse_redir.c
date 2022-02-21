@@ -45,7 +45,6 @@ char *ft_new_sub(int i, t_comm *lst, char *str, int begin)
         }
         i++;
     }
-   // printf("%s\n", lst->name);
     return (lst->name);
 }
 

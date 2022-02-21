@@ -9,10 +9,10 @@
 #include <errno.h>
 // #include <readline/readline.h>
 // #include <readline/history.h>
-// #include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
-// #include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
-#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+#include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
+#include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
+// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 // void rl_replace_line (const char *text, int clear_undo);
 // #include "../readline/readline.h"
 // #include "../readline/history.h"
@@ -29,11 +29,15 @@ int g_error_status;
 
 typedef struct s_iterat // итераторы для подгонки под норму
 {
-	int i;
-	int j;
-	int k;
+	// int i;
+	// int j;
+	// int k;
+	// int z;
+	// int l;
 	int z;
-	int l;
+    int k;
+    int c;
+    int l;
 	int pos;
 	int foq; // flag on quotes
 }	t_iter;
@@ -111,6 +115,7 @@ t_comm *ft_check_redir(t_comm *lst);
 int ft_check_str(char *str);
 char *ft_new_sub(int i, t_comm *lst, char *str, int begin);
 void    ft_skip_sp(char *str, int *i, int *begin);
+void	ft_skip_space(char *str, int *i);
 char *ft_open_file(char *str, int *i, int *j, t_comm *lst);
 int	ft_cnode(t_envp *list_env);
 t_envp *ft_node_env(t_envp *e, char **env);

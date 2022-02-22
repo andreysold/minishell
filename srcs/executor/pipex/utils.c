@@ -62,5 +62,10 @@ char	*find_command_path(char *command, char **env)
 			return (path_to_command);
 		i++;
 	}
+	free(path_to_command);
+	i = 0;
+	while (splited[i])
+		i++;
+	leak_case(i, splited);
 	return (ft_strdup(command));
 }

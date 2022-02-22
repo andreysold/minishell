@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/22 16:03:41 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/20 14:12:03 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,12 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 		if (origin)
 			tmp->value_orig = ft_strdup(new_value);
 		else
-			tmp->value = new_value;
-//			tmp->value = ft_strdup(new_value); //todo do i need strdup?
+		{
+			// if (tmp->value)
+			// 	free(tmp->value);
+			// tmp->value = new_value;
+			tmp->value = ft_strdup(new_value); //todo do i need strdup?
+		}
 	}
 }
 

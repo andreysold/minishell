@@ -76,7 +76,11 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 			*new_path = home;
 			pos = locate_env_key(lst->e,"PWD", 0);
 			if (pos != -1)
+			{
 				upd_env_value(lst->e, home, pos, 0);
+				// if (home)
+				// 	free(home);
+			}
 		}
 	}
 	else if (ft_strncmp(lst->cmd[1], "", 1) == 0) //FIXME doesn't work
@@ -94,7 +98,7 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 int	ft_cd(t_comm *lst)
 {
 	char	*new_path;
-	char	*old_path;
+	char	*clean;
 	int		location;
 	char	*buf;
 
@@ -102,14 +106,25 @@ int	ft_cd(t_comm *lst)
 	buf = NULL;
 	location = locate_env_key(lst->e, "OLDPWD", 0);
 	if (location != -1)
-		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+	{
+		clean = getcwd(buf, 0);
+		upd_env_value(lst->e, clean, location, 0);
+		if (clean)
+			free(clean);
+	}
 //	printf("%s - before origa\n", getcwd(buf, 0));
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	chdir(new_path);
+	free(new_path);
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
+	{
+		clean = getcwd(buf, 0);
 		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+		if (clean)
+			free(clean);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -125,6 +140,8 @@ int	ft_pwd(t_comm *lst)
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
 		upd_env_value(lst->e, pwd, location, 0);
+	if (pwd)
+		free(pwd);
 	return (EXIT_SUCCESS);
 }
 

@@ -1,8 +1,8 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 -I../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline  #-Wall -Wextra -Werror
-RLFLAG	=	-L../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/lib -lreadline
+CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include  #-Wall -Wextra -Werror
+RLFLAG	=	-L../../../.brew/opt/readline/lib -lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 

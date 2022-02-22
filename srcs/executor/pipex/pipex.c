@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/22 12:43:37 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/22 17:52:51 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,11 +135,10 @@ static inline void heredoc(t_comm *tmp)
 	while (1)
 	{
 		str = readline("> ");
+		if (str == NULL)
+			exit(1);
 		if (ft_strncmp(str, tmp->here, here_len + 1) == 0)
 			break ;
-		else if (str == NULL)
-			break ;
-		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
 	free(str);
@@ -281,10 +280,7 @@ int pipex(t_comm *lst, char **env)
 			{
 				pid = fork();
 				if (pid != 0)
-				{
 					signal(SIGINT, SIG_IGN);
-//					signal(SIGQUIT)
-				}
 				if (pid == 0) /// test cmd < 21 << pop | cmd << pop < 21
 				{
 					signal(SIGINT, ff);
@@ -301,6 +297,7 @@ int pipex(t_comm *lst, char **env)
 					return (g_error_status);
 				}
 				tmp->infile = open(".tmp", O_RDONLY);
+				// dup2(tmp->infile, STDIN_FILENO);
 			}
 		}
 		signal(SIGINT, handler22);

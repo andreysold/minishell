@@ -26,12 +26,15 @@ int ft_count_dol_value(char *str, int *i)
 int ft_len_value_dol(char *tmp, t_comm *lst)
 {
 	t_envp *head;
+	int len;
 
+	len = (int)ft_strlen(tmp);
 	head = lst->e;
 	lst->fl = 0;
 	while (head)
 	{
-		if (ft_strncmp(head->key, tmp , ft_strlen(tmp)) == 0 && ft_strlen(head->key) == ft_strlen(tmp)) // int len = ft_string(tmp);
+		if (ft_strncmp(head->key, tmp , ft_strlen(tmp)) == 0 
+		&& ft_strlen(head->key) == len)
 		{
 			free (tmp);
 			tmp = ft_strdup(head->value);
@@ -76,11 +79,14 @@ char *ft_get_env_val(char *tmp, t_comm *lst, int *j)
 {
 	t_envp *head;
 	int l;
+	int len;
 
+	len = (int)ft_strlen(tmp);
 	head = lst->e;
 	while (head != NULL)
 	{
-		if (ft_strncmp(tmp, head->key, ft_strlen(head->key)) == 0 && ft_strlen(tmp) == ft_strlen(head->key))
+		if (ft_strncmp(tmp, head->key, ft_strlen(head->key)) == 0
+		&& ft_strlen(head->key) == len)
 		{
 			lst->fl = 1;
 			free (tmp);

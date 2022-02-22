@@ -164,7 +164,7 @@ t_comm *ft_create_node(t_comm *lst, char *str, int c, t_envp *e)
 {
     lst = malloc(sizeof(t_comm));
 	if (!lst)
-		return (-1);
+		return (NULL);
 	ft_memset((void *)lst, 0, sizeof(t_comm));
     lst->last_str = ft_strdup(str);
     lst->last_str = ft_new_str(lst->last_str);

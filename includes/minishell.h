@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:40:14 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 20:40:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/22 14:15:18 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,13 @@
 # include "../srcs/libft/libft.h"
 # include <fcntl.h>
 # include <errno.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+// # include <readline/readline.h>
+// # include <readline/history.h>
 //#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
+
 //#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 #include "pipex.h"
 
 # define FD_UNUSED	-2

@@ -137,9 +137,9 @@ static inline void heredoc(t_comm *tmp)
 	{
 		str = readline("> ");
 		if (str == NULL)
-			break ;
+			exit (0);
 		if (ft_strncmp(str, tmp->here, here_len + 1) == 0) ///"tmp.here\0", so+1
-			break ;
+			exit (0);
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
@@ -153,15 +153,7 @@ static inline void redirect(t_comm *tmp)
 
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
-	{
-		// if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
-		// {
-		// 	heredoc(tmp);
-		// 	close(tmp->infile);
-		// 	tmp->infile = open(".tmp", O_RDONLY);
-		// }
 		err = dup2(tmp->infile, STDIN_FILENO);
-	}
 	if (err != 0)
 		perror("1redirect:");
 	err = 0;
@@ -236,14 +228,12 @@ void	handler2(int sig)
 		(void) sig;
 		write(2, "\n", 1);
 		g_error_status = 130;
-		// exit (0);
 	}
 	if (sig == SIGQUIT)
 	{
 		(void) sig;
 		write(2, "Quit: 3\n", 8);
 		g_error_status = 131;
-		// exit (0);
 	}
 }
 int pipex(t_comm *lst, char **env)
@@ -283,10 +273,7 @@ int pipex(t_comm *lst, char **env)
 				}
 				wait(&status);
 				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
-				{
 					g_error_status = 1;
-					return (g_error_status);
-				}
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}

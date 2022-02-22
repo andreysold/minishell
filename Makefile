@@ -31,7 +31,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -lreadline  -L  ../../../.brew/opt/readline/lib  -o $(NAME) $(OBJS) $(LIBFT)/libft.a
+			$(CC) -lreadline  -L  /usr/local/opt/readline/lib  -o $(NAME) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h

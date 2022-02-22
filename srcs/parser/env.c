@@ -94,15 +94,15 @@ char *ft_get_value(int count, char **env)
 
 t_envp *ft_node_env(t_envp *e, char **env)
 {
-	int i;
+	int c;
 	int count;
 	t_envp *tmp;
 
 	count = 0;
-	i = 0;
 	while (env[count])
 		count++;
 	e = NULL;
+	c = count;
 	while (count-- > 0)
 	{
 		tmp = malloc(sizeof(t_envp));
@@ -110,8 +110,9 @@ t_envp *ft_node_env(t_envp *e, char **env)
 			return (NULL);
 		tmp->key = ft_get_key(count, env);
 		tmp->value = ft_get_value(count, env);
-		tmp->key_orig = ft_get_key(count, env);
-		tmp->value_orig = ft_get_value(count, env);
+		tmp->count = c;
+		// tmp->key_orig = ft_get_key(count, env);
+		// tmp->value_orig = ft_get_value(count, env);
 		tmp->next = e;
 		e = tmp;
 	}

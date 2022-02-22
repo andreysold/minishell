@@ -7,38 +7,36 @@ void	ft_free_list(t_comm *lst)
 	t_envp *head2;
 
 	while (lst)
-    {
-        head = lst;
-        if (lst->command_str)
-        {
-            int i = 0;
-            while (lst->command_str[i])
-                i++;
-            ft_no_malloc(lst->command_str);
-        }
-        lst = lst->next;
-        free (head);
-    }
+	{
+		head = lst;
+		if (lst->command_str)
+		{
+			int i = 0;
+			while (lst->command_str[i])
+				i++;
+			ft_no_malloc(lst->command_str);
+		}
+		lst = lst->next;
+		free (head);
+	}
 }
 
 
 int ft_process4(char *str, t_envp *list_env)
 {
-    t_comm *lst;
+	t_comm *lst;
 	char **new_env;
 
-    lst = malloc(sizeof(t_comm));
-    if (!lst)
-        return (-1);
-    ft_memset((void *)lst, 0, sizeof(t_comm));
+	lst = malloc(sizeof(t_comm));
+	if (!lst)
+		return (-1);
+	ft_memset((void *)lst, 0, sizeof(t_comm));
 	new_env = ft_update_env(list_env);
    	lst = ft_parser4(lst, str, list_env);
-	// if (executor(lst, new_env) == -1)
-	//  	return (1);
-	// printf("ABC\n");
-	executor(lst, new_env);
+	if (executor(lst, new_env) == -1)
+	 	return (-1);
 	// ft_free_list(lst);
-    return (0);
+	return (0);
 }
 
 void	ft_no_malloc(char **str)
@@ -100,25 +98,27 @@ int main(int ac, char **av, char **env)
 	envp = ft_get_envp(env);
 	list_env = ft_node_env(list_env, envp);
 	ft_up_shlvl(list_env);
-	// signal(SIGQUIT, SIG_IGN);
 	while (1)
-    {
+	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
-        str = readline("bash:");
-        if (str && *str)
-        {
-           	add_history(str);
-            if (ft_lexer(str) != -1)
-            {
+		str = readline("bash:");
+		if (str && *str)
+		{
+		   	add_history(str);
+			if (ft_lexer(str) != -1)
+			{
 				if (ft_process4(str, list_env) == -1)
 					exit(0);
-            }
-            else
-                free (str);
-        }
+			}
+			else
+				free (str);
+		}
 		else if (str == NULL)
+		{
+			write(1, "exit\n", 5);
 			exit(0);
+		}
 
 	}
 	return (0);

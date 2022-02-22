@@ -7,15 +7,8 @@
 #include "../srcs/libft/libft.h"
 #include <fcntl.h>
 #include <errno.h>
-// #include <readline/readline.h>
-// #include <readline/history.h>
-#include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
-#include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
-// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
-// void rl_replace_line (const char *text, int clear_undo);
-// #include "../readline/readline.h"
-// #include "../readline/history.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 #define FD_UNUSED	-2
 
 /**********COLOR**********/
@@ -27,19 +20,14 @@
 
 int g_error_status;
 
-typedef struct s_iterat // итераторы для подгонки под норму
+typedef struct s_iterat
 {
-	// int i;
-	// int j;
-	// int k;
-	// int z;
-	// int l;
 	int z;
-    int k;
-    int c;
-    int l;
+	int k;
+	int c;
+	int l;
 	int pos;
-	int foq; // flag on quotes
+	int foq;
 }	t_iter;
 
 typedef struct s_redir
@@ -52,29 +40,28 @@ typedef struct s_redir
 
 typedef struct s_envp 
 {
-    char *key;
-    char *value;
+	char *key;
+	char *value;
 	char *key_orig;
 	char *value_orig;
 	int	 count;
-    struct s_envp *next;
+	struct s_envp *next;
 }   t_envp;
 
 typedef struct s_comm
 {
-	char			**command_str; // двумернный массив из las_str(separator ' ')
-	char			*last_str; // подмножество строки
+	char			**command_str;
+	char			*last_str;
 	int				infile;
 	int				outfile;
-    char            **str_tl;
+	char            **str_tl;
 	char			*here;
 	int				count_word;
 	int				count_node;
-    char            *tmp;
-    int             fl;
-    t_envp          *e;
-    char            *name; // name of files
-	t_iter			t; // структура итераторов
+	char            *tmp;
+	int             fl;
+	t_envp          *e;
+	char            *name;
 	struct s_comm	*next;
 }	t_comm;
 

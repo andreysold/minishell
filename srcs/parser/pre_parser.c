@@ -65,6 +65,9 @@ int	ft_return_error(char *str)
 // }
 
 
+
+
+
 int	ft_lexer(char *str)
 {
 	int i;
@@ -128,6 +131,8 @@ int	ft_lexer(char *str)
 					return (ft_return_error("bash: syntax error near unexpected token `>>'\n"));
 				else if (count_red == 3)
 					return (ft_return_error("bash: syntax error near unexpected token `<'\n"));
+				else if (str[i] == '>')
+					return (ft_return_error("bash: syntax error near unexpected token `>'\n"));
 			}
 			if (str[i] == ' ')
 				ft_skip_space(str, &i);

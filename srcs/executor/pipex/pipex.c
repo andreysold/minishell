@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/21 19:24:28 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/22 12:43:37 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,10 +309,8 @@ int pipex(t_comm *lst, char **env)
 				ft_putstr_fd("bash: ", 2);
 				ft_putstr_fd(tmp->command_str[0], 2);
 				ft_putendl_fd(": command not found", 2);
-				// g_error_status = 255;
 				exit(EXIT_FAILURE);
 			}
-			// signal(SIGQUIT, SIG_IGN);
 		}
 		if (tmp->here)
 			unlink(".tmp");

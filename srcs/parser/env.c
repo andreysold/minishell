@@ -47,12 +47,6 @@ char **ft_update_env(t_envp *list_env)
 		tmp = tmp->next;
 	}
 	massiv[i] = NULL;
-	// i = 0;
-	// while (massiv[i])
-	// {
-	// 	printf("%s\n", massiv[i]);
-	// 	i++;
-	// }
 	return (massiv);
 }
 

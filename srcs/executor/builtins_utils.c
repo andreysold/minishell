@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/18 14:56:36 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/20 14:12:03 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,8 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 	tmp = envp;
 	while (tmp)
 	{
-
 		if (i == location)
-		{
-			printf("!!! upd val %s\n", tmp->key);
-			fflush(NULL);
 			break ;
-		}
 		i++;
 		tmp = tmp->next;
 	}

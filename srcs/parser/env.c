@@ -2,9 +2,10 @@
 
 char **ft_get_envp(char **env)
 {
-	char **envp;
-	int i = 0;
+	char	**envp;
+	int		i;
 
+	i = 0;
 	while (env[i])
 		i++;
 	envp = (char **)malloc(sizeof(char *) * i + 1);
@@ -28,11 +29,10 @@ char **ft_update_env(t_envp *list_env)
 	char *tmp1;
 	t_envp *tmp;
 
-	tmp = list_env;
 	i = 0;
-	count = 0;
+	tmp = list_env;
 	count = ft_cnode(list_env);
-	massiv = (char **)malloc(sizeof(char *) * count + 1);
+	massiv = ft_calloc(sizeof(char *), count + 1);
 	if (!massiv)
 		return (NULL);
 	while (tmp)
@@ -71,17 +71,18 @@ char *ft_get_key(int count, char **env)
 	return (str);
 }
 
-char *ft_get_value(int count, char **env)
+char	*ft_get_value(int count, char **env)
 {
-	char *str;
-	int i;
+	char	*str;
+	int		i;
+	int		z;
 
 	i = 0;
 	while (env[i])
 	{
 		if (i == count)
 		{
-			int z = 0;
+			z = 0;
 			while (env[i][z] && env[i][z] != '=')
 				z++;
 			str = ft_substr(env[i], z + 1, ft_strlen(env[i]) - z);
@@ -94,12 +95,10 @@ char *ft_get_value(int count, char **env)
 
 t_envp *ft_node_env(t_envp *e, char **env)
 {
-	int i;
 	int count;
 	t_envp *tmp;
 
 	count = 0;
-	i = 0;
 	while (env[count])
 		count++;
 	e = NULL;
@@ -110,19 +109,19 @@ t_envp *ft_node_env(t_envp *e, char **env)
 			return (NULL);
 		tmp->key = ft_get_key(count, env);
 		tmp->value = ft_get_value(count, env);
-		tmp->key_orig = ft_get_key(count, env);
-		tmp->value_orig = ft_get_value(count, env);
+//		tmp->key_orig = ft_get_key(count, env);
+//		tmp->value_orig = ft_get_value(count, env);
+		tmp->count = count;
 		tmp->next = e;
 		e = tmp;
 	}
 	return (e);
 }
 
-
 int	ft_cnode(t_envp *list_env)
 {
-	int i;
-	t_envp *tmp;
+	int		i;
+	t_envp	*tmp;
 
 	tmp = list_env;
 	i = 0;
@@ -131,5 +130,5 @@ int	ft_cnode(t_envp *list_env)
 		i++;
 		tmp = tmp->next;
 	}
-	return(i);
+	return (i);
 }

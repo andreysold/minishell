@@ -57,7 +57,8 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 		if (origin)
 			tmp->value_orig = ft_strdup(new_value);
 		else
-			tmp->value = ft_strdup(new_value); //todo do i need strdup?
+			tmp->value = new_value;
+//			tmp->value = ft_strdup(new_value); //todo do i need strdup?
 	}
 }
 
@@ -114,7 +115,8 @@ int	locate_env_key(t_envp *envp, char *key, int origin)
 		}
 		else
 		{
-			if (ft_strncmp(key, tmp->key, key_len) == 0)
+			//fixme added + 1, 'cause there was key match on 'TERM'
+			if (ft_strncmp(key, tmp->key, key_len + 1) == 0)
 				return (i);
 		}
 		i++;

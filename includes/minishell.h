@@ -19,10 +19,10 @@
 # include "../srcs/libft/libft.h"
 # include <fcntl.h>
 # include <errno.h>
-// # include <readline/readline.h>
-// # include <readline/history.h>
-#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
-#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+//#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
+//#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
 #include "pipex.h"
 
 # define FD_UNUSED	-2

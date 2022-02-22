@@ -202,7 +202,7 @@ int ft_count_strings(t_comm *lst)
 	int count;
 
 	count = 0;
-	while (lst->command_str[count])
+	while (lst->cmd[count])
 		count++;
 	return (count);
 }
@@ -254,30 +254,29 @@ int	ft_new_value_error(char *str)
 
 int	ft_check_exit_numeric(t_comm *lst)
 {
-	t_comm *head;
-
-	int count_min;
-	int j;
+	t_comm	*head;
+	int		count_min;
+	int		j;
 	j = 0;
 	count_min = 0;
-	while (lst->command_str[1][j])
+	while (lst->cmd[1][j])
 	{
-		if (lst->command_str[1][j] == '-' && count_min == 0)
+		if (lst->cmd[1][j] == '-' && count_min == 0)
 		{
 			count_min = 1;
 			j++;
 		}
-		if (!(ft_isdigit(lst->command_str[1][j])))
+		if (!(ft_isdigit(lst->cmd[1][j])))
 		{
 			write(2, "bash: exit: ", 12);
-			write(2, lst->command_str[1], ft_strlen(lst->command_str[1]));
+			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
 			g_error_status = 1;
 			return (0);
 		}
 		j++;
 	}
-	g_error_status = ft_new_value_error(lst->command_str[1]);
+	g_error_status = ft_new_value_error(lst->cmd[1]);
 	return (0);
 }
 

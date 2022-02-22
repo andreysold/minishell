@@ -73,52 +73,51 @@ void	ft_free_list(t_comm *lst)
 	}
 }
 
-char	*ft_get_key(int count, char **env)
-{
-	char	*str;
-	int		i;
-	int		z;
+//char	*ft_get_key(int count, char **env)
+//{
+//	char	*str;
+//	int		i;
+//	int		z;
+//
+//	i = 0;
+//	while (env[i])
+//	{
+//		if (i == count)
+//		{
+//			z = 0;
+//			while (env[i][z] && env[i][z] != '=')
+//				z++;
+//			str = ft_substr(env[i], 0, z);
+//			break ;
+//		}
+//		i++;
+//	}
+//	return (str);
+//}
 
-	i = 0;
-	while (env[i])
-	{
-		if (i == count)
-		{
-			z = 0;
-			while (env[i][z] && env[i][z] != '=')
-				z++;
-			str = ft_substr(env[i], 0, z);
-			break ;
-		}
-		i++;
-	}
-	return (str);
-}
+//char	*ft_get_value(int count, char **env)
+//{
+//	char	*str;
+//	int		i;
+//	int		z;
+//
+//	i = 0;
+//	while (env[i])
+//	{
+//		if (i == count)
+//		{
+//
+//			while (env[i][z] && env[i][z] != '=')
+//				z++;
+//			str = ft_substr(env[i], z + 1, ft_strlen(env[i]) - z);
+//			break ;
+//		}
+//		i++;
+//	}
+//	return (str);
+//}
 
-char	*ft_get_value(int count, char **env)
-{
-	char	*str;
-	int		i;
-	int		z;
-	char	*clean;
-
-	i = 0;
-	while (env[i])
-	{
-		if (i == count)
-		{
-			z = 0;
-			while (env[i][z] && env[i][z] != '=')
-				z++;
-			str = ft_substr(env[i], z + 1, ft_strlen(env[i]) - z);
-			break ;
-		}
-		i++;
-	}
-	return (str);
-}
-
-t_envp	*ft_node_env(t_envp *e, char **env)
+/*t_envp	*ft_node_env(t_envp *e, char **env)
 {
 	int		count;
 	t_envp	*tmp;
@@ -141,9 +140,9 @@ t_envp	*ft_node_env(t_envp *e, char **env)
 		e = tmp;
 	}
 	return (e);
-}
+}*/
 
-int	ft_cnode(t_envp *l)
+/*int	ft_cnode(t_envp *l)
 {
 	int	i;
 	t_envp	*tmp;
@@ -156,9 +155,9 @@ int	ft_cnode(t_envp *l)
 		tmp = tmp->next;
 	}
 	return (i);
-}
+}*/
 
-char	**ft_update_env(t_envp *l_envp)
+/*char	**ft_update_env(t_envp *l_envp)
 {
 	int		i;
 	t_envp	*tmp;
@@ -197,7 +196,7 @@ char	**ft_update_env(t_envp *l_envp)
 	}
 	// new_env[i] = NULL;
 	return (new_env);
-}
+}*/
 
 void	clean_env(char **env, t_comm *lst)
 {
@@ -230,7 +229,7 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-char	**ft_get_envp(char **env)
+/*char	**ft_get_envp(char **env)
 {
 	int		i;
 	char	**envp;
@@ -249,8 +248,8 @@ char	**ft_get_envp(char **env)
 	}
 	envp[i] = NULL;
 	return (envp);
-}
-
+}*/
+/*
 int	ft_check_str(char *str)
 {
 	int	i;
@@ -267,60 +266,96 @@ int	ft_check_str(char *str)
 		i++;
 	}
 	return (1);
-}
+}*/
 
-int	ft_process4(char *str, t_envp *envp)
+int	ft_process4(char *str, t_envp *list_env)
 {
 	t_comm	*lst;
-	char	**env;
+	char	**new_env;
 
 	lst = NULL; ///fixed
-	env = ft_update_env(envp);
-	// lst = malloc(sizeof(t_comm));
-	// if (!lst)
-	// 	return (-1);
-	// ft_memset((void *)lst, 0, sizeof(t_comm));
-	lst = ft_parser4(lst, str, envp);
-/*	if (executor(lst, env) == -1)
-		return (1);*/
-	executor(lst, env);
-	if (env)
-		clean_env(env, lst);
+//	lst = malloc(sizeof(t_comm));
+//	if (!lst)
+//		return (-1);
+//	ft_memset((void *)lst, 0, sizeof(t_comm));
+	new_env = ft_update_env(list_env);
+	lst = ft_parser4(lst, str, list_env);
+	if (executor(lst, new_env) == -1)
+		return (-1);
+	if (new_env)
+		clean_env(new_env, lst);
 	remove_all_list(lst);
-	//env = ft_update_env(envp); /////
 	// ft_free_list(lst);
 	return (0);
 }
 
-int	main(void)
+void	handler(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
+	write(1,"  \b\b\n", 5);
+	rl_on_new_line();
+//	rl_replace_line("", 1);
+	rl_redisplay();
+	g_error_status = 1;
+}
+
+void	ft_up_shlvl(t_envp *list_env)
+{
+	t_envp	*head;
+	int		shlvl;
+	char	*tmp;
+	int		locate;
+
+	locate = 0;
+	head = list_env;
+	locate = locate_env_key(head, "SHLVL", 0);
+	if (locate == -1)
+		add_to_env(list_env, "SHLVL", "1", 0);
+	else
+	{
+		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
+		tmp = ft_itoa(shlvl);
+		upd_env_value(list_env, tmp, locate, 0);
+	}
+}
+
+int main(int ac, char **av, char **env)
 {
 	char		*str;
 	char		*name;
-	t_envp		*l_envp;
-	extern char	**environ;
+	char		**envp;
+	t_envp		*list_env;
 
-	// l_envp = malloc(sizeof(t_envp *));
-	// if (!l_envp)
-	// 	return (-1);
-	l_envp = ft_node_env(l_envp, environ); // key value 
-
+//	list_env = malloc(sizeof(t_envp)); //todo ???? нужно ли?
+//	if (!list_env)
+//		return (-1);
+	envp = ft_get_envp(env);
+	list_env = ft_node_env(list_env, envp);
+	ft_up_shlvl(list_env);
 	while (1)
 	{
+		signal(SIGINT, handler);
+		signal(SIGQUIT, SIG_IGN);
 		str = readline("bash:");
 		if (str && *str)
 		{
 			add_history(str);
-			// if (ft_lexer(str) != -1)
-			// {
-			if (ft_process4(str, l_envp) == -1)
-				exit(0);
-			// }
-			// else
-				// free (str);
-
+			if (ft_lexer(str) != -1)
+			{
+				if (ft_process4(str, list_env) == -1)
+					exit(0);
+			}
+			else
+				free (str);
 		}
 		else if (str == NULL)
-			exit (0);
+		{
+			write(1, "exit\n", 5);
+			exit(0);
+		}
 	}
-	remove_all_env_list(l_envp);
+	remove_all_env_list(list_env);
+	return (0);
 }

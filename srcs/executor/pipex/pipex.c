@@ -281,10 +281,14 @@ int pipex(t_comm *lst, char **env)
 			{
 				pid = fork();
 				if (pid != 0)
+				{
 					signal(SIGINT, SIG_IGN);
+//					signal(SIGQUIT)
+				}
 				if (pid == 0) /// test cmd < 21 << pop | cmd << pop < 21
 				{
 					signal(SIGINT, ff);
+					signal(SIGQUIT, SIG_IGN);
 					heredoc(tmp);
 					close(tmp->infile);
 					unlink(".tmp");

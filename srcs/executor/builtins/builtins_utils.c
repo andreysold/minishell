@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/09 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/20 14:12:03 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,7 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 	while (tmp)
 	{
 		if (i == location)
-		{
-			printf("!!! upd val %s\n", tmp->key);
-			fflush(NULL);
 			break ;
-		}
 		i++;
 		tmp = tmp->next;
 	}

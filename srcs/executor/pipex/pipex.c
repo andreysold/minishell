@@ -3,14 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/22 12:43:37 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include <termios.h>
+
+#include <sys/types.h>
+#include <unistd.h>
+
+void	handler22(int sig)
+{
+	if (sig == SIGINT)
+	{
+		(void) sig;
+		write(2, "\n", 1);
+		g_error_status = 130;
+	}
+	if (sig == SIGQUIT)
+	{
+		(void) sig;
+		write(2, "Quit: 3\n", 8);
+		g_error_status = 131;
+	}
+}
+
+
+void	ft_handler_herdoc(int sig)
+{
+	(void) sig;
+	exit (0);
+}
 
 void close_pipes(int *pipes, int count_node)
 {
@@ -32,9 +59,10 @@ void wait_childs(int n)
 	while (i < n)
 	{
 		wait(&status);
-		if (WIFEXITED(status) && status != 0)
+		if (WEXITSTATUS(status) && status != 0)
 		{
-			printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
+			g_error_status = 127;
+			// printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
 			fflush(NULL);
 		}
 		i++;
@@ -63,6 +91,41 @@ static inline void close_in_out_file(t_comm *tmp)
 		perror("close_in_out_file:");
 }
 
+void	handler_her(int sig)
+{
+	// (void)sig;
+	if (sig == SIGINT)
+	{
+	// printf("A\n");
+		g_error_status = 1;
+		exit (g_error_status);
+	}
+	// if (sig == SIGQUIT)
+	// {
+
+	// }
+}
+void	ff(int sig)
+{
+	(void) sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	// rl_on_new_line();
+	// rl_redisplay();
+	// write(1,"  \b\b\n", 5);
+	// rl_on_new_line();
+	// rl_replace_line("", 0);
+	// rl_redisplay();
+	g_error_status = 1;
+	// write(1, "a\n", 2);
+	exit (g_error_status);
+}
+
+
+
+
+
+
 static inline void heredoc(t_comm *tmp)
 {
 	char	*str;
@@ -82,6 +145,7 @@ static inline void heredoc(t_comm *tmp)
 	free(str);
 }
 
+
 static inline void redirect(t_comm *tmp)
 {
 	int err;
@@ -89,21 +153,19 @@ static inline void redirect(t_comm *tmp)
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
 	{
-		if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
-		{
-			heredoc(tmp);
-			close(tmp->infile);
-			tmp->infile = open(".tmp", O_RDONLY);
-		}
+		// if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
+		// {
+		// 	heredoc(tmp);
+		// 	close(tmp->infile);
+		// 	tmp->infile = open(".tmp", O_RDONLY);
+		// }
 		err = dup2(tmp->infile, STDIN_FILENO);
 	}
 	if (err != 0)
 		perror("1redirect:");
 	err = 0;
 	if (tmp->outfile != FD_UNUSED)
-	{
 		err = dup2(tmp->outfile, STDOUT_FILENO);
-	}
 	if (err != 0)
 		perror("2redirect:");
 }
@@ -174,6 +236,24 @@ void	bash_error(char *first_part, char *cmd, char *last_part)
 	ft_putendl_fd(last_part, 2);
 }
 
+void	handler2(int sig)
+{
+	if (sig == SIGINT)
+	{
+		(void) sig;
+		write(2, "\n", 1);
+		g_error_status = 130;
+		// exit (0);
+	}
+	if (sig == SIGQUIT)
+	{
+		(void) sig;
+		write(2, "Quit: 3\n", 8);
+		g_error_status = 131;
+		// exit (0);
+	}
+}
+
 int pipex(t_comm *lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
@@ -182,11 +262,12 @@ int pipex(t_comm *lst, char **env)
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
-	pid_t pid;
+	pid_t 	pid;
 	int bool;
+	int status;
 
 	tmp = lst;
-	pipes = open_pipes(tmp); //todo malloc
+	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
 	while (tmp != NULL)
@@ -196,9 +277,31 @@ int pipex(t_comm *lst, char **env)
 			bool = builtins(tmp, env);
 			if (bool != -1)
 				return (bool);
+			if (tmp->here != NULL)
+			{
+				pid = fork();
+				if (pid != 0)
+					signal(SIGINT, SIG_IGN);
+				if (pid == 0) /// test cmd < 21 << pop | cmd << pop < 21
+				{
+					signal(SIGINT, ff);
+					heredoc(tmp);
+					close(tmp->infile);
+					unlink(".tmp");
+					exit(0);
+				}
+				wait(&status);
+				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+				{
+					g_error_status = 1;
+					return (g_error_status);
+				}
+				tmp->infile = open(".tmp", O_RDONLY);
+			}
 		}
-		pid = fork();
-		if (pid == 0)
+		signal(SIGINT, handler22);
+		signal(SIGQUIT, handler22);
+		if (fork() == 0)
 		{
 			if (tmp->count_node > 1)
 				pipe_switch(i, kind, pipes, tmp);

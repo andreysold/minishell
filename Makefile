@@ -23,6 +23,7 @@ SRCS	+=	srcs/parser/parse_dollar.c \
             srcs/parser/parse_utils.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
+			srcs/parser/env.c\
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
@@ -31,7 +32,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(NAME) $(OBJS) $(RLFLAG) $(LIBFT)/libft.a
+			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h

@@ -73,7 +73,6 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 		else
 		{
 			home = get_env_value(lst->e, pos, 0);
-			*new_path = home;
 			pos = locate_env_key(lst->e,"PWD", 0);
 			if (pos != -1)
 			{
@@ -81,6 +80,7 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 				// if (home)
 				// 	free(home);
 			}
+			*new_path = home;
 		}
 	}
 	else if (ft_strncmp(lst->cmd[1], "", 1) == 0) //FIXME doesn't work
@@ -116,12 +116,13 @@ int	ft_cd(t_comm *lst)
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	chdir(new_path);
-	free(new_path);
+	if (new_path)
+		free(new_path);
 	location = locate_env_key(lst->e, "PWD", 0);
 	if (location != -1)
 	{
 		clean = getcwd(buf, 0);
-		upd_env_value(lst->e, getcwd(buf, 0), location, 0);
+		upd_env_value(lst->e, clean, location, 0);
 		if (clean)
 			free(clean);
 	}
@@ -189,6 +190,8 @@ int	ft_unset(t_comm *lst)
 		del = del->next;
 		prev->next = del->next;
 		printf("%s j - %s%s\n", BLUE, del->key, RESET);
+		free(del->key);
+		free(del->value);
 		free(del);
 //		prev->next = NULL;
 		return (EXIT_SUCCESS);
@@ -336,7 +339,7 @@ int check_builtin(t_comm *lst, char **env)
 	{
 		return (ft_pwd(lst));
 	}
-	else if (ft_strncmp(*lst->cmd, "export", 7) == 0)
+	else if (ft_strncmp(*lst->cmd, "export", 7) == 0) //Houston  we got problems
 	{
 		return (ft_export(lst));
 	}

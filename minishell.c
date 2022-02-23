@@ -43,7 +43,6 @@ void	remove_all_env_list(t_envp *head)
 	free(head);
 }
 
-
 void	clean_env(char **env, t_comm *lst)
 {
 	int	i;
@@ -103,7 +102,7 @@ void	handler(int sig)
 	rl_redisplay();
 	write(1,"  \b\b\n", 5);
 	rl_on_new_line();
-	rl_replace_line("", 1);
+//	rl_replace_line("", 1);
 	rl_redisplay();
 	g_error_status = 1;
 }

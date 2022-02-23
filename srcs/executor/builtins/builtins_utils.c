@@ -42,6 +42,7 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 {
 	int		i;
 	t_envp	*tmp;
+	char	*clean;
 
 	i = 0;
 	tmp = envp;
@@ -58,10 +59,13 @@ void	upd_env_value(t_envp *envp, char *new_value, int location, int origin)
 			tmp->value_orig = ft_strdup(new_value);
 		else
 		{
+			clean = tmp->value;
 			// if (tmp->value)
 			// 	free(tmp->value);
 			// tmp->value = new_value;
 			tmp->value = ft_strdup(new_value); //todo do i need strdup?
+			if (clean)
+				free(clean);
 		}
 	}
 }
@@ -85,9 +89,9 @@ void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin)
 	}
 	else
 	{
-		node->key = new_key;
+		node->key = ft_strdup(new_key);
 		if (new_value)
-			node->value = new_value;
+			node->value = ft_strdup(new_value);
 	}
 	node->next = NULL;
 	tmp = envp;

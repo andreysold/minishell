@@ -131,13 +131,12 @@ static inline void heredoc(t_comm *tmp)
 	{
 		str = readline("> ");
 		if (str == NULL)
-			break ;
+			exit (EXIT_SUCCESS);
 		else if (ft_strncmp(str, tmp->here, here_len + 1) == 0)
-			break ;
+			exit (EXIT_SUCCESS);
 		ft_putendl_fd(str, tmp->infile);
 		free(str);
 	}
-	free(str);
 }
 
 static inline void redirect(t_comm *tmp)
@@ -207,18 +206,18 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 		if (kind == START && tmp->next != NULL)
 		{
 			///    1 =>
-			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
+			dup2(pipes[1], STDOUT_FILENO); ///1
 		}
 		else if (kind == MIDDLE)
 		{
 			/// => 2 =>
-			dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
-			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
+			dup2(pipes[0], STDIN_FILENO); ///0
+			dup2(pipes[3], STDOUT_FILENO); ///3
 		}
 		else if (kind == END)
 		{
 			/// => 3
-			dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
+			dup2(pipes[2], STDIN_FILENO); ///2
 		}
 	}
 }
@@ -284,9 +283,6 @@ int pipex(t_comm *lst, char **env)
 					signal(SIGINT, ff);
 					signal(SIGQUIT, SIG_IGN);
 					heredoc(tmp);
-					close(tmp->infile);
-					unlink(".tmp");
-					exit(0);
 				}
 				wait(&status);
 				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)

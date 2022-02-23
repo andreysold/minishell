@@ -36,7 +36,7 @@ int	check_export_arg(t_comm *copy, int i, char **key, char **value)
 					//fixme free
 				}
 				else
-					break ;
+					*value = ft_strdup("");
 			}
 			else if ((copy->cmd[i][j + 1] && copy->cmd[i][j + 1] == '=') || !copy->cmd[i][j + 1])
 				*key = ft_substr(copy->cmd[i], 0, j + 1); //fixme free
@@ -95,11 +95,29 @@ int	ft_export(t_comm *lst) //todo there is no ascii output
 				if (location == -1)
 					add_to_env(copy->e, key, value, 0);
 				else
-					upd_env_value(copy->e, value, location, 0);
-				free(key);
-				if (value)
-					free(value);
+				{
+					if (value)
+					{
+						upd_env_value(copy->e, value, location, 0);
+//						if (value)
+//							free(value);
+					}
+//					else
+//					{
+////						if (copy->e->value)
+////							free(copy->e->value); //убрать значение
+//						copy->e->value = NULL;
+////						if (value)
+////							free(value);
+//					}
+//					if (key)
+//						free(key);
+				}
 			}
+			if (key)
+				free(key);
+			if (value)
+				free(value);
 			i++;
 		}
 	}

@@ -49,9 +49,9 @@ char **ft_update_env(t_envp *list_env)
 			massiv[i] = ft_strjoin(massiv[i], tmp->value);
 //			if (clean)
 			//fixme how
-		}
 		if (clean)
 			free(clean);
+		}
 		// if (tmp->key && tmp->value)
 		// {
 		// 	tmp1 = ft_strjoin(tmp->key, "=");

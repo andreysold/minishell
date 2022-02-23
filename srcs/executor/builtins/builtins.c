@@ -86,7 +86,9 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 	else if (ft_strncmp(lst->cmd[1], "", 1) == 0) //FIXME doesn't work
 		return (EXIT_FAILURE);
 	else
-		*new_path = lst->cmd[1];
+		{
+			*new_path = ft_strdup(lst->cmd[1]);
+		}
 	return (EXIT_SUCCESS);
 }
 

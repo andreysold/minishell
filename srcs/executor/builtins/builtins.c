@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <string.h>
 #include "minishell.h"
 
 int	ft_echo(t_comm *lst)
@@ -118,7 +119,8 @@ int	ft_cd(t_comm *lst)
 //	printf("%s - before origa\n", getcwd(buf, 0));
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
-	chdir(new_path);
+	if (chdir(new_path) == -1)
+		printf("bash: cd: %s: %s\n", lst->cmd[1], strerror(errno));
 	if (new_path)
 		free(new_path);
 	location = locate_env_key(lst->e, "PWD", 0);
@@ -164,6 +166,22 @@ size_t	ft_listlen(t_envp *head)
 	return (len);
 }
 
+t_envp	*remove_first_element(t_envp *head)
+{
+	t_envp	*buf;
+//	(*head)->count--;
+	buf = head->next;
+	//printf("%s j - %s%s\n", BLUE, head->key, RESET);
+	if (head->key)
+		free(head->key);
+	if (head->value)
+		free(head->value);
+	if (head)
+		free(head);
+	head = buf;
+	return (head);
+}
+
 int	ft_unset(t_comm *lst)
 {
 	int		i;
@@ -183,21 +201,30 @@ int	ft_unset(t_comm *lst)
 		if (location == -1 || len <= 0 || location + 1 > len)
 			return (EXIT_FAILURE);
 		printf("%s locat - %d\n", GREEN, location);
-		while (j <= location - 1)
+		if (location == 0)
 		{
-			prev = prev->next;
-			j++;
+			lst->e = remove_first_element(lst->e);
+			return (EXIT_SUCCESS);
 		}
-		printf("%s j - %d\n", YELLOW, location);
-		del = prev;
-		del = del->next;
-		prev->next = del->next;
-		printf("%s j - %s%s\n", BLUE, del->key, RESET);
-		free(del->key);
-		free(del->value);
-		free(del);
-//		prev->next = NULL;
-		return (EXIT_SUCCESS);
+		else
+		{
+			while (j <= location - 1)
+			{
+				prev = prev->next;
+				j++;
+			}
+			printf("%s j - %d\n", YELLOW, location);
+			del = prev;
+	//		if (location)
+			del = del->next;
+			prev->next = del->next;
+			printf("%s j - %s%s\n", BLUE, del->key, RESET);
+			free(del->key);
+			free(del->value);
+			free(del);
+	//		prev->next = NULL;
+			return (EXIT_SUCCESS);
+		}
 	}
 	return (EXIT_FAILURE);
 }

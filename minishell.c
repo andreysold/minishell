@@ -128,9 +128,9 @@ void	ft_up_shlvl(t_envp *list_env)
 		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
 		tmp = ft_itoa(shlvl);
 		upd_env_value(list_env, tmp, locate, 0);
+		if (tmp)
+			free(tmp);
 	}
-	if (tmp)
-		free(tmp);
 }
 
 int main(int ac, char **av, char **env)

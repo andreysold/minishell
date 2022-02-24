@@ -263,7 +263,7 @@ int pipex(t_comm *lst, char **env)
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	while (tmp != NULL)
+	while (tmp != NULL && tmp->cmd)
 	{
 		if (tmp->count_node == 1)
 		{

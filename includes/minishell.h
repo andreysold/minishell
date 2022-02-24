@@ -96,6 +96,7 @@ int		ft_echo(t_comm *tmp);
 int		ft_cd(t_comm *lst);
 int		ft_pwd(t_comm *lst);
 int		ft_export(t_comm *lst);
+int		ft_exit(t_comm *lst);
 
 /**********BUILTIN_UTILS****/
 char	*get_env_value(t_envp *envp, int location, int origin);

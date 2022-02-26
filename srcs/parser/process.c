@@ -66,6 +66,7 @@ char *ft_parse_condition(char *str, t_comm *lst, int *i, int *j)
 		lst->tmp[(*j)++] = str[(*i)++];
 	return (lst->tmp);
 }
+
 char *ft_destroy_space4(char *str, t_comm *lst)
 {
 	int i;
@@ -123,9 +124,9 @@ t_comm *ft_return_node(t_comm *lst)
 		if (lst->last_str)
 		{
 			lst->last_str = ft_destroy_space4(lst->last_str, lst);
-			lst->command_str = ft_split(lst->last_str, ' ');
+			lst->cmd = ft_split(lst->last_str, ' ');
 			free (lst->last_str);
-			lst->command_str = ft_return_space(lst->command_str);
+			lst->cmd = ft_return_space(lst->cmd);
 		}
 		lst = lst->next;
 	}
@@ -146,47 +147,56 @@ t_comm *ft_create_nodes(t_comm *lst, char **str_tl, int count_nd, t_envp *e)
 		if (!tmp)
 			return (NULL);
 		ft_memset((void *)tmp, 0, sizeof(t_comm));
-		tmp->last_str = ft_strdup(str_tl[count_nd]);
-		tmp->last_str = ft_new_str(tmp->last_str);
-		tmp->count_node = c;
-		tmp->infile = -2;
-		tmp->outfile = -2;
-		tmp->e = e;
-		tmp->next = lst;
-		lst = tmp;
-	}
-	ft_no_malloc(str_tl);
-	return (lst);
+        tmp->last_str = ft_strdup(str_tl[count_nd]);
+        tmp->last_str = ft_new_str(tmp->last_str);
+        tmp->count_node = c;
+        tmp->infile = -2;
+        tmp->outfile = -2;
+        tmp->e = e;
+        tmp->next = lst;
+        lst = tmp;
+    }
+    ft_no_malloc(str_tl);
+    return (lst);
 }
 
 t_comm *ft_create_node(t_comm *lst, char *str, int c, t_envp *e)
 {
-	lst->last_str = ft_strdup(str);
-	lst->last_str = ft_new_str(lst->last_str);
-	lst->count_node = c;
-	lst->outfile = -2;
-	lst->infile = -2;
-	lst->e = e;
-	lst->next = NULL;
-	return (lst);
+    lst = malloc(sizeof(t_comm));
+	if (!lst)
+		return (NULL);
+	ft_memset((void *)lst, 0, sizeof(t_comm));
+    lst->last_str = ft_strdup(str);
+    lst->last_str = ft_new_str(lst->last_str);
+    lst->count_node = c;
+    lst->outfile = -2;
+    lst->infile = -2;
+    lst->e = e;
+    lst->next = NULL;
+    return (lst);
 }
 
 t_comm *ft_parser4(t_comm *lst, char *str, t_envp *e)
 {
-	t_comm *head;
-	int count_nd;
-	char **str_tl;
+    t_comm  *head;
+    int     count_nd;
+    char    **str_tl;
+    t_comm  *clean;
 
-	count_nd = ft_count_node(str);
-	if (count_nd > 1)
-		str_tl = ft_split(str, '|');
-	if (count_nd > 1)
-		lst = ft_create_nodes(lst, str_tl, count_nd, e);
-	else
-		lst = ft_create_node(lst, str, count_nd, e);
-	free (str);
-	lst = ft_return_node(lst);
-	return (lst);
+    count_nd = ft_count_node(str);
+    if (count_nd > 1)
+        str_tl = ft_split(str, '|');
+    clean = lst;
+    if (count_nd > 1)
+        lst = ft_create_nodes(lst, str_tl, count_nd, e);
+    else
+        lst = ft_create_node(lst, str, count_nd, e);
+
+    if (clean)
+        free(clean);
+    free (str);
+    lst = ft_return_node(lst);
+    return (lst);
 }
 
 // "$US"ER$

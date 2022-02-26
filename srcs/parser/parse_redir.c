@@ -101,7 +101,7 @@ int ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(2, lst->name, ft_strlen(lst->name));
 		write(1, ":", 1);
 		perror("");
-		
+		g_error_status = 1;
 	}
 	free (lst->name);
 	return (0);

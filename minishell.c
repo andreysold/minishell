@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 20:46:12 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/27 19:56:16 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ void	remove_all_list(t_comm *head)
 	remove_all_list(head->next);
 	if (head->here)
 		free(head->here);
-	if (head->command_str)
+	if (head->cmd)
 	{
 		i = 0;
-		while (head->command_str[i])
+		while (head->cmd[i])
 			i++;
-		leak_case(i, head->command_str);
+		leak_case(i, head->cmd);
 	}
 	free(head);
 }
@@ -95,7 +95,6 @@ int	ft_process4(char *str, t_envp *list_env)
 	if (new_env)
 		clean_env(new_env, lst);
 	remove_all_list(lst);
-	// ft_free_list(lst);
 	return (0);
 }
 
@@ -122,13 +121,9 @@ void	ft_up_shlvl(t_envp *list_env)
 	head = list_env;
 	locate = locate_env_key(head, "SHLVL", 0);
 	if (locate == -1)
-	{
-		printf("!!!!!\n");
 		add_to_env(list_env, "SHLVL", "1", 0);
-	}
 	else
 	{
-		printf("?????\n");
 		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
 		tmp = ft_itoa(shlvl);
 		upd_env_value(list_env, tmp, locate, 0);
@@ -144,9 +139,6 @@ int main(int ac, char **av, char **env)
 	char		**envp;
 	t_envp		*list_env;
 
-//	list_env = malloc(sizeof(t_envp)); //todo ???? нужно ли?
-//	if (!list_env)
-//		return (-1);
 	list_env = NULL;
 	list_env = ft_node_env(list_env, env);
 	ft_up_shlvl(list_env);

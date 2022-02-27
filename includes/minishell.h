@@ -7,10 +7,10 @@
 #include "../srcs/libft/libft.h"
 #include <fcntl.h>
 #include <errno.h>
-#include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
-#include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
-// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+// #include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
+// #include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 #define FD_UNUSED	-2
 
 /**********COLOR**********/
@@ -52,7 +52,7 @@ typedef struct s_envp
 
 typedef struct s_comm
 {
-	char			**command_str;
+	char			**cmd;
 	char			*last_str;
 	int				infile;
 	int				outfile;

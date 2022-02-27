@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 14:12:37 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/27 14:33:40 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ int	ft_echo(t_comm *lst)
 
 	i = 1;
 	n_flag = 0;
-	while(lst->command_str[i] && !ft_strncmp(lst->command_str[i], "-n", 3))
+	while(lst->cmd[i] && !ft_strncmp(lst->cmd[i], "-n", 3))
 	{
 		n_flag = 1;
 		i++;
 	}
-	while (lst->command_str[i])
+	while (lst->cmd[i])
 	{
-		ft_putstr_fd(lst->command_str[i], 1);
+		ft_putstr_fd(lst->cmd[i], 1);
 		ft_putchar_fd(' ', 1);
 		i++;
 	}
@@ -60,13 +60,13 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 	int		pos;
 	char	*home;
 
-	if (lst->command_str[1] == NULL) //todo check is there NULL
+	if (lst->cmd[1] == NULL) //todo check is there NULL
 	{
 		pos = locate_env_key(lst->e,"HOME", 0);
 		if (pos == -1)
 		{
 			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(lst->command_str[0], 2);
+			ft_putstr_fd(lst->cmd[0], 2);
 			ft_putendl_fd(": HOME not set", 2);
 			return (EXIT_FAILURE);
 		}
@@ -79,10 +79,10 @@ static inline int	search_path(const t_comm *lst, char	**new_path)
 				upd_env_value(lst->e, home, pos, 0);
 		}
 	}
-	else if (ft_strncmp(lst->command_str[1], "", 1) == 0) //FIXME doesn't work
+	else if (ft_strncmp(lst->cmd[1], "", 1) == 0) //FIXME doesn't work
 		return (EXIT_FAILURE);
 	else
-		*new_path = lst->command_str[1];
+		*new_path = lst->cmd[1];
 	return (EXIT_SUCCESS);
 }
 
@@ -169,35 +169,35 @@ int check_export_arg(t_comm *copy, int i, char **key, char **value)
 
 	j = 0;
 	value_start = 0;
-	while (copy->command_str[i][j])
+	while (copy->cmd[i][j])
 	{
 		//word should start with letter
-		if (j == 0 && ft_isalpha(copy->command_str[i][j]) == 0)
+		if (j == 0 && ft_isalpha(copy->cmd[i][j]) == 0)
 		{
 			return (EXIT_FAILURE);
 		}
 		else if (j != 0)
 		{
-			if (copy->command_str[i][j] == '=')
+			if (copy->cmd[i][j] == '=')
 			{
-				if (copy->command_str[i][j++])
+				if (copy->cmd[i][j++])
 				{
 //					j++;
 					value_start = j;
-					while (copy->command_str[i][j])
+					while (copy->cmd[i][j])
 						j++;
-					*value = ft_substr(copy->command_str[i], value_start, j + 1);
+					*value = ft_substr(copy->cmd[i], value_start, j + 1);
 					//fixme free
 				}
 				else
 					break ;
 
 			}
-			else if ((copy->command_str[i][j + 1] && copy->command_str[i][j + 1] == '=') || !copy->command_str[i][j + 1])
+			else if ((copy->cmd[i][j + 1] && copy->cmd[i][j + 1] == '=') || !copy->cmd[i][j + 1])
 			{
-				*key = ft_substr(copy->command_str[i], 0, j + 1); //fixme free
+				*key = ft_substr(copy->cmd[i], 0, j + 1); //fixme free
 			}
-			else if (ft_isalnum(copy->command_str[i][j]) == 0)
+			else if (ft_isalnum(copy->cmd[i][j]) == 0)
 				return (EXIT_FAILURE);
 //			else //todo check condition, if alnum fail go to error
 //				break ; //feel it could stop all while
@@ -217,7 +217,7 @@ int	ft_export(t_comm *lst) //todo there is no ascii output
 	int		i;
 	int		j;
 
-	if (lst->command_str[1] == NULL)
+	if (lst->cmd[1] == NULL)
 	{
 		tmp = lst->e;
 		while (tmp)
@@ -241,14 +241,14 @@ int	ft_export(t_comm *lst) //todo there is no ascii output
 	{
 		i = 1;
 		copy = lst;
-		while (copy->command_str[i])
+		while (copy->cmd[i])
 		{
 			key = NULL;
 			value = NULL;
 			if (check_export_arg(copy, i, &key, &value))
 			{
 				ft_putstr_fd("bash: export: \'", 2);
-				ft_putstr_fd(copy->command_str[i], 2);
+				ft_putstr_fd(copy->cmd[i], 2);
 				ft_putendl_fd("\': not a valid identifier", 2);
 			}
 //			printf("<key>-<value> :: <%s>-<%s>\n", key, value);
@@ -299,7 +299,7 @@ int	ft_unset(t_comm *lst)
 		j = 1;
 		len = (int)ft_listlen(prev);
 		printf("%s len - %d\n", RED, len);
-		location = locate_env_key(prev, lst->command_str[1], 0);
+		location = locate_env_key(prev, lst->cmd[1], 0);
 		if (location != -1 && len > 0 && location + 1 > len)
 			return (EXIT_FAILURE);
 		printf("%s locat - %d\n", GREEN, location);
@@ -343,15 +343,15 @@ int ft_count_strings(t_comm *lst)
 	int count;
 
 	count = 0;
-	while (lst->command_str[count])
+	while (lst->cmd[count])
 		count++;
-	return (count);	
+	return (count);
 }
 
 int	ft_new_value_error(char *str)
 {
 	int i;
-	unsigned long long  	n;
+	long long 	n;
 	int new_val;
 	int sign;
 	unsigned long long		max;
@@ -371,13 +371,15 @@ int	ft_new_value_error(char *str)
 		i++;
 	}
 	n *= sign;
-	if (n > max)
+	// printf("%lld\n", n);
+	if (n > max && sign != -1)
 	{
-		printf("B\n");
+		// printf("A\n");
 		write(2, "bash: exit: ",12);
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
-		return (255);
+		g_error_status = 255;
+		return (g_error_status);
 	}
 	// else if (n < min && sign)
 	// {
@@ -395,38 +397,56 @@ int	ft_new_value_error(char *str)
 
 int	ft_check_exit_numeric(t_comm *lst)
 {
-	t_comm *head;
-
-	int count_min;
-	int j;
+	t_comm	*head;
+	int		count_min;
+	int		j;
 	j = 0;
 	count_min = 0;
-	while (lst->command_str[1][j])
+	while (lst->cmd[1][j])
 	{
-		if (lst->command_str[1][j] == '-' && count_min == 0)
+		if (lst->cmd[1][j] == '-' && count_min == 0)
 		{
 			count_min = 1;
 			j++;
 		}
-		if (!(ft_isdigit(lst->command_str[1][j])))
+		if (!(ft_isdigit(lst->cmd[1][j])))
 		{
+			// printf("A\n");
 			write(2, "bash: exit: ", 12);
-			write(2, lst->command_str[1], ft_strlen(lst->command_str[1]));
+			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
-			g_error_status = 1;
-			return (0);
+			g_error_status = 255;
+			exit (g_error_status);
 		}
 		j++;
 	}
-	g_error_status = ft_new_value_error(lst->command_str[1]);
-	return (0);
+	g_error_status = ft_new_value_error(lst->cmd[1]);
+	return (g_error_status);
 }
 
-void	ft_exit_many_args(void)
+int	ft_exit_many_args(t_comm *lst)
 {
+	int i;
+
+	i = 0;
+	while (lst->cmd[1][i])
+	{
+		if (ft_isalpha(lst->cmd[1][i]))
+		{
+			// printf("A\n");
+			write(2, "bash: exit: ", 12);
+			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
+			write(2, ": numeric argument required\n", 29);
+			g_error_status = 255;
+			return (g_error_status);
+		}
+		i++;
+	}
+
 	write(2, "bash: exit: ", 12);
 	write(2, ": too many arguments\n", 22);
 	g_error_status = 1;
+	return (g_error_status);
 }
 
 int	ft_exit(t_comm *lst)
@@ -438,42 +458,47 @@ int	ft_exit(t_comm *lst)
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
 	count = ft_count_strings(lst);
 	if (count == 2)
-		ft_check_exit_numeric(lst);
+		g_error_status = ft_check_exit_numeric(lst);
 	else if (count > 2)
-		ft_exit_many_args();
+		ft_exit_many_args(lst);
 	else
 		exit (0);
 	// exit (0);
-	return (EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }
+
+
+
+
+
 
 int check_builtin(t_comm *lst, char **env)
 {
-	if (ft_strncmp(*lst->command_str, "echo", 5) == 0) ///'-n' should work
+	if (ft_strncmp(*lst->cmd, "echo", 5) == 0) ///'-n' should work
 	{
 		return (ft_echo(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "cd", 3) == 0) ///'only a relative or absolute path'
+	else if (ft_strncmp(*lst->cmd, "cd", 3) == 0) ///'only a relative or absolute path'
 	{
 		return (ft_cd(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "pwd", 4) == 0)
+	else if (ft_strncmp(*lst->cmd, "pwd", 4) == 0)
 	{
 		return (ft_pwd(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "export", 7) == 0)
+	else if (ft_strncmp(*lst->cmd, "export", 7) == 0)
 	{
 		return (ft_export(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "unset", 6) == 0)
+	else if (ft_strncmp(*lst->cmd, "unset", 6) == 0)
 	{
 		return (ft_unset(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "env", 4) == 0) /// 'no arguments'
+	else if (ft_strncmp(*lst->cmd, "env", 4) == 0) /// 'no arguments'
 	{
 		return (ft_env(lst));
 	}
-	else if (ft_strncmp(*lst->command_str, "exit", 5) == 0)
+	else if (ft_strncmp(*lst->cmd, "exit", 5) == 0)
 	{
 		return (ft_exit(lst));
 	}

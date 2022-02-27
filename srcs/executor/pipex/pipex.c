@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/22 12:43:37 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/27 19:55:44 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,9 @@ void wait_childs(int n)
 	{
 		wait(&status);
 		if (WEXITSTATUS(status) && status != 0)
-		{
-			printf("THIS\n");
 			g_error_status = WEXITSTATUS(status);
-		}
-		else if (status == 0)
-			g_error_status = 0;
+		else if (status == 0 && g_error_status != 1) // ????? check this!
+				g_error_status = 0;
 		i++;
 	}
 }
@@ -83,9 +80,9 @@ static inline void close_in_out_file(t_comm *tmp)
 	int err;
 
 	err = 0;
-	if (tmp->outfile != -2)
+	if (tmp->outfile >= 0)
 		err = close(tmp->outfile);
-	if (tmp->infile != -2)
+	if (tmp->infile >= 0)
 		err = close(tmp->infile);
 	if (err != 0)
 		perror("close_in_out_file:");
@@ -145,7 +142,7 @@ static inline void redirect(t_comm *tmp)
 	int err;
 
 	err = 0;
-	if (tmp->infile != FD_UNUSED)
+	if (tmp->infile >= 0)
 	{
 		// if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
 		// {
@@ -158,10 +155,10 @@ static inline void redirect(t_comm *tmp)
 	if (err != 0)
 		perror("1redirect:");
 	err = 0;
-	if (tmp->outfile != FD_UNUSED)
+	if (tmp->outfile >= 0)
 		err = dup2(tmp->outfile, STDOUT_FILENO);
-	if (err != 0)
-		perror("2redirect:");
+	// if (err != 0)
+	// 	perror("2redirect:");
 }
 
 static inline int *open_pipes(t_comm *tmp)
@@ -265,8 +262,10 @@ int pipex(t_comm *lst, char **env)
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	while (tmp != NULL && tmp->cmd)
+	// printf("|%s|\n", tmp->cmd[0]);
+	while (tmp != NULL && tmp->cmd[0] != NULL)
 	{
+
 		if (tmp->count_node == 1)
 		{
 			bool = builtins(tmp, env);
@@ -292,6 +291,8 @@ int pipex(t_comm *lst, char **env)
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}
+		// if (g_error_status == 1)
+		// 	break ;
 		signal(SIGINT, handler22);
 		signal(SIGQUIT, handler22);
 		if (fork() == 0)
@@ -320,9 +321,14 @@ int pipex(t_comm *lst, char **env)
 	}
 	tmp = lst;
 	close_pipes(pipes, tmp->count_node);
-	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
+	// close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs(tmp->count_node);
 	if (lst->count_node > 1)
 		free(pipes);
 	return (EXIT_SUCCESS);
 }
+
+
+// write(1, "bash: ", 7);
+				// write(1, tmp->cmd[0], ft_strlen(tmp->cmd[0]));
+				// write(1, ": command not found\n", 21);

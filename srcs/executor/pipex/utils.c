@@ -12,12 +12,6 @@
 
 #include "../../../includes/pipex.h"
 
-void	error_n_exit(char *err_msg)
-{
-	perror(err_msg);
-	exit(EXIT_FAILURE);
-}
-
 /// It could find string with PATH in env
 /// @param env It will show UNIX enviroment, like command `env`
 /// @return

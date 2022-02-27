@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	executor(t_comm *lst, char **env)
+int	executor(t_comm **lst, char **env)
 {
 	if (pipex(lst, env) == -1)
 		return (-1);

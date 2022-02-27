@@ -14,7 +14,7 @@
 
 void	remove_all_list(t_comm *head)
 {
-	int i;
+	int	i;
 
 	if (!head)
 		return ;
@@ -43,10 +43,9 @@ void	remove_all_env_list(t_envp *head)
 	free(head);
 }
 
-void	clean_env(char **env, t_comm *lst)
+void	clean_env(char **env)
 {
 	int	i;
-	int	len;
 
 	i = 0;
 	if (env)
@@ -74,7 +73,7 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-int	ft_process4(char *str, t_envp *list_env)
+int	ft_process4(char *str, t_envp **list_env)
 {
 	t_comm	*lst;
 	char	**new_env;
@@ -84,14 +83,17 @@ int	ft_process4(char *str, t_envp *list_env)
 //	if (!lst)
 //		return (-1);
 //	ft_memset((void *)lst, 0, sizeof(t_comm));
-	new_env = ft_update_env(list_env);
-	lst = ft_parser4(lst, str, list_env);
-	if (executor(lst, new_env) == -1)
+//	printf("lst - '%s'\n", (*list_env)->key);
+	lst = ft_parser4(lst, str, (*list_env));
+	new_env = ft_update_env((*list_env));
+//	printf("lst - '%s'\n", (*list_env)->key);
+	if (executor(&lst, new_env) == -1)
 		return (-1);
 	if (new_env)
-		clean_env(new_env, lst);
+		clean_env(new_env);
+	*list_env = lst->e;
 	remove_all_list(lst);
-	// ft_free_list(lst);
+//	printf("!!!!|%s|=%s\n", lst->e->key, lst->e->value);
 	return (0);
 }
 
@@ -119,12 +121,12 @@ void	ft_up_shlvl(t_envp *list_env)
 	locate = locate_env_key(head, "SHLVL", 0);
 	if (locate == -1)
 	{
-		printf("!!!!!\n");
+//		printf("!!!!!\n");
 		add_to_env(list_env, "SHLVL", "1", 0);
 	}
 	else
 	{
-		printf("?????\n");
+//		printf("?????\n");
 		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
 		tmp = ft_itoa(shlvl);
 		upd_env_value(list_env, tmp, locate, 0);
@@ -133,7 +135,7 @@ void	ft_up_shlvl(t_envp *list_env)
 	}
 }
 
-int main(int ac, char **av, char **env)
+int	main(int ac, char **av, char **env)
 {
 	char		*str;
 	char		*name;
@@ -156,7 +158,7 @@ int main(int ac, char **av, char **env)
 			add_history(str);
 			if (ft_lexer(str) != -1)
 			{
-				if (ft_process4(str, list_env) == -1)
+				if (ft_process4(str, &list_env) == -1)
 					exit(0);
 			}
 			else
@@ -168,6 +170,7 @@ int main(int ac, char **av, char **env)
 			remove_all_env_list(list_env);
 			exit(0);
 		}
+//		printf("!$$@|%s|=%s\n", list_env->key, list_env->value);
 	}
 	remove_all_env_list(list_env);
 	return (0);

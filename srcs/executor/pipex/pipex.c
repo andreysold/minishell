@@ -247,7 +247,7 @@ void	handler2(int sig)
 	}
 }
 
-int pipex(t_comm *lst, char **env)
+int pipex(t_comm **lst, char **env)
 {
 	//for test:  ls -l | head -6 | cut -b 1-10
 	// echo p | echo r | echo i | echo v | echo e | echo t
@@ -255,19 +255,22 @@ int pipex(t_comm *lst, char **env)
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
-	pid_t 	pid;
-	int bool;
-	int status;
+	pid_t	pid;
+	int		bool;
+	int		status;
 
-	tmp = lst;
+	tmp = *lst;
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	while (tmp != NULL && tmp->cmd)
+	while (tmp != NULL && tmp->cmd[0])
 	{
 		if (tmp->count_node == 1)
 		{
-			bool = builtins(tmp, env);
+			bool = builtins(lst, env);
+//			printf("pipex|tmp- |%s|\n", tmp->e->key);
+//			lst->e = tmp->e;
+//			printf("pipex|lst- |%s|\n", (*lst)->e->key);
 			if (bool != -1)
 				return (bool);
 			if (tmp->here != NULL)
@@ -303,7 +306,7 @@ int pipex(t_comm *lst, char **env)
 				redirect(tmp);
 			close_pipes(pipes, tmp->count_node);
 			close_in_out_file(tmp);
-			bool = builtins(tmp, env);
+			bool = builtins(&tmp, env);
 			if (bool != -1)
 				exit (bool);
 			if (execve(find_command_path(tmp->cmd[0], env),
@@ -319,11 +322,12 @@ int pipex(t_comm *lst, char **env)
 		tmp = tmp->next;
 		i++;
 	}
-	tmp = lst;
+	tmp = *lst;
+//	printf("pipex- |%s|\n", (*lst)->e->key);
 	close_pipes(pipes, tmp->count_node);
 	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs(tmp->count_node);
-	if (lst->count_node > 1)
+	if ((*lst)->count_node > 1)
 		free(pipes);
 	return (EXIT_SUCCESS);
 }

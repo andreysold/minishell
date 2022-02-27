@@ -8,20 +8,28 @@ SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins/ft_export.c \
-			srcs/executor/builtins/ft_exit.c \
 			srcs/executor/builtins/builtins.c \
-			srcs/executor/builtins/builtins_utils.c
+			srcs/executor/builtins/builtins_utils.c \
+			srcs/executor/builtins/ft_echo.c \
+			srcs/executor/builtins/ft_cd.c \
+			srcs/executor/builtins/ft_pwd.c \
+			srcs/executor/builtins/ft_export.c \
+			srcs/executor/builtins/ft_unset.c \
+			srcs/executor/builtins/ft_env.c \
+			srcs/executor/builtins/ft_exit.c \
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \
-            srcs/executor/pipex/utils.c
+	srcs/executor/pipex/utils.c
+
+#UTILS
+SRCS	+=	srcs/list_utils/list_utils.c\
 
 #PARSER
 SRCS	+=	srcs/parser/parse_dollar.c \
-            srcs/parser/process.c \
-            srcs/parser/parse_quotes.c \
-            srcs/parser/parse_utils.c \
+			srcs/parser/process.c \
+			srcs/parser/parse_quotes.c \
+			srcs/parser/parse_utils.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
 			srcs/parser/env.c\

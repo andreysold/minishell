@@ -1,8 +1,4 @@
-//
-// Created by Waif Jonathon on 2/24/22.
-//
-
-#include	"minishell.h"
+#include	"../../../includes/minishell.h"
 
 int ft_count_strings(t_comm *lst)
 {
@@ -40,6 +36,7 @@ int	ft_new_value_error(char *str)
 	// printf("%lld\n", n);
 	if (n > max && sign != -1)
 	{
+		printf("A\n");
 		write(2, "bash: exit: ",12);
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
@@ -76,6 +73,7 @@ int	ft_check_exit_numeric(t_comm *lst)
 		}
 		if (!(ft_isdigit(lst->cmd[1][j])))
 		{
+			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
@@ -97,6 +95,7 @@ int	ft_exit_many_args(t_comm *lst)
 	{
 		if (ft_isalpha(lst->cmd[1][i]))
 		{
+			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);

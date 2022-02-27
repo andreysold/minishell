@@ -21,7 +21,7 @@ char *ft_name_file(t_comm *lst, int i, char *tmp, t_envp *head)
 {
 	while (lst->name[i])
 	{
-		if (lst->name[i] == '$' && lst->name[i + 1] != ' ')
+		if (lst->name[i] == '$')
 		{
 			i++;
 			tmp = ft_substr(lst->name, i, ft_strlen(lst->name) - i);
@@ -32,13 +32,15 @@ char *ft_name_file(t_comm *lst, int i, char *tmp, t_envp *head)
 					free (tmp);
 					free (lst->name);
 					lst->name = ft_strdup(head->value);
-					break ;
+					printf("%s\n", lst->name);
+					return (lst->name);
 				}
 				head = head->next;
 			}
 		}
 		i++;
 	}
+	// printf("%s\n", lst->name);
 	return (lst->name);
 }
 
@@ -48,13 +50,11 @@ char *ft_new_sub(int i, t_comm *lst, char *str, int begin)
 	char *tmp;
 	int fl;
 	int count;
-	int j;
-	j = 0;
 
 	fl = 0;
 	count = 0;
 	head = lst->e;
-	ft_key_file(str, &begin, i, lst->name);
+	tmp = ft_key_file(str, &begin, i, lst->name);
 	return (ft_name_file(lst, i, tmp, head));
 }
 
@@ -73,6 +73,7 @@ int ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
 	ft_skip_sp(str, i, begin);
 	lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
 	lst->name = ft_new_sub(*i, lst, str, *begin);
+	printf("|%s|\n", lst->name);
 	lst->outfile = open(lst->name,  O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (!lst->outfile)
 		return (-1);
@@ -129,11 +130,23 @@ int ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 
 int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 {
+	int beg;
+	int k;
+
+	k = 0;
+	beg = 0;
 	(*i) += 2;
 	while (str[(*i)] && str[(*i)] == ' ')
 		(*i)++;
-	lst->here = ft_strdup(str + (*i));
-	(*i) += ft_strlen(lst->here);
+	beg = (*i);
+	while (str[(*i)] && str[(*i)] != ' ')
+	{
+		(*i)++;
+		k++;
+	}
+	lst->here = ft_substr(str, beg, k);
+	// printf("|%s|\n", lst->here);
+	// (*i) += ft_strlen(lst->here);
 	lst->infile = open(".tmp", O_TRUNC | O_WRONLY | O_CREAT, 0644);
 	if (lst->infile == -1)
 	{
@@ -148,14 +161,14 @@ int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 char *ft_open_file(char *str, int *i, int *j, t_comm *lst)
 {
 	int begin;
-	int end;
-	int k;
+	// int end;
+	// int k;
 	
-	end = 0;
-	begin = 0;
+	// end = 0;
+	// begin = 0;
 	while (str[(*i)])
 	{
-		k = 0;
+		// k = 0;
 		if (str[(*i)] == '>' && str[(*i) + 1] != '>')
 			ft_one_redir(lst, str, i, &begin);
 		else if (str[(*i)] == '>' && str[(*i) + 1] == '>')

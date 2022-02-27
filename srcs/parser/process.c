@@ -186,6 +186,9 @@ t_comm *ft_parser4(t_comm *lst, char *str, t_envp *e)
     count_nd = ft_count_node(str);
     if (count_nd > 1)
         str_tl = ft_split(str, '|');
+	// int i = 0;
+	// while (str_tl[i])
+	// 	printf("%s\n", str_tl[i++]);
     clean = lst;
     if (count_nd > 1)
         lst = ft_create_nodes(lst, str_tl, count_nd, e);

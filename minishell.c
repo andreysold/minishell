@@ -131,6 +131,29 @@ void	ft_up_shlvl(t_envp *list_env)
 	}
 }
 
+int	ft_main_circle(char *str, t_envp *list_env)
+{
+	str = readline("bash:");
+	if (str && *str)
+	{
+		add_history(str);
+		if (ft_lexer(str) != -1)
+		{
+			if (ft_process4(str, list_env) == -1)
+				exit(0);
+		}
+		else
+			free (str);
+	}
+	else if (str == NULL)
+	{
+		write(1, "exit\n", 5);
+		remove_all_env_list(list_env);
+		exit(0);
+	}
+	return (0);
+}
+
 int main(int ac, char **av, char **env)
 {
 	char		*str;
@@ -141,28 +164,14 @@ int main(int ac, char **av, char **env)
 	list_env = NULL;
 	list_env = ft_node_env(list_env, env);
 	ft_up_shlvl(list_env);
+	//if (ac > 1)
+	//	printf("Error arg\n");
+	//	exit(0);
 	while (1)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
-		str = readline("bash:");
-		if (str && *str)
-		{
-			add_history(str);
-			if (ft_lexer(str) != -1)
-			{
-				if (ft_process4(str, list_env) == -1)
-					exit(0);
-			}
-			else
-				free (str);
-		}
-		else if (str == NULL)
-		{
-			write(1, "exit\n", 5);
-			remove_all_env_list(list_env);
-			exit(0);
-		}
+		ft_main_circle(str, list_env);
 	}
 	remove_all_env_list(list_env);
 	return (0);

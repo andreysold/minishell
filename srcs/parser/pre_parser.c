@@ -25,7 +25,6 @@ int	ft_return_error(char *str)
 	if (str)
 		write(2, str, ft_strlen(str));
 	g_error_status = 258;
-	// g_error = ?
 	return (-1);
 }
 
@@ -36,8 +35,9 @@ int	ft_lexer(char *str)
 	int len;
 	int count_red;
 	int	count_back;
-	int pipe_flag = 0;
-
+	int pipe_flag;
+	
+	pipe_flag = 0;
 	count_red = 0;
 	count_back = 0;
 	i = 0;
@@ -56,21 +56,9 @@ int	ft_lexer(char *str)
 			if (str[i] != '\"')
 				return (ft_return_error("bash: syntax error in unclosed quoters\n"));
 		}
-		// else if (str[i] == ' ')
-		// {
-		// 	// i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 	{
-		// 		if (str[i+1] == '|')
-		// 			return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
-		// 		i++;
-		// 	}
-		// 	if (str[i] == '"')
-		// 		printf("THIS");
-		// }
 		else if (str[i] == '|')
 		{
-			if (i == 0)
+			if (pipe_flag == 0 || i == 0)
 				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
 			i++;
 			if (str[i] == ' ')
@@ -78,47 +66,33 @@ int	ft_lexer(char *str)
 				while (str[i] && str[i] == ' ')
 					i++;
 			}
-			if (str[i] == '|')
-				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
-			if (len == i)
+			if (len == i || str[i] == '|')
 				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
 			else 
 				continue ;
-		}
-		else if (str[i] == ' ')
-		{
-			i++;
-			while (str[i] && str[i] == ' ')
-				i++;
-			if (str[i] == '|')
-				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
 		}
 		else if (str[i] == '>')
 		{
 			i++;
 			count_red = 1;
-			while (str[i] && str[i] == '>')
-			{
+			count_red += ft_count_redir(str, &i, '>');
+			while (str[i] && str[i] == ' ')
 				i++;
-				count_red++;
-			}
 			if (str[i] == '<')
 				return (ft_return_error("bash: syntax error near unexpected token `<'\n"));
 			if (count_red == 3)
 				return (ft_return_error("bash: syntax error near unexpected token `>'\n"));
 			else if (count_red > 3)
 				return (ft_return_error("bash: syntax error near unexpected token `>>'\n"));
+			if (str[i] == '|' || i == len)
+				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
 			
 		}
 		else if (str[i] == '<')
 		{
 			i++;
 			count_back = 1;
-			while (str[i] && str[i] == '<')
-			{
-				i++;
-				count_back++;
-			}
+			count_back += ft_count_redir(str, &i, '<');
 			if (str[i] == '>')
 				return (ft_return_error("bash: syntax error near unexpected token `>'\n"));
 			if (count_back == 4)
@@ -128,6 +102,8 @@ int	ft_lexer(char *str)
 			else if (count_back > 5)
 				return (ft_return_error("bash: syntax error near unexpected token `<<<'\n"));
 		}
+		else if (str[i] != ' ')
+			pipe_flag++;
 		i++;
 	}
 	return (1);

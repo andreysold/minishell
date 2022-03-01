@@ -82,6 +82,7 @@ char *ft_destroy_space4(char *str, t_comm *lst)
 	j = 0;
 	while (str[i])
 		ft_parse_condition(str, lst, &i, &j);
+	// printf("|%d|\n", lst->flag_error);
 	lst->tmp[j] = '\0';
 	free (str);
 	return (lst->tmp);
@@ -124,6 +125,8 @@ t_comm *ft_return_node(t_comm *lst)
 		if (lst->last_str)
 		{
 			lst->last_str = ft_destroy_space4(lst->last_str, lst);
+			if (lst->flag_error == -1)
+				return (NULL);
 			lst->cmd = ft_split(lst->last_str, ' ');
 			free (lst->last_str);
 			lst->cmd = ft_return_space(lst->cmd);
@@ -186,19 +189,17 @@ t_comm *ft_parser4(t_comm *lst, char *str, t_envp *e)
     count_nd = ft_count_node(str);
     if (count_nd > 1)
         str_tl = ft_split(str, '|');
-	// int i = 0;
-	// while (str_tl[i])
-	// 	printf("%s\n", str_tl[i++]);
     clean = lst;
     if (count_nd > 1)
         lst = ft_create_nodes(lst, str_tl, count_nd, e);
     else
         lst = ft_create_node(lst, str, count_nd, e);
-
     if (clean)
         free(clean);
     free (str);
     lst = ft_return_node(lst);
+	if (lst == NULL)
+		return (NULL);
     return (lst);
 }
 

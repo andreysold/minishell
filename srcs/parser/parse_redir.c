@@ -1,5 +1,6 @@
 #include "../../includes/minishell.h"
 
+
 char *ft_key_file(char *str, int *begin, int len, char *name)
 {
 	int k;
@@ -17,8 +18,11 @@ char *ft_key_file(char *str, int *begin, int len, char *name)
 	return (name);
 }
 
-char *ft_name_file(t_comm *lst, int i, char *tmp, t_envp *head)
+char *ft_name_file(t_comm *lst, char *tmp, t_envp *head)
 {
+    int i;
+
+    i = 0;
 	while (lst->name[i])
 	{
 		if (lst->name[i] == '$')
@@ -32,7 +36,6 @@ char *ft_name_file(t_comm *lst, int i, char *tmp, t_envp *head)
 					free (tmp);
 					free (lst->name);
 					lst->name = ft_strdup(head->value);
-					printf("%s\n", lst->name);
 					return (lst->name);
 				}
 				head = head->next;
@@ -40,7 +43,6 @@ char *ft_name_file(t_comm *lst, int i, char *tmp, t_envp *head)
 		}
 		i++;
 	}
-	// printf("%s\n", lst->name);
 	return (lst->name);
 }
 
@@ -54,8 +56,9 @@ char *ft_new_sub(int i, t_comm *lst, char *str, int begin)
 	fl = 0;
 	count = 0;
 	head = lst->e;
-	tmp = ft_key_file(str, &begin, i, lst->name);
-	return (ft_name_file(lst, i, tmp, head));
+	lst->name = ft_key_file(str, &begin, i, lst->name);
+    lst->name = ft_name_file(lst, tmp, head);
+    return (lst->name);
 }
 
 void    ft_skip_sp(char *str, int *i, int *begin)
@@ -83,6 +86,8 @@ int ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(2, lst->name, ft_strlen(lst->name));
 		write(1, ":", 1);
 		perror("");
+		g_error_status = -1;
+		return (-1);
 	}
 	free (lst->name);
 	return (0);
@@ -103,6 +108,7 @@ int ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(1, ":", 1);
 		perror("");
 		g_error_status = 1;
+		return (-1);
 	}
 	free (lst->name);
 	return (0);
@@ -123,6 +129,9 @@ int ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(2, lst->name, ft_strlen(lst->name));
 		write(1, ":", 1);
 		perror("");
+		g_error_status = -1;
+		return (-1);
+
 	}
 	free (lst->name);
 	return (0);
@@ -141,12 +150,10 @@ int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 	beg = (*i);
 	while (str[(*i)] && str[(*i)] != ' ')
 	{
-		(*i)++;
 		k++;
+		(*i)++;
 	}
 	lst->here = ft_substr(str, beg, k);
-	// printf("|%s|\n", lst->here);
-	// (*i) += ft_strlen(lst->here);
 	lst->infile = open(".tmp", O_TRUNC | O_WRONLY | O_CREAT, 0644);
 	if (lst->infile == -1)
 	{
@@ -154,6 +161,8 @@ int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 		write(2, lst->name, ft_strlen(lst->name));
 		write(1, ":", 1);
 		perror("");
+		g_error_status = -1;
+		return (-1);
 	}
 	return (0);
 }
@@ -161,22 +170,18 @@ int    ft_herdok(t_comm *lst, char *str, int *i, int *begin)
 char *ft_open_file(char *str, int *i, int *j, t_comm *lst)
 {
 	int begin;
-	// int end;
-	// int k;
-	
-	// end = 0;
-	// begin = 0;
+
+    begin = 0;
 	while (str[(*i)])
 	{
-		// k = 0;
 		if (str[(*i)] == '>' && str[(*i) + 1] != '>')
-			ft_one_redir(lst, str, i, &begin);
+			lst->flag_error = ft_one_redir(lst, str, i, &begin);
 		else if (str[(*i)] == '>' && str[(*i) + 1] == '>')
-			ft_add_redir(lst, str, i, &begin);
+			lst->flag_error = ft_add_redir(lst, str, i, &begin);
 		else if (str[(*i)] == '<' && str[(*i) + 1] != '<')
-			ft_back_redir(lst, str, i, &begin);
+			lst->flag_error = ft_back_redir(lst, str, i, &begin);
 		else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
-			ft_herdok(lst, str, i, &begin);
+			lst->flag_error = ft_herdok(lst, str, i, &begin);
 		else
 			lst->tmp[(*j)++] = str[(*i)++];
 	}

@@ -7,10 +7,10 @@
 #include "../srcs/libft/libft.h"
 #include <fcntl.h>
 #include <errno.h>
-// #include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
-// #include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
-#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+#include "/usr/local/Cellar/readline/8.1/include/readline/readline.h"
+#include "/usr/local/Cellar/readline/8.1/include/readline/history.h"
+// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+// #include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 #define FD_UNUSED	-2
 
 /**********COLOR**********/
@@ -62,6 +62,7 @@ typedef struct s_comm
 	int				count_node;
 	char            *tmp;
 	int             fl;
+	int				flag_error;
 	t_envp          *e;
 	char            *name;
 	struct s_comm	*next;

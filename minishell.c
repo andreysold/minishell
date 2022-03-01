@@ -80,18 +80,17 @@ int	ft_process4(char *str, t_envp *list_env)
 	char	**new_env;
 
 	lst = NULL; ///fixed
-//	lst = malloc(sizeof(t_comm));
-//	if (!lst)
-//		return (-1);
-//	ft_memset((void *)lst, 0, sizeof(t_comm));
 	new_env = ft_update_env(list_env);
 	lst = ft_parser4(lst, str, list_env);
-	// if (g_error_status == 0)
-	// {
-		if (executor(lst, new_env) == -1)
-			return (-1);
-	// }
-	// g_error_status = 0;
+	if (lst == NULL)
+	{
+		if (new_env)
+			clean_env(new_env, lst);
+		remove_all_list(lst);
+		return (0);
+	}
+	if (executor(lst, new_env) == -1)
+		return (-1);
 	if (new_env)
 		clean_env(new_env, lst);
 	remove_all_list(lst);

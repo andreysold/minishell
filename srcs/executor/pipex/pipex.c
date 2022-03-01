@@ -291,8 +291,6 @@ int pipex(t_comm *lst, char **env)
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}
-		// if (g_error_status == 1)
-		// 	break ;
 		signal(SIGINT, handler22);
 		signal(SIGQUIT, handler22);
 		if (fork() == 0)
@@ -307,7 +305,7 @@ int pipex(t_comm *lst, char **env)
 			if (bool != -1)
 				exit (bool);
 			if (execve(find_command_path(tmp->cmd[0], env),
-					   tmp->cmd, env) == -1)
+					tmp->cmd, env) == -1)
 			{
 				bash_error("bash: ", tmp->cmd[0], ": command not found");
 				exit(g_error_status);

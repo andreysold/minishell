@@ -58,17 +58,14 @@ char	*find_command_path(char *command, char **env)
 	splited = ft_split(env[where_is_path(env)] + 5, ':');
 //	cmd = ft_split(command_with_args, ' ');
 	i = 0;
+	if (command == NULL)
+		return (ft_strdup(""));
 	while (i < str_count(splited))
 	{
 		path_to_command = ft_strjoin(ft_strjoin(splited[i], "/"), command);
 		if (access(path_to_command, R_OK) == 0)
-		{
-			/*printf("%sPID %d | '%s' path to the command %s\n", BLUE, getpid(), path_to_command, RESET);
-			fflush(NULL);*/
 			return (path_to_command);
-		}
 		i++;
 	}
-
 	return (ft_strdup(command));
 }

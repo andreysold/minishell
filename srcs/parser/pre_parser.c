@@ -28,7 +28,6 @@ int	ft_return_error(char *str)
 	return (-1);
 }
 
-
 int	ft_lexer(char *str)
 {
 	int i;

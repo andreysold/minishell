@@ -133,7 +133,20 @@ void	ft_up_shlvl(t_envp *list_env)
 
 int	ft_main_circle(char *str, t_envp *list_env)
 {
+	int i;
+	int len;
+
+
+	i = 0;
 	str = readline("bash:");
+	len = ft_strlen(str);
+	if (str[0] == ' ')
+	{
+		while (str[i] && str[i] == ' ')
+			i++;
+		if (i == len)
+			return (0);
+	}
 	if (str && *str)
 	{
 		add_history(str);

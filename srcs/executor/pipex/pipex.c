@@ -262,11 +262,17 @@ int pipex(t_comm *lst, char **env)
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	// printf("|%s|\n", tmp->cmd[0]);
-	while (tmp != NULL && tmp->cmd[0] != NULL)
+	//printf("|%s|\n", tmp->cmd[0]);
+	// // while (tmp != NULL && tmp->cmd[0] != NULL)
+	// if (tmp->cmd[0] == NULL)
+	// {
+	// 	write(2, "bash: : command not found\n", 27);
+	// 	g_error_status = 127;
+	// }
+	// printf("%")
+	while (tmp != NULL)
 	{
-
-		if (tmp->count_node == 1)
+		if (tmp->count_node == 1 && tmp->cmd[0] != NULL)
 		{
 			bool = builtins(tmp, env);
 			if (bool != -1)
@@ -295,15 +301,18 @@ int pipex(t_comm *lst, char **env)
 		signal(SIGQUIT, handler22);
 		if (fork() == 0)
 		{
-			if (tmp->count_node > 1)
-				pipe_switch(i, kind, pipes, tmp);
-			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
-				redirect(tmp);
-			close_pipes(pipes, tmp->count_node);
-			close_in_out_file(tmp);
-			bool = builtins(tmp, env);
-			if (bool != -1)
-				exit (bool);
+			if (tmp->cmd[0] != NULL)
+			{
+				if (tmp->count_node > 1)
+					pipe_switch(i, kind, pipes, tmp);
+				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+					redirect(tmp);
+				close_pipes(pipes, tmp->count_node);
+				close_in_out_file(tmp);
+				bool = builtins(tmp, env);
+				if (bool != -1)
+					exit (bool);
+			}
 			if (execve(find_command_path(tmp->cmd[0], env),
 					tmp->cmd, env) == -1)
 			{

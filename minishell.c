@@ -1,113 +1,69 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/02/27 19:56:16 by galetha          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	ft_lexer(char *str)
+void	remove_all_list(t_comm *head)
 {
 	int i;
-	int len;
+
+	if (!head)
+		return ;
+	remove_all_list(head->next);
+	if (head->here)
+		free(head->here);
+	if (head->cmd)
+	{
+		i = 0;
+		while (head->cmd[i])
+			i++;
+		leak_case(i, head->cmd);
+	}
+	free(head);
+}
+
+void	remove_all_env_list(t_envp *head)
+{
+	if (!head)
+		return ;
+	remove_all_env_list(head->next);
+	if (head->key)
+		free(head->key);
+	if (head->value)
+		free(head->value);
+	free(head);
+}
+
+void	clean_env(char **env, t_comm *lst)
+{
+	int	i;
+	int	len;
 
 	i = 0;
-	len = ft_strlen(str);
-	while (str[i])
+	if (env)
 	{
-		if (str[i] == '\'')
+		while (env[i]) //todo mb + 1
 		{
-			ft_count_node2(str, &i, '\'');
-			if (str[i] != '\'')
-			{
-				write(1, "bash: syntax error in unclosed quoters\n", 40);
-				return (-1);
-			}
+			free(env[i]);
+			i++;
 		}
-		if (str[i] == '\"')
-		{
-			ft_count_node2(str, &i, '\"');
-			if (str[i] != '\"')
-			{
-				write(1, "bash: syntax error in unclosed quoters\n", 40);
-				return (-1);
-			}
-		}
-		// if (str[i] == '>')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (str[i] != )
-		// }
-		// if (str[i] == '|')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (i == len)
-		// 	{
-		// 		write(1, "bash: syntax error in the absence of commands\n", 47);
-		// 		return (-1);
-		// 	}
-		// }
-		// if (str[i] == '>' || str[i] == '<')
-		// {
-		// 	i++;
-		// 	while (str[i] && str[i] == ' ')
-		// 		i++;
-		// 	if (i == len)
-		// 	{
-		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-		// 		return (-1);
-		// 	}
-		// 	else
-		// 	{
-		// 		write(1,"bash: syntax error near unexpected token `newline'\n", 52);
-		// 		return (-1);
-		// 	}
-		// }
-		i++;
+		// free(env[i]);
+		free(env);
 	}
-	//printf("A\n");
-	return (1);
 }
 
-void	ft_free_list(t_comm *lst)
+void	ft_no_malloc(char **str)
 {
-	t_comm *head;
-
-	while (lst != NULL)
-    {
-        head = lst;
-        if (lst->command_str)
-        {
-            int i = 0;
-            while (lst->command_str[i])
-			{
-				printf("|%s|\n", lst->command_str[i]);
-                free (lst->command_str[i]);
-				i++;
-			}
-            free (lst->command_str);
-        }
-        lst = lst->next;
-        free (head);
-    }
-}
-
-int ft_process4(char **env, char *str)
-{
-    t_comm *lst;
-
-    lst = malloc(sizeof(t_comm));
-    if (!lst)
-        return (-1);
-    ft_memset((void *)lst, 0, sizeof(t_comm));
-    lst = ft_parser4(lst, str, env);
-	lst = ft_check_redir(lst);
-	executor(lst, env);
-	ft_free_list(lst);
-    return (0);
-}
-
-void ft_no_malloc(char **str)
-{
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -118,49 +74,118 @@ void ft_no_malloc(char **str)
 	free (str);
 }
 
-char **ft_get_envp(char **env)
+int	ft_process4(char *str, t_envp **list_env)
 {
-	char **envp;
-	int i = 0;
+	t_comm	*lst;
+	char	**new_env;
 
-	while (env[i])
-		i++;
-	envp = (char **)malloc(sizeof(char *) * i + 1);
-	if (!envp)
-		return (NULL);
-	i = 0;
-	while (env[i])
+	lst = NULL; ///fixed
+	new_env = ft_update_env(*list_env);
+	lst = ft_parser4(lst, str, *list_env);
+	if (lst == NULL)
 	{
-		envp[i] = ft_substr(env[i], 0, ft_strlen(env[i]));
-		i++;
+		if (new_env)
+			clean_env(new_env, lst);
+		remove_all_list(lst);
+		return (0);
 	}
-	envp[i] = NULL;
-	return (envp);
+	if (executor(&lst, new_env) == -1)
+		return (-1);
+	if (new_env)
+		clean_env(new_env, lst);
+	*list_env = lst->e;
+	remove_all_list(lst);
+	return (0);
+}
+
+void	handler(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
+	write(1,"  \b\b\n", 5);
+	rl_on_new_line();
+//	rl_replace_line("", 1); ///fixme
+	rl_redisplay();
+	g_error_status = 1;
+}
+
+void	ft_up_shlvl(t_envp *list_env)
+{
+	t_envp	*head;
+	int		shlvl;
+	char	*tmp;
+	int		locate;
+
+	locate = 0;
+	head = list_env;
+	locate = locate_env_key(head, "SHLVL", 0);
+	if (locate == -1)
+		add_to_env(list_env, "SHLVL", "1", 0);
+	else
+	{
+		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
+		tmp = ft_itoa(shlvl);
+		upd_env_value(list_env, tmp, locate, 0);
+		if (tmp)
+			free(tmp);
+	}
+}
+
+int	ft_main_circle(char *str, t_envp **list_env)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	str = readline("bash:");
+	len = (int)ft_strlen(str);
+	if (str && *str)
+	{
+		if (str[0] == ' ')
+		{
+			while (str[i] && str[i] == ' ')
+				i++;
+			if (i == len)
+				return (0);
+		}
+		add_history(str);
+		if (ft_lexer(str) != -1)
+		{
+			if (ft_process4(str, list_env) == -1)
+				exit(0);
+		}
+		else
+			free (str);
+	}
+	else if (str == NULL)
+	{
+		write(1, "exit\n", 5);
+		remove_all_env_list(*list_env);
+		exit(0);
+	}
+	return (0);
 }
 
 int main(int ac, char **av, char **env)
 {
-	char *str;
-	char **envp;
+	char		*str;
+	char		*name;
+	char		**envp;
+	t_envp		*list_env;
 
-	(void)ac;
-	(void)av;
+	list_env = NULL;
+	list_env = ft_node_env(list_env, env);
+	ft_up_shlvl(list_env);
+	//if (ac > 1)
+	//	printf("Error arg\n");
+	//	exit(0);
 	while (1)
 	{
-		str = readline("bash:");
-		if (str && *str)
-		{
-			if (ft_lexer(str) != 1)
-				exit (0);
-			envp = ft_get_envp(env);
-			add_history(str);
-			if (ft_check_str(str) != -1)
-        	{
-				if (ft_process4(envp, str) == -1)
-					exit (0);
-			}
-			free (str);
-			ft_no_malloc(envp);
-		}
+		signal(SIGINT, handler);
+		signal(SIGQUIT, SIG_IGN);
+		ft_main_circle(str, &list_env);
 	}
+	remove_all_env_list(list_env);
+	return (0);
 }

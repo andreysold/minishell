@@ -1,22 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utlis.c                                            :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:09:44 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/10/30 20:36:23 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/21 18:20:21 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/pipex.h"
-
-void	error_n_exit(char *err_msg)
-{
-	perror(err_msg);
-	exit(EXIT_FAILURE);
-}
 
 /// It could find string with PATH in env
 /// @param env It will show UNIX enviroment, like command `env`
@@ -47,25 +41,27 @@ static inline int	str_count(char **strings)
 	return (i);
 }
 
-char	*find_command_path(char *command_with_args, char **env)
+char	*find_command_path(char *command, char **env)
 {
 	int		i;
 	char	**splited;
 	char	*path_to_command;
-	char	**cmd;
 
-	i = 0;
 	splited = ft_split(env[where_is_path(env)] + 5, ':');
-	cmd = ft_split(command_with_args, ' ');
-	while (i < str_count(env))
+	i = 0;
+	if (command == NULL)
+		return (ft_strdup(""));
+	while (i < str_count(splited))
 	{
-		path_to_command = ft_strjoin(ft_strjoin(splited[i], "/"), cmd[0]);
+		path_to_command = ft_strjoin(ft_strjoin(splited[i], "/"), command);
 		if (access(path_to_command, R_OK) == 0)
-			break ;
+			return (path_to_command);
 		i++;
 	}
-	/*printf("%sPID %d | '%s' path to the command %s\n", BLUE, getpid(), \
-	path_to_command, RESET);
-	fflush(NULL);*/
-	return (path_to_command);
+	free(path_to_command);
+	i = 0;
+	while (splited[i])
+		i++;
+	leak_case(i, splited);
+	return (ft_strdup(command));
 }

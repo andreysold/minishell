@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2021/11/01 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/27 19:53:44 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	executor(t_comm *lst, char **env)
+int	executor(t_comm **lst, char **env)
 {
-	pipex(lst, env);
+	if (pipex(lst, env) == -1)
+		return (-1);
 	return (0);
 }

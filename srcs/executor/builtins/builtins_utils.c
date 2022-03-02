@@ -135,3 +135,13 @@ int	locate_env_key(t_envp *envp, char *key, int origin)
 	}
 	return (-1);
 }
+
+int	ft_count_strings(t_comm *lst)
+{
+	int	count;
+
+	count = 0;
+	while (lst->cmd[count])
+		count++;
+	return (count);
+}

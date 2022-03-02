@@ -35,11 +35,20 @@
 # define FD_UNUSED	-2
 
 /**********COLOR**********/
-# define RESET	"\033[0m"
-# define RED		"\033[31m"
-# define GREEN   "\033[32m"
-# define YELLOW  "\033[33m"
-# define BLUE    "\033[34m"
+#define RESET	"\033[0m"
+#define RED		"\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+/***********PRE_PARSER****/
+
+#define	PIPE "bash: syntax error near unexpected token `|'\n"
+#define RED1 "bash: syntax error near unexpected token `>'\n"
+#define RED2 "bash: syntax error near unexpected token `>>'\n"
+#define RED3 "bash: syntax error near unexpected token `<'\n"
+#define RED4 "bash: syntax error near unexpected token `<<'\n"
+#define	RED5 "bash: syntax error near unexpected token `<<<'\n"
+#define	QUOT "bash: syntax error in unclosed quoters\n"
 
 # define START	1
 # define MIDDLE	2
@@ -145,6 +154,8 @@ int		ft_process4(char *str, t_envp **envp);
 int		ft_count_node(char *str);
 
 void	ft_no_malloc(char **str);
+void	ft_skip_space(char *str, int *i);
+
 int		ft_lexer(char *str);
 char	*ft_one_quotes(char *str, t_comm *lst, int *i, int *j);
 char	*ft_two_quotes(char *str, t_comm *lst, int *i, int *j);
@@ -152,6 +163,7 @@ char	*ft_tream(char *str);
 char	**ft_return_space(char **str);
 int		ft_dol_str(char *str, t_comm *lst);
 t_comm	*ft_parser4(t_comm *lst, char *str, t_envp *e);
+t_comm	*ft_return_node(t_comm *lst);
 char	*ft_destroy_space4(char *str, t_comm *lst);
 char	*ft_shit_dollar(char *str, t_comm *lst, int *i, int *j);
 char	*ft_add_space(char *str);
@@ -168,6 +180,27 @@ char	*ft_get_value(int count, char **env);
 char	*ft_get_key(int count, char **env);
 char	**ft_update_env(t_envp *list_env);
 char	**ft_get_envp(char **env);
+char	*ft_spasibo_norma(char *tmp, t_comm *lst, int *j);
+char	*ft_global_value(char *str, t_comm *lst, int *i, int *j);
+char	*ft_name_file(t_comm *lst, char *tmp, t_envp *head);
+char	*ft_key_file(char *str, int *begin, int len, char *name);
+char	*ft_new_str(char *str);
 void	handler(int sig);
-
+void	remove_all_list(t_comm *head);
+void	ft_skip_quotes(char *str, int *i, char c);
+void	remove_all_env_list(t_envp *head);
+void	clean_env(char **env, t_comm *lst);
+void	ft_get_key_value(char **massiv, t_envp *tmp, char *clean, int *i);
+int		ft_is_space(char *str, int *i);
+int		ft_return_error(char *str);
+int		ft_len_value_dol(char *tmp, t_comm *lst);
+int		ft_count_dol_value(char *str, int *i);
+int		ft_iskey(char c);
+int		ft_del_space(char *str, int *i);
+int		ft_count_strings(t_comm *lst);
+int		ft_count_redir(char *str, int *i, char c);
+int		ft_return_error(char *str);
+int		ft_out_error(char *str, int *i, int count_red);
+int		ft_infile_error(char *str, int *i, int count_back);
+size_t	segments(char const *s, char c);
 #endif

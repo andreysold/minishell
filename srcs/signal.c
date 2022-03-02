@@ -34,5 +34,17 @@ void	ff(int sig)
 	write(1, "\n", 1);
 	rl_on_new_line();
 	g_error_status = 1;
-	exit (g_error_status);
+	exit(g_error_status);
+}
+
+void	handler(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
+	write(1, "  \b\b\n", 5);
+	rl_on_new_line();
+	rl_replace_line("", 1);
+	rl_redisplay();
+	g_error_status = 1;
 }

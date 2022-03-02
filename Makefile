@@ -40,6 +40,13 @@ SRCS	+=	srcs/parser/parse_dollar.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
 			srcs/parser/env.c\
+			srcs/signal.c\
+			srcs/all_free.c\
+			srcs/parser/env_utils.c\
+			srcs/parser/dollar_utils.c\
+			srcs/parser/process_utils.c\
+			srcs/parser/redir_utils.c\
+			srcs/parser/pre_parser_utils.c\
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 

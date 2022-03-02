@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/03/02 15:02:26 by galetha          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
 void	ft_count_node2(char *str, int *i, char c)
@@ -5,6 +17,22 @@ void	ft_count_node2(char *str, int *i, char c)
 	(*i)++;
 	while (str[(*i)] && str[(*i)] != c)
 		(*i)++;
+}
+
+int	ft_is_space(char *str, int *i)
+{
+	int	len;
+
+	len = (int)ft_strlen(str);
+	add_history(str);
+	if (str[0] == ' ')
+	{
+		while (str[(*i)] && str[(*i)] == ' ')
+			(*i)++;
+		if ((*i) == len)
+			return (-1);
+	}
+	return (1);
 }
 
 int	ft_count_node(char *str)

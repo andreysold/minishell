@@ -1,27 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/03/02 14:36:45 by galetha          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include	"../../../includes/minishell.h"
 
-int ft_count_strings(t_comm *lst)
-{
-	int count;
+int	ft_exit_atoi(char *str, int sign, int n)
+{	
+	int	i;
 
-	count = 0;
-	while (lst->cmd[count])
-		count++;
-	return (count);
-}
-
-int	ft_new_value_error(char *str)
-{
-	int i;
-	long long 	n;
-	int new_val;
-	int sign;
-	unsigned long long		max;
-
-	max = 9223372036854775807;
-	sign = 1;
 	i = 0;
-	n = 0;
 	if (str && str[i] == '-')
 	{
 		sign = -1;
@@ -33,24 +28,27 @@ int	ft_new_value_error(char *str)
 		i++;
 	}
 	n *= sign;
-	// printf("%lld\n", n);
+	return (n);
+}
+
+int	ft_new_value_error(char *str)
+{
+	long long			n;
+	int					new_val;
+	int					sign;
+	unsigned long long	max;
+
+	max = 9223372036854775807;
+	sign = 1;
+	n = ft_exit_atoi(str, sign, n);
 	if (n > max && sign != -1)
 	{
-		printf("A\n");
-		write(2, "bash: exit: ",12);
+		write(2, "bash: exit: ", 12);
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
 		g_error_status = 255;
-		return (g_error_status);
+		exit (g_error_status);
 	}
-	// else if (n < min && sign)
-	// {
-	// 	printf("A\n");
-	// 	write(2, "bash: exit: ",12);
-	// 	write(2, str, ft_strlen(str));
-	// 	write(2, " numeric argument required\n", 28);
-	// 	return (255);
-	// }
 	n = n % 256;
 	while (n < 0)
 		n = n + 256;
@@ -62,6 +60,7 @@ int	ft_check_exit_numeric(t_comm *lst)
 	t_comm	*head;
 	int		count_min;
 	int		j;
+
 	j = 0;
 	count_min = 0;
 	while (lst->cmd[1][j])
@@ -73,7 +72,6 @@ int	ft_check_exit_numeric(t_comm *lst)
 		}
 		if (!(ft_isdigit(lst->cmd[1][j])))
 		{
-			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
@@ -88,7 +86,7 @@ int	ft_check_exit_numeric(t_comm *lst)
 
 int	ft_exit_many_args(t_comm *lst)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (lst->cmd[1][i])
@@ -104,7 +102,6 @@ int	ft_exit_many_args(t_comm *lst)
 		}
 		i++;
 	}
-
 	write(2, "bash: exit: ", 12);
 	write(2, ": too many arguments\n", 22);
 	g_error_status = 1;
@@ -113,9 +110,9 @@ int	ft_exit_many_args(t_comm *lst)
 
 int	ft_exit(t_comm *lst)
 {
-	int shlvl;
-	char *tmp;
-	int count;
+	int		shlvl;
+	char	*tmp;
+	int		count;
 
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
 	count = ft_count_strings(lst);
@@ -125,6 +122,5 @@ int	ft_exit(t_comm *lst)
 		ft_exit_many_args(lst);
 	else
 		exit (0);
-	// exit (0);
 	return (EXIT_FAILURE);
 }

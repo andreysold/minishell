@@ -1,8 +1,4 @@
-//
-// Created by Waif Jonathon on 2/24/22.
-//
-
-#include	"minishell.h"
+#include	"../../../includes/minishell.h"
 
 int ft_count_strings(t_comm *lst)
 {
@@ -37,9 +33,10 @@ int	ft_new_value_error(char *str)
 		i++;
 	}
 	n *= sign;
-	printf("%lld\n", n);
+	// printf("%lld\n", n);
 	if (n > max && sign != -1)
 	{
+		printf("A\n");
 		write(2, "bash: exit: ",12);
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
@@ -76,10 +73,11 @@ int	ft_check_exit_numeric(t_comm *lst)
 		}
 		if (!(ft_isdigit(lst->cmd[1][j])))
 		{
+			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
-			g_error_status = 1;
+			g_error_status = 255;
 			exit (g_error_status);
 		}
 		j++;
@@ -91,15 +89,17 @@ int	ft_check_exit_numeric(t_comm *lst)
 int	ft_exit_many_args(t_comm *lst)
 {
 	int i;
+
 	i = 0;
 	while (lst->cmd[1][i])
 	{
 		if (ft_isalpha(lst->cmd[1][i]))
 		{
+			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
-			g_error_status = 1;
+			g_error_status = 255;
 			return (g_error_status);
 		}
 		i++;

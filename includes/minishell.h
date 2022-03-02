@@ -31,11 +31,11 @@
 # define FD_UNUSED	-2
 
 /**********COLOR**********/
-# define RESET	"\033[0m"
-# define RED	"\033[31m"
-# define GREEN	"\033[32m"
-# define YELLOW	"\033[33m"
-# define BLUE	"\033[34m"
+#define RESET	"\033[0m"
+#define RED		"\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
 
 int	g_error_status;
 
@@ -79,6 +79,7 @@ typedef struct s_comm
 	int				count_node;
 	char			*tmp;
 	int				fl;
+	int				flag_error;
 	t_envp			*e;
 	char			*name;
 	t_iter			t;

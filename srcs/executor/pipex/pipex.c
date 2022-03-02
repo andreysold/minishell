@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/22 12:43:37 by galetha          ###   ########.fr       */
+/*   Updated: 2022/02/27 19:55:44 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,9 @@ void wait_childs(int n)
 	{
 		wait(&status);
 		if (WEXITSTATUS(status) && status != 0)
-		{
-			g_error_status = 127;
-			// printf("%sexit status = %d%s\n",RED, WIFEXITED(status), RESET);
-			fflush(NULL);
-		}
+			g_error_status = WEXITSTATUS(status);
+		else if (status == 0 && g_error_status != 1) // ????? check this!
+				g_error_status = 0;
 		i++;
 	}
 }
@@ -206,18 +204,18 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 		if (kind == START && tmp->next != NULL)
 		{
 			///    1 =>
-			dup2(pipes[1], STDOUT_FILENO); ///1
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
 		}
 		else if (kind == MIDDLE)
 		{
 			/// => 2 =>
-			dup2(pipes[0], STDIN_FILENO); ///0
-			dup2(pipes[3], STDOUT_FILENO); ///3
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
 		}
 		else if (kind == END)
 		{
 			/// => 3
-			dup2(pipes[2], STDIN_FILENO); ///2
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
 		}
 	}
 }
@@ -227,6 +225,7 @@ void	bash_error(char *first_part, char *cmd, char *last_part)
 	ft_putstr_fd(first_part, 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putendl_fd(last_part, 2);
+	g_error_status = 127;
 }
 
 void	handler2(int sig)
@@ -263,9 +262,9 @@ int pipex(t_comm **lst, char **env)
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	while (tmp != NULL && tmp->cmd[0])
+	while (tmp != NULL)
 	{
-		if (tmp->count_node == 1)
+		if (tmp->count_node == 1 && tmp->cmd[0] != NULL)
 		{
 			bool = builtins(lst, env);
 //			printf("pipex|tmp- |%s|\n", tmp->e->key);
@@ -279,9 +278,9 @@ int pipex(t_comm **lst, char **env)
 				if (pid != 0)
 				{
 					signal(SIGINT, SIG_IGN);
-//					signal(SIGQUIT)
+					signal(SIGQUIT, SIG_IGN);
 				}
-				if (pid == 0) /// test cmd < 21 << pop | cmd << pop < 21
+				if (pid == 0)
 				{
 					signal(SIGINT, ff);
 					signal(SIGQUIT, SIG_IGN);
@@ -289,10 +288,7 @@ int pipex(t_comm **lst, char **env)
 				}
 				wait(&status);
 				if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
-				{
 					g_error_status = 1;
-					return (g_error_status);
-				}
 				tmp->infile = open(".tmp", O_RDONLY);
 			}
 		}
@@ -300,20 +296,23 @@ int pipex(t_comm **lst, char **env)
 		signal(SIGQUIT, handler22);
 		if (fork() == 0)
 		{
-			if (tmp->count_node > 1)
-				pipe_switch(i, kind, pipes, tmp);
-			if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
-				redirect(tmp);
-			close_pipes(pipes, tmp->count_node);
-			close_in_out_file(tmp);
-			bool = builtins(&tmp, env);
-			if (bool != -1)
-				exit (bool);
+			if (tmp->cmd[0] != NULL)
+			{
+				if (tmp->count_node > 1)
+					pipe_switch(i, kind, pipes, tmp);
+				if (tmp->infile != FD_UNUSED || tmp->outfile != FD_UNUSED)
+					redirect(tmp);
+				close_pipes(pipes, tmp->count_node);
+				close_in_out_file(tmp);
+				bool = builtins(tmp, env);
+				if (bool != -1)
+					exit (bool);
+			}
 			if (execve(find_command_path(tmp->cmd[0], env),
-					   tmp->cmd, env) == -1)
+					tmp->cmd, env) == -1)
 			{
 				bash_error("bash: ", tmp->cmd[0], ": command not found");
-				exit(EXIT_FAILURE);
+				exit(g_error_status);
 			}
 		}
 		if (tmp->here)

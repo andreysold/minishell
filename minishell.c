@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 20:46:12 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/02/27 19:56:16 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	remove_all_list(t_comm *head)
 {
-	int	i;
+	int i;
 
 	if (!head)
 		return ;
@@ -43,9 +43,10 @@ void	remove_all_env_list(t_envp *head)
 	free(head);
 }
 
-void	clean_env(char **env)
+void	clean_env(char **env, t_comm *lst)
 {
 	int	i;
+	int	len;
 
 	i = 0;
 	if (env)
@@ -73,27 +74,26 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-int	ft_process4(char *str, t_envp **list_env)
+int	ft_process4(char *str, t_envp *list_env)
 {
 	t_comm	*lst;
 	char	**new_env;
 
 	lst = NULL; ///fixed
-//	lst = malloc(sizeof(t_comm));
-//	if (!lst)
-//		return (-1);
-//	ft_memset((void *)lst, 0, sizeof(t_comm));
-//	printf("lst - '%s'\n", (*list_env)->key);
-	lst = ft_parser4(lst, str, (*list_env));
-	new_env = ft_update_env((*list_env));
-//	printf("lst - '%s'\n", (*list_env)->key);
-	if (executor(&lst, new_env) == -1)
+	new_env = ft_update_env(list_env);
+	lst = ft_parser4(lst, str, list_env);
+	if (lst == NULL)
+	{
+		if (new_env)
+			clean_env(new_env, lst);
+		remove_all_list(lst);
+		return (0);
+	}
+	if (executor(lst, new_env) == -1)
 		return (-1);
 	if (new_env)
-		clean_env(new_env);
-	*list_env = lst->e;
+		clean_env(new_env, lst);
 	remove_all_list(lst);
-//	printf("!!!!|%s|=%s\n", lst->e->key, lst->e->value);
 	return (0);
 }
 
@@ -104,7 +104,7 @@ void	handler(int sig)
 	rl_redisplay();
 	write(1,"  \b\b\n", 5);
 	rl_on_new_line();
-//	rl_replace_line("", 1);
+	rl_replace_line("", 1);
 	rl_redisplay();
 	g_error_status = 1;
 }
@@ -120,13 +120,9 @@ void	ft_up_shlvl(t_envp *list_env)
 	head = list_env;
 	locate = locate_env_key(head, "SHLVL", 0);
 	if (locate == -1)
-	{
-//		printf("!!!!!\n");
 		add_to_env(list_env, "SHLVL", "1", 0);
-	}
 	else
 	{
-//		printf("?????\n");
 		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
 		tmp = ft_itoa(shlvl);
 		upd_env_value(list_env, tmp, locate, 0);
@@ -135,42 +131,60 @@ void	ft_up_shlvl(t_envp *list_env)
 	}
 }
 
-int	main(int ac, char **av, char **env)
+int	ft_main_circle(char *str, t_envp *list_env)
+{
+	int i;
+	int len;
+
+
+	i = 0;
+	str = readline("bash:");
+	len = ft_strlen(str);
+	if (str[0] == ' ')
+	{
+		while (str[i] && str[i] == ' ')
+			i++;
+		if (i == len)
+			return (0);
+	}
+	if (str && *str)
+	{
+		add_history(str);
+		if (ft_lexer(str) != -1)
+		{
+			if (ft_process4(str, list_env) == -1)
+				exit(0);
+		}
+		else
+			free (str);
+	}
+	else if (str == NULL)
+	{
+		write(1, "exit\n", 5);
+		remove_all_env_list(list_env);
+		exit(0);
+	}
+	return (0);
+}
+
+int main(int ac, char **av, char **env)
 {
 	char		*str;
 	char		*name;
 	char		**envp;
 	t_envp		*list_env;
 
-//	list_env = malloc(sizeof(t_envp)); //todo ???? нужно ли?
-//	if (!list_env)
-//		return (-1);
 	list_env = NULL;
 	list_env = ft_node_env(list_env, env);
 	ft_up_shlvl(list_env);
+	//if (ac > 1)
+	//	printf("Error arg\n");
+	//	exit(0);
 	while (1)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
-		str = readline("bash:");
-		if (str && *str)
-		{
-			add_history(str);
-			if (ft_lexer(str) != -1)
-			{
-				if (ft_process4(str, &list_env) == -1)
-					exit(0);
-			}
-			else
-				free (str);
-		}
-		else if (str == NULL)
-		{
-			write(1, "exit\n", 5);
-			remove_all_env_list(list_env);
-			exit(0);
-		}
-//		printf("!$$@|%s|=%s\n", list_env->key, list_env->value);
+		ft_main_circle(str, list_env);
 	}
 	remove_all_env_list(list_env);
 	return (0);

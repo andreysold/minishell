@@ -49,6 +49,8 @@ char	*find_command_path(char *command, char **env)
 
 	splited = ft_split(env[where_is_path(env)] + 5, ':');
 	i = 0;
+	if (command == NULL)
+		return (ft_strdup(""));
 	while (i < str_count(splited))
 	{
 		path_to_command = ft_strjoin(ft_strjoin(splited[i], "/"), command);

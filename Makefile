@@ -20,7 +20,7 @@ SRCS	+=	srcs/executor/executor.c \
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \
-	srcs/executor/pipex/utils.c
+            srcs/executor/pipex/utils.c
 
 #UTILS
 SRCS	+=	srcs/list_utils/list_utils.c\

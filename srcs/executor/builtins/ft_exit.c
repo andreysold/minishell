@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 14:36:45 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/02 18:56:53 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	ft_new_value_error(char *str)
 		write(2, str, ft_strlen(str));
 		write(2, " numeric argument required\n", 28);
 		g_error_status = 255;
-		exit (g_error_status);
+		return (g_error_status);
 	}
 	n = n % 256;
 	while (n < 0)
@@ -93,12 +93,11 @@ int	ft_exit_many_args(t_comm *lst)
 	{
 		if (ft_isalpha(lst->cmd[1][i]))
 		{
-			printf("A\n");
 			write(2, "bash: exit: ", 12);
 			write(2, lst->cmd[1], ft_strlen(lst->cmd[1]));
 			write(2, ": numeric argument required\n", 29);
 			g_error_status = 255;
-			return (g_error_status);
+			exit (g_error_status);
 		}
 		i++;
 	}
@@ -119,7 +118,7 @@ int	ft_exit(t_comm *lst)
 	if (count == 2)
 		g_error_status = ft_check_exit_numeric(lst);
 	else if (count > 2)
-		ft_exit_many_args(lst);
+		g_error_status = ft_exit_many_args(lst);
 	else
 		exit (0);
 	return (EXIT_FAILURE);

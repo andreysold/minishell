@@ -1,28 +1,45 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3  -I  ../../../.brew/opt/readline/include  -I./ #-Wall -Wextra -Werror
-RLFLAG	=	-lreadline
+CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include  #-Wall -Wextra -Werror
+RLFLAG	=	-L../../../.brew/opt/readline/lib -lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins.c\
-			srcs/executor/builtins_utils.c\
+			srcs/executor/builtins/builtins.c \
+			srcs/executor/builtins/builtins_utils.c \
+			srcs/executor/builtins/ft_echo.c \
+			srcs/executor/builtins/ft_cd.c \
+			srcs/executor/builtins/ft_pwd.c \
+			srcs/executor/builtins/ft_export.c \
+			srcs/executor/builtins/ft_unset.c \
+			srcs/executor/builtins/ft_env.c \
+			srcs/executor/builtins/ft_exit.c \
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \
             srcs/executor/pipex/utils.c
 
+#UTILS
+SRCS	+=	srcs/list_utils/list_utils.c\
+
 #PARSER
 SRCS	+=	srcs/parser/parse_dollar.c \
-            srcs/parser/process.c \
-            srcs/parser/parse_quotes.c \
-            srcs/parser/parse_utils.c \
+			srcs/parser/process.c \
+			srcs/parser/parse_quotes.c \
+			srcs/parser/parse_utils.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
 			srcs/parser/env.c\
+			srcs/signal.c\
+			srcs/all_free.c\
+			srcs/parser/env_utils.c\
+			srcs/parser/dollar_utils.c\
+			srcs/parser/process_utils.c\
+			srcs/parser/redir_utils.c\
+			srcs/parser/pre_parser_utils.c\
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
@@ -31,7 +48,7 @@ all:
 
 $(NAME):	$(OBJS)
 			$(MAKE) -C $(LIBFT)
-			$(CC) -lreadline  -L  /usr/local/opt/readline/lib  -o $(NAME) $(OBJS) $(LIBFT)/libft.a
+			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h includes/pipex.h

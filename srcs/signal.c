@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/27 19:53:44 by galetha          ###   ########.fr       */
+/*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/03/02 17:39:25 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	executor(t_comm **lst, char **env)
+void	handler(int sig)
 {
-	if (pipex(lst, env) == -1)
-		return (-1);
-	return (0);
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
+	write(1, "  \b\b\n", 5);
+	rl_on_new_line();
+	rl_replace_line("", 1);
+	rl_redisplay();
+	g_error_status = 1;
 }

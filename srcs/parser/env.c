@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
+/*   Updated: 2022/03/02 13:50:58 by galetha          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
 char	**ft_get_envp(char **env)
@@ -38,16 +50,7 @@ char	**ft_update_env(t_envp *list_env)
 	while (tmp)
 	{
 		if (tmp->key && tmp->value)
-		{
-			massiv[i] = ft_strdup(tmp->key);
-			clean = massiv[i];
-			massiv[i] = ft_strjoin(massiv[i], "=");
-			free(clean);
-			clean = massiv[i];
-			massiv[i] = ft_strjoin(massiv[i], tmp->value);
-			if (clean)
-				free(clean);
-		}
+			ft_get_key_value(massiv, tmp, clean, &i);
 		i++;
 		tmp = tmp->next;
 	}
@@ -122,19 +125,4 @@ t_envp	*ft_node_env(t_envp *e, char **env)
 		e = tmp;
 	}
 	return (e);
-}
-
-int	ft_cnode(t_envp *list_env)
-{
-	int		i;
-	t_envp	*tmp;
-
-	tmp = list_env;
-	i = 0;
-	while (tmp)
-	{
-		i++;
-		tmp = tmp->next;
-	}
-	return (i);
 }

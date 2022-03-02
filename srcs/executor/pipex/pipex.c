@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/27 19:55:44 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/02 16:55:39 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ static inline void close_in_out_file(t_comm *tmp)
 	int err;
 
 	err = 0;
-	if (tmp->outfile >= 0)
+	if (tmp->outfile != -2)
 		err = close(tmp->outfile);
-	if (tmp->infile >= 0)
+	if (tmp->infile != -2)
 		err = close(tmp->infile);
 	if (err != 0)
 		perror("close_in_out_file:");
@@ -142,7 +142,7 @@ static inline void redirect(t_comm *tmp)
 	int err;
 
 	err = 0;
-	if (tmp->infile >= 0)
+	if (tmp->infile != FD_UNUSED)
 	{
 		// if (tmp->here != NULL) /// test cmd < 21 << pop | cmd << pop < 21
 		// {
@@ -155,10 +155,10 @@ static inline void redirect(t_comm *tmp)
 	if (err != 0)
 		perror("1redirect:");
 	err = 0;
-	if (tmp->outfile >= 0)
+	if (tmp->outfile != FD_UNUSED)
 		err = dup2(tmp->outfile, STDOUT_FILENO);
-	// if (err != 0)
-	// 	perror("2redirect:");
+	if (err != 0)
+		perror("2redirect:");
 }
 
 static inline int *open_pipes(t_comm *tmp)
@@ -204,18 +204,18 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 		if (kind == START && tmp->next != NULL)
 		{
 			///    1 =>
-			dup2(pipes[1], STDOUT_FILENO); ///1
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///1
 		}
 		else if (kind == MIDDLE)
 		{
 			/// => 2 =>
-			dup2(pipes[0], STDIN_FILENO); ///0
-			dup2(pipes[3], STDOUT_FILENO); ///3
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///0
+			dup2(pipes[2 * i + 1], STDOUT_FILENO); ///3
 		}
 		else if (kind == END)
 		{
 			/// => 3
-			dup2(pipes[2], STDIN_FILENO); ///2
+			dup2(pipes[2 * i - 2], STDIN_FILENO); ///2
 		}
 	}
 }
@@ -246,35 +246,25 @@ void	handler2(int sig)
 	}
 }
 
-int pipex(t_comm *lst, char **env)
+int pipex(t_comm **lst, char **env)
 {
-	//for test:  ls -l | head -6 | cut -b 1-10
-	// echo p | echo r | echo i | echo v | echo e | echo t
 	int		i;
 	int		*pipes;
 	t_comm	*tmp;
 	int		kind;
-	pid_t 	pid;
-	int bool;
-	int status;
+	pid_t	pid;
+	int		bool;
+	int		status;
 
-	tmp = lst;
+	tmp = *lst;
 	pipes = open_pipes(tmp);
 	kind = START;
 	i = 0;
-	//printf("|%s|\n", tmp->cmd[0]);
-	// // while (tmp != NULL && tmp->cmd[0] != NULL)
-	// if (tmp->cmd[0] == NULL)
-	// {
-	// 	write(2, "bash: : command not found\n", 27);
-	// 	g_error_status = 127;
-	// }
-	// printf("%")
 	while (tmp != NULL)
 	{
 		if (tmp->count_node == 1 && tmp->cmd[0] != NULL)
 		{
-			bool = builtins(tmp, env);
+			bool = builtins(lst, env); //fixme mb use tmp
 			if (bool != -1)
 				return (bool);
 			if (tmp->here != NULL)
@@ -309,7 +299,7 @@ int pipex(t_comm *lst, char **env)
 					redirect(tmp);
 				close_pipes(pipes, tmp->count_node);
 				close_in_out_file(tmp);
-				bool = builtins(tmp, env);
+				bool = builtins(&tmp, env);
 				if (bool != -1)
 					exit (bool);
 			}
@@ -326,16 +316,12 @@ int pipex(t_comm *lst, char **env)
 		tmp = tmp->next;
 		i++;
 	}
-	tmp = lst;
+	tmp = *lst;
+//	printf("pipex- |%s|\n", (*lst)->e->key);
 	close_pipes(pipes, tmp->count_node);
-	// close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
+	close_in_out_file(tmp); /// ??? it doesn't close in each node | mb no need
 	wait_childs(tmp->count_node);
-	if (lst->count_node > 1)
+	if ((*lst)->count_node > 1)
 		free(pipes);
 	return (EXIT_SUCCESS);
 }
-
-
-// write(1, "bash: ", 7);
-				// write(1, tmp->cmd[0], ft_strlen(tmp->cmd[0]));
-				// write(1, ": command not found\n", 21);

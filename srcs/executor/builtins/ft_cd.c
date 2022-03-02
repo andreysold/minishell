@@ -76,7 +76,12 @@ int	ft_cd(t_comm *lst)
 	if (search_path(lst, &new_path))
 		return (EXIT_FAILURE);
 	if (chdir(new_path) == -1)
-		printf("bash: cd: %s: %s\n", lst->cmd[1], strerror(errno));
+	{
+		if (lst->cmd[1])
+			printf("bash: cd: %s: %s\n", lst->cmd[1], strerror(errno));
+		else
+			printf("bash: cd: %s\n", strerror(errno));
+	}
 	else
 	{
 		if (new_path)

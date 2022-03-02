@@ -266,7 +266,7 @@ int pipex(t_comm **lst, char **env)
 	{
 		if (tmp->count_node == 1 && tmp->cmd[0] != NULL)
 		{
-			bool = builtins(lst, env);
+			bool = builtins(lst, env); //fixme mb use tmp
 //			printf("pipex|tmp- |%s|\n", tmp->e->key);
 //			lst->e = tmp->e;
 //			printf("pipex|lst- |%s|\n", (*lst)->e->key);
@@ -304,7 +304,7 @@ int pipex(t_comm **lst, char **env)
 					redirect(tmp);
 				close_pipes(pipes, tmp->count_node);
 				close_in_out_file(tmp);
-				bool = builtins(tmp, env);
+				bool = builtins(&tmp, env); //fixme
 				if (bool != -1)
 					exit (bool);
 			}

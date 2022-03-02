@@ -74,14 +74,14 @@ void	ft_no_malloc(char **str)
 	free (str);
 }
 
-int	ft_process4(char *str, t_envp *list_env)
+int	ft_process4(char *str, t_envp **list_env)
 {
 	t_comm	*lst;
 	char	**new_env;
 
 	lst = NULL; ///fixed
-	new_env = ft_update_env(list_env);
-	lst = ft_parser4(lst, str, list_env);
+	new_env = ft_update_env(*list_env);
+	lst = ft_parser4(lst, str, *list_env);
 	if (lst == NULL)
 	{
 		if (new_env)
@@ -89,10 +89,11 @@ int	ft_process4(char *str, t_envp *list_env)
 		remove_all_list(lst);
 		return (0);
 	}
-	if (executor(lst, new_env) == -1)
+	if (executor(&lst, new_env) == -1)
 		return (-1);
 	if (new_env)
 		clean_env(new_env, lst);
+	*list_env = lst->e;
 	remove_all_list(lst);
 	return (0);
 }
@@ -104,7 +105,7 @@ void	handler(int sig)
 	rl_redisplay();
 	write(1,"  \b\b\n", 5);
 	rl_on_new_line();
-	rl_replace_line("", 1);
+//	rl_replace_line("", 1); ///fixme
 	rl_redisplay();
 	g_error_status = 1;
 }
@@ -131,24 +132,23 @@ void	ft_up_shlvl(t_envp *list_env)
 	}
 }
 
-int	ft_main_circle(char *str, t_envp *list_env)
+int	ft_main_circle(char *str, t_envp **list_env)
 {
-	int i;
-	int len;
-
+	int	i;
+	int	len;
 
 	i = 0;
 	str = readline("bash:");
-	len = ft_strlen(str);
-	if (str[0] == ' ')
-	{
-		while (str[i] && str[i] == ' ')
-			i++;
-		if (i == len)
-			return (0);
-	}
+	len = (int)ft_strlen(str);
 	if (str && *str)
 	{
+		if (str[0] == ' ')
+		{
+			while (str[i] && str[i] == ' ')
+				i++;
+			if (i == len)
+				return (0);
+		}
 		add_history(str);
 		if (ft_lexer(str) != -1)
 		{
@@ -161,7 +161,7 @@ int	ft_main_circle(char *str, t_envp *list_env)
 	else if (str == NULL)
 	{
 		write(1, "exit\n", 5);
-		remove_all_env_list(list_env);
+		remove_all_env_list(*list_env);
 		exit(0);
 	}
 	return (0);
@@ -184,7 +184,7 @@ int main(int ac, char **av, char **env)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
-		ft_main_circle(str, list_env);
+		ft_main_circle(str, &list_env);
 	}
 	remove_all_env_list(list_env);
 	return (0);

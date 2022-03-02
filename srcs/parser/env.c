@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-char **ft_get_envp(char **env)
+char	**ft_get_envp(char **env)
 {
 	char	**envp;
 	int		i;
@@ -21,13 +21,12 @@ char **ft_get_envp(char **env)
 	return (envp);
 }
 
-char **ft_update_env(t_envp *list_env)
+char	**ft_update_env(t_envp *list_env)
 {
-	int i;
-	char **massiv;
-	int count;
-	char *tmp1;
-	t_envp *tmp;
+	int		i;
+	char	**massiv;
+	int		count;
+	t_envp	*tmp;
 	char	*clean;
 
 	i = 0;
@@ -44,22 +43,11 @@ char **ft_update_env(t_envp *list_env)
 			clean = massiv[i];
 			massiv[i] = ft_strjoin(massiv[i], "=");
 			free(clean);
-			// clean = NULL;
-			clean = massiv[i]; ///
+			clean = massiv[i];
 			massiv[i] = ft_strjoin(massiv[i], tmp->value);
-//			if (clean)
-			//fixme how
-		if (clean)
-			free(clean);
+			if (clean)
+				free(clean);
 		}
-		// if (tmp->key && tmp->value)
-		// {
-		// 	tmp1 = ft_strjoin(tmp->key, "=");
-		// 	massiv[i] = ft_strjoin(tmp1, tmp->value);
-		// 	// free (tmp1);
-		// }
-		// if (tmp1)
-		// 	free(tmp1);
 		i++;
 		tmp = tmp->next;
 	}
@@ -67,10 +55,10 @@ char **ft_update_env(t_envp *list_env)
 	return (massiv);
 }
 
-char *ft_get_key(int count, char **env)
+char	*ft_get_key(int count, char **env)
 {
-	char 	*str;
-	int 	i;
+	char	*str;
+	int		i;
 	int		z;
 
 	i = 0;
@@ -111,11 +99,11 @@ char	*ft_get_value(int count, char **env)
 	return (str);
 }
 
-t_envp *ft_node_env(t_envp *e, char **env)
+t_envp	*ft_node_env(t_envp *e, char **env)
 {
-	int count;
-	t_envp *tmp;
-	int c;
+	int		count;
+	t_envp	*tmp;
+	int		c;
 
 	count = 0;
 	while (env[count])
@@ -129,8 +117,6 @@ t_envp *ft_node_env(t_envp *e, char **env)
 			return (NULL);
 		tmp->key = ft_get_key(count, env);
 		tmp->value = ft_get_value(count, env);
-//		tmp->key_orig = ft_get_key(count, env);
-//		tmp->value_orig = ft_get_value(count, env);
 		tmp->count = c;
 		tmp->next = e;
 		e = tmp;

@@ -1,6 +1,5 @@
 #include "../../includes/minishell.h"
 
-
 void	ft_skip_space(char *str, int *i)
 {
 	while (str[(*i)] && str[(*i)] == ' ')
@@ -9,7 +8,7 @@ void	ft_skip_space(char *str, int *i)
 
 int	ft_count_redir(char *str, int *i, char c)
 {
-	int count_red;
+	int	count_red;
 
 	count_red = 0;
 	while (str[(*i)] && str[(*i)] == c)
@@ -30,12 +29,12 @@ int	ft_return_error(char *str)
 
 int	ft_lexer(char *str)
 {
-	int i;
-	int len;
-	int count_red;
+	int	i;
+	int	len;
+	int	count_red;
 	int	count_back;
-	int pipe_flag;
-	
+	int	pipe_flag;
+
 	pipe_flag = 0;
 	count_red = 0;
 	count_back = 0;
@@ -67,7 +66,7 @@ int	ft_lexer(char *str)
 			}
 			if (len == i || str[i] == '|')
 				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
-			else 
+			else
 				continue ;
 		}
 		else if (str[i] == '>')
@@ -85,7 +84,6 @@ int	ft_lexer(char *str)
 				return (ft_return_error("bash: syntax error near unexpected token `>>'\n"));
 			if (str[i] == '|' || i == len)
 				return (ft_return_error("bash: syntax error near unexpected token `|'\n"));
-			
 		}
 		else if (str[i] == '<')
 		{

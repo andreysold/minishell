@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j)
+char	*ft_one_quotes(char *str, t_comm *lst, int *i, int *j)
 {
 	(*i)++;
 	while (str[(*i)] && str[(*i)] != '\'')
@@ -10,9 +10,9 @@ char *ft_one_quotes(char *str, t_comm *lst, int *i, int *j)
 	return (lst->tmp);
 }
 
-char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
+char	*ft_two_quotes(char *str, t_comm *lst, int *i, int *j)
 {
-	int flag;
+	int	flag;
 
 	flag = (*i);
 	(*i)++;
@@ -23,7 +23,8 @@ char *ft_two_quotes(char *str,  t_comm *lst, int *i, int *j) // no norm
 			lst->tmp = ft_global_value(str, lst, i, j);
 			continue ;
 		}
-		else if (str[(*i)] == '$' && str[(*i) + 1] != ' ' && str[(*i) + 1] != '\"')
+		else if (str[(*i)] == '$' && str[(*i) + 1] != ' '
+			&& str[(*i) + 1] != '\"')
 		{
 			(*i)++;
 			lst->tmp = ft_shit_dollar(str, lst, i, j);

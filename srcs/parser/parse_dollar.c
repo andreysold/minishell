@@ -1,15 +1,15 @@
 #include "../../includes/minishell.h"
 
-int ft_iskey(char c)
+int	ft_iskey(char c)
 {
 	if (ft_isalnum(c) || c == '_')
 		return (1);
 	return (0);
 }
 
-int ft_count_dol_value(char *str, int *i)
+int	ft_count_dol_value(char *str, int *i)
 {
-	int count;
+	int	count;
 
 	count = 0;
 	while (str[(*i)] && str[(*i)] != '\"')
@@ -23,18 +23,18 @@ int ft_count_dol_value(char *str, int *i)
 	return (count);
 }
 
-int ft_len_value_dol(char *tmp, t_comm *lst)
+int	ft_len_value_dol(char *tmp, t_comm *lst)
 {
-	t_envp *head;
-	int len;
+	t_envp	*head;
+	int		len;
 
 	len = (int)ft_strlen(tmp);
 	head = lst->e;
 	lst->fl = 0;
 	while (head)
 	{
-		if (ft_strncmp(head->key, tmp , ft_strlen(tmp)) == 0 
-		&& ft_strlen(head->key) == len)
+		if (ft_strncmp(head->key, tmp, ft_strlen(tmp)) == 0
+			&& ft_strlen(head->key) == len)
 		{
 			free (tmp);
 			tmp = ft_strdup(head->value);
@@ -47,12 +47,13 @@ int ft_len_value_dol(char *tmp, t_comm *lst)
 	free (tmp);
 	return (lst->fl);
 }
-int ft_func(char *str, int i, t_comm *lst)
+
+int	ft_func(char *str, int i, t_comm *lst)
 {
-	int count;
-	int z;
-	char *tmp;
-	char *tmp2;
+	int		count;
+	int		z;
+	char	*tmp;
+	char	*tmp2;
 
 	count = 0;
 	z = (i);
@@ -62,8 +63,7 @@ int ft_func(char *str, int i, t_comm *lst)
 	return (count);
 }
 
-
-void    ft_is_key(char *str, int *i, int *t)
+void	ft_is_key(char *str, int *i, int *t)
 {
 	while (str[*i] && (str[*i] != '\"' && str[*i] != '\''))
 	{
@@ -75,23 +75,23 @@ void    ft_is_key(char *str, int *i, int *t)
 	}
 }
 
-char *ft_get_env_val(char *tmp, t_comm *lst, int *j)
+char	*ft_get_env_val(char *tmp, t_comm *lst, int *j)
 {
-	t_envp *head;
-	int l;
-	int len;
+	t_envp	*head;
+	int		l;
+	int		len;
 
 	len = (int)ft_strlen(tmp);
 	head = lst->e;
 	while (head != NULL)
 	{
 		if (ft_strncmp(tmp, head->key, ft_strlen(head->key)) == 0
-		&& ft_strlen(head->key) == len)
+			&& ft_strlen(head->key) == len)
 		{
 			lst->fl = 1;
 			free (tmp);
 			tmp = ft_strdup(head->value);
-			break;
+			break ;
 		}
 		head = head->next;
 	}
@@ -105,10 +105,10 @@ char *ft_get_env_val(char *tmp, t_comm *lst, int *j)
 	return (lst->tmp);
 }
 
-char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
+char	*ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
 {
-	t_iter *t;
-	char *tmp;
+	t_iter	*t;
+	char	*tmp;
 
 	t = malloc(sizeof(t_iter));
 	if (!t)
@@ -131,10 +131,10 @@ char *ft_shit_dollar(char *str, t_comm *lst, int *i, int *j)
 	return (lst->tmp);
 }
 
-int ft_dol_str(char *str, t_comm *lst)
+int	ft_dol_str(char *str, t_comm *lst)
 {
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = 0;
 	count = 0;

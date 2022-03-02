@@ -1,8 +1,8 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include #-Wall -Wextra -Werror
-RLFLAG	=	-L../../../.brew/opt/readline/lib -lreadline
+CFLAGS	=	-I./includes -ggdb3 #-I../../../.brew/opt/readline/include #-Wall -Wextra -Werror
+RLFLAG	=	-lreadline #-L../../../.brew/opt/readline/lib
 NAME	=	minishell
 SRCS	=	minishell.c
 

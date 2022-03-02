@@ -50,9 +50,9 @@
 #define	RED5 "bash: syntax error near unexpected token `<<<'\n"
 #define	QUOT "bash: syntax error in unclosed quoters\n"
 
-# define START	1
-# define MIDDLE	2
-# define END	3
+# define START	0
+# define MIDDLE	1
+# define END	2
 
 int	g_error_status;
 

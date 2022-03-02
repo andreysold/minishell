@@ -91,4 +91,3 @@ void	pipe_switch(int i, int kind, int *pipes, t_comm *tmp)
 			dup2(pipes[2 * i - 2], STDIN_FILENO);
 	}
 }
-

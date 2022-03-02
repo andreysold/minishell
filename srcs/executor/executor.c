@@ -16,11 +16,14 @@ static inline int	one_cmd_preprocess(t_comm **tmp, char **env)
 {
 	int		bool;
 
-	bool = builtins(tmp, env);
-	if (bool != -1)
-		return (bool);
-	if ((*tmp)->here != NULL)
-		heredoc(tmp);
+	if ((*tmp)->count_node == 1 && (*tmp)->cmd[0] != NULL)
+	{
+		bool = builtins(tmp, env);
+		if (bool != -1)
+			return (bool);
+		if ((*tmp)->here != NULL)
+			heredoc(tmp);
+	}
 	return (-1);
 }
 
@@ -28,7 +31,7 @@ static inline void	pipex_routine2(t_comm **tmp, char **env)
 {
 	int	bool;
 
-	if ((*tmp)->cmd[0] != NULL)
+	if ((*tmp)->count_node != 1 && (*tmp)->cmd[0] != NULL)
 	{
 		bool = builtins(tmp, env); //fixme
 		if (bool != -1)
@@ -67,31 +70,31 @@ static inline void	pipex_end(t_comm **lst, int *pipes)
 		free(pipes);
 }
 
+/// arr[0] – i \n arr[1] – kind \n arr[2] - bool
 ///for test:  ls -l | head -6 | cut -b 1-10
 /// echo p | echo r | echo i | echo v | echo e | echo t
 int	executor(t_comm **lst, char **env)
 {
-	int		i;
+	int		arr[3];
 	int		*pipes;
 	t_comm	*tmp;
-	int		kind;
 
-	i = 0;
 	tmp = *lst;
-	kind = START;
 	pipes = open_pipes(tmp);
+	ft_memset((void *)arr, 0, sizeof(int *));
 	while (tmp != NULL)
 	{
-		if (tmp->count_node == 1 && tmp->cmd[0] != NULL)
-			one_cmd_preprocess(&tmp, env);
+		arr[2] = one_cmd_preprocess(&tmp, env);
+		if (arr[2] != -1)
+			return (arr[2]);
 		signal(SIGINT, handler22);
 		signal(SIGQUIT, handler22);
 		if (fork() == 0)
 		{
-			pipex_routine1(&tmp, pipes, kind, i);
+			pipex_routine1(&tmp, pipes, arr[1], arr[0]);
 			pipex_routine2(&tmp, env);
 		}
-		pipex_iterators(&tmp, &kind, &i);
+		pipex_iterators(&tmp, &arr[1], &arr[0]);
 	}
 	pipex_end(lst, pipes);
 	return (EXIT_SUCCESS);

@@ -139,9 +139,9 @@ int	ft_main_circle(char *str, t_envp **list_env)
 
 	i = 0;
 	str = readline("bash:");
-	len = (int)ft_strlen(str);
 	if (str && *str)
 	{
+		len = (int)ft_strlen(str);
 		if (str[0] == ' ')
 		{
 			while (str[i] && str[i] == ' ')

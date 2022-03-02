@@ -13,6 +13,11 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <sys/fcntl.h>			//open
+# include <sys/wait.h>			//waitpid
+# include <stdio.h>				//perror
+# include <sys/errno.h>
+
 # include <string.h> //strerror
 # include <unistd.h>
 # include <stdio.h>
@@ -26,16 +31,19 @@
 //#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
 //#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
 //#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
-#include "pipex.h"
 
 # define FD_UNUSED	-2
 
 /**********COLOR**********/
-#define RESET	"\033[0m"
-#define RED		"\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
+# define RESET	"\033[0m"
+# define RED		"\033[31m"
+# define GREEN   "\033[32m"
+# define YELLOW  "\033[33m"
+# define BLUE    "\033[34m"
+
+# define START	1
+# define MIDDLE	2
+# define END	3
 
 int	g_error_status;
 
@@ -86,9 +94,22 @@ typedef struct s_comm
 	struct s_comm	*next;
 }	t_comm;
 
-int		pipex(t_comm **lst, char **env);
+/**********EXECUTOR**********/
 int		executor(t_comm **lst, char **env);
+
+/**********PIPEX**********/
+void	heredoc(t_comm **tmp);
+void	wait_childs(int n);
+void	redirect(t_comm *tmp);
+int		*open_pipes(t_comm *tmp);
+void	pipe_switch(int i, int kind, int *pipes, t_comm *tmp);
+
+/**********UTILS***********/
+char	*find_command_path(char *command, char **env);
+void	pipex_iterators(t_comm **tmp, int *kind, int *i);
 void	bash_error(char *first_part, char *cmd, char *last_part);
+void	close_in_out_file(t_comm *tmp);
+void	close_pipes(int *pipes, int count_node);
 
 /**********BUILTIN**********/
 int		builtins(t_comm **lst, char **env);
@@ -112,6 +133,10 @@ void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
 /**********LIST_UTILS*******/
 void	remove_element(t_envp **head, int location);
 size_t	ft_listlen(t_envp *head);
+
+/**********SIGNALS*******/
+void	handler22(int sig);
+void	ff(int sig);
 
 char	*ft_global_value(char *str, t_comm *lst, int *i, int *j);
 

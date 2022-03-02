@@ -1,14 +1,16 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include  #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include #-Wall -Wextra -Werror
 RLFLAG	=	-L../../../.brew/opt/readline/lib -lreadline
 NAME	=	minishell
 SRCS	=	minishell.c
 
 #EXECUTOR
 SRCS	+=	srcs/executor/executor.c \
-			srcs/executor/builtins/builtins.c \
+
+##BUILTINS
+SRCS	+=	srcs/executor/builtins/builtins.c \
 			srcs/executor/builtins/builtins_utils.c \
 			srcs/executor/builtins/ft_echo.c \
 			srcs/executor/builtins/ft_cd.c \
@@ -20,10 +22,15 @@ SRCS	+=	srcs/executor/executor.c \
 
 ##PIPEX
 SRCS	+=	srcs/executor/pipex/pipex.c \
-            srcs/executor/pipex/utils.c
+			srcs/executor/pipex/heredoc.c \
+			srcs/executor/pipex/utils.c \
+			srcs/executor/pipex/utils1.c \
 
 #UTILS
 SRCS	+=	srcs/list_utils/list_utils.c\
+
+#SIGNALS
+SRCS	+=	srcs/signal.c
 
 #PARSER
 SRCS	+=	srcs/parser/parse_dollar.c \

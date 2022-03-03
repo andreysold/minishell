@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/03/02 19:20:38 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,10 @@ static void	export_key_value(t_comm *tmp, char **key, char **value, int i)
 	*key = NULL;
 	*value = NULL;
 	if (check_export_arg(tmp, i, key, value))
-		bash_error("bash: export: \'", tmp->cmd[i], "\': not a valid identifier");
+	{
+		g_error_status = 1;
+		printf("bash: export: %s: not a valid identifier\n", tmp->cmd[i]);
+	} 
 	if (*key)
 	{
 		location = locate_env_key(tmp->e, *key);

@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 13:50:58 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 14:05:38 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ char	**ft_update_env(t_envp *list_env)
 	while (tmp)
 	{
 		if (tmp->key && tmp->value)
+		{
 			ft_get_key_value(massiv, tmp, clean, &i);
-		i++;
+			i++;
+		}
 		tmp = tmp->next;
 	}
 	massiv[i] = NULL;

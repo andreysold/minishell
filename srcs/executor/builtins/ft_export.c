@@ -89,13 +89,16 @@ static void	export_key_value(t_comm *tmp, char **key, char **value, int i)
 		bash_error("bash: export: \'", tmp->cmd[i], "\': not a valid identifier");
 	if (*key)
 	{
-		location = locate_env_key(tmp->e, *key, 0);
+		location = locate_env_key(tmp->e, *key);
 		if (location == -1)
-			add_to_env(tmp->e, *key, *value, 0);
+			add_to_env(tmp->e, *key, *value);
 		else
 		{
 			if (*value)
-				upd_env_value(tmp->e, *value, location, 0);
+			{
+				upd_env_value(tmp->e, *value, location);
+				free(*value);
+			}
 		}
 	}
 }

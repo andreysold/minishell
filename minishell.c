@@ -23,14 +23,14 @@ int	ft_process4(char *str, t_envp **list_env)
 	if (lst == NULL)
 	{
 		if (new_env)
-			clean_env(new_env, lst);
+			clean_env(new_env);
 		remove_all_list(lst);
 		return (0);
 	}
 	if (executor(&lst, new_env) == -1)
 		return (-1);
 	if (new_env)
-		clean_env(new_env, lst);
+		clean_env(new_env);
 	*list_env = lst->e;
 	remove_all_list(lst);
 	return (0);
@@ -45,14 +45,14 @@ void	ft_up_shlvl(t_envp *list_env)
 
 	locate = 0;
 	head = list_env;
-	locate = locate_env_key(head, "SHLVL", 0);
+	locate = locate_env_key(head, "SHLVL");
 	if (locate == -1)
-		add_to_env(list_env, "SHLVL", "1", 0);
+		add_to_env(list_env, "SHLVL", "1");
 	else
 	{
-		shlvl = ft_atoi(get_env_value(list_env, locate, 0)) + 1;
+		shlvl = ft_atoi(get_env_value(list_env, locate)) + 1;
 		tmp = ft_itoa(shlvl);
-		upd_env_value(list_env, tmp, locate, 0);
+		upd_env_value(list_env, tmp, locate);
 		if (tmp)
 			free(tmp);
 	}
@@ -85,19 +85,15 @@ int	ft_main_circle(char *str, t_envp **list_env)
 	return (0);
 }
 
-int	main(int ac, char **av, char **env)
+int	main(void)
 {
 	char		*str;
-	char		*name;
-	char		**envp;
 	t_envp		*list_env;
+	extern char	**environ;
 
-	if (ac > 1)
-		return (0);
-	(void)ac;
-	(void)av;
+	str = NULL;
 	list_env = NULL;
-	list_env = ft_node_env(list_env, env);
+	list_env = ft_node_env(list_env, environ);
 	ft_up_shlvl(list_env);
 	while (1)
 	{

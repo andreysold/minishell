@@ -40,11 +40,8 @@ char	*ft_new_sub(int i, t_comm *lst, char *str, int begin)
 {
 	t_envp	*head;
 	char	*tmp;
-	int		fl;
-	int		count;
 
-	fl = 0;
-	count = 0;
+	tmp = NULL;
 	head = lst->e;
 	lst->name = ft_key_file(str, &begin, i, lst->name);
 	lst->name = ft_name_file(lst, tmp, head);

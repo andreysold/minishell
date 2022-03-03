@@ -53,6 +53,7 @@ int	*open_pipes(t_comm *tmp)
 	int	i;
 	int	*pipes;
 
+	pipes = NULL;
 	if (tmp->count_node > 1)
 	{
 		pipes = ft_calloc(sizeof(int), 2 * (tmp->count_node - 1));

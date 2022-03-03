@@ -50,7 +50,7 @@ size_t	segments(char const *s, char c)
 	return (i);
 }
 
-char	*ft_global_value(char *str, t_comm *lst, int *i, int *j)
+char	*ft_global_value(t_comm *lst, int *i, int *j)
 {
 	char	*tmp;
 	int		k;

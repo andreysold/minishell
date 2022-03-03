@@ -12,7 +12,7 @@
 
 #include	"../../../includes/minishell.h"
 
-int	ft_exit_atoi(char *str, int sign, int n)
+static long long int	ft_exit_atoi(char *str, int sign, unsigned long long n)
 {	
 	int	i;
 
@@ -31,17 +31,17 @@ int	ft_exit_atoi(char *str, int sign, int n)
 	return (n);
 }
 
-int	ft_new_value_error(char *str)
+static inline int	ft_new_value_error(char *str)
 {
-	long long			n;
-	int					new_val;
 	int					sign;
-	unsigned long long	max;
+	unsigned long long	n;
+	long long int		max;
 
-	max = 9223372036854775807;
+	n = 0;
 	sign = 1;
+	max = 9223372036854775807;
 	n = ft_exit_atoi(str, sign, n);
-	if (n > max && sign != -1)
+	if (n > (unsigned long long)max && sign != -1)
 	{
 		write(2, "bash: exit: ", 12);
 		write(2, str, ft_strlen(str));
@@ -55,9 +55,8 @@ int	ft_new_value_error(char *str)
 	return (n);
 }
 
-int	ft_check_exit_numeric(t_comm *lst)
+static inline int	ft_check_exit_numeric(t_comm *lst)
 {
-	t_comm	*head;
 	int		count_min;
 	int		j;
 
@@ -84,7 +83,7 @@ int	ft_check_exit_numeric(t_comm *lst)
 	return (g_error_status);
 }
 
-int	ft_exit_many_args(t_comm *lst)
+static inline int	ft_exit_many_args(t_comm *lst)
 {
 	int	i;
 
@@ -110,11 +109,9 @@ int	ft_exit_many_args(t_comm *lst)
 
 int	ft_exit(t_comm *lst)
 {
-	int		shlvl;
-	char	*tmp;
 	int		count;
 
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	ft_putstr_fd("exit\n", STDERR_FILENO);
 	count = ft_count_strings(lst);
 	if (count == 2)
 		g_error_status = ft_check_exit_numeric(lst);

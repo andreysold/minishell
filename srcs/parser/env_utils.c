@@ -12,8 +12,10 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_get_key_value(char **massiv, t_envp *tmp, char *clean, int *i)
+void	ft_get_key_value(char **massiv, t_envp *tmp, int *i)
 {
+	char	*clean;
+
 	massiv[(*i)] = ft_strdup(tmp->key);
 	clean = massiv[(*i)];
 	massiv[(*i)] = ft_strjoin(massiv[(*i)], "=");

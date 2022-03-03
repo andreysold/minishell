@@ -17,7 +17,6 @@ int	ft_func(char *str, int i, t_comm *lst)
 	int		count;
 	int		z;
 	char	*tmp;
-	char	*tmp2;
 
 	count = 0;
 	z = (i);
@@ -42,9 +41,9 @@ void	ft_is_key(char *str, int *i, int *t)
 char	*ft_get_env_val(char *tmp, t_comm *lst, int *j)
 {
 	t_envp	*head;
-	int		len;
+	size_t	len;
 
-	len = (int)ft_strlen(tmp);
+	len = ft_strlen(tmp);
 	head = lst->e;
 	while (head != NULL)
 	{

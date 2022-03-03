@@ -32,7 +32,7 @@ char	*ft_two_quotes(char *str, t_comm *lst, int *i, int *j)
 	{
 		if (str[(*i)] == '$' && str[(*i) + 1] == '?')
 		{
-			lst->tmp = ft_global_value(str, lst, i, j);
+			lst->tmp = ft_global_value(lst, i, j);
 			continue ;
 		}
 		else if (str[(*i)] == '$' && str[(*i) + 1] != ' '

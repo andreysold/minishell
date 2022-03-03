@@ -121,8 +121,8 @@ void	close_in_out_file(t_comm *tmp);
 void	close_pipes(int *pipes, int count_node);
 
 /**********BUILTIN**********/
-int		builtins(t_comm **lst, char **env);
-int		check_builtin(t_comm **lst, char **env);
+int builtins(t_comm **lst);
+int check_builtin(t_comm **lst);
 int		ft_echo(t_comm *tmp);
 int		ft_cd(t_comm *lst);
 int		ft_pwd(t_comm *lst);
@@ -132,12 +132,10 @@ int		ft_env(t_comm *lst);
 int		ft_exit(t_comm *lst);
 
 /**********BUILTIN_UTILS****/
-int		locate_env_key(t_envp *envp, char *key, int origin);
-char	*get_env_value(t_envp *envp, int location, int origin);
-
-//fixme lower t_envp **envp
-void	upd_env_value(t_envp *envp, char *new_value, int location, int origin);
-void	add_to_env(t_envp *envp, char *new_key, char *new_value, int origin);
+int		locate_env_key(t_envp *envp, char *key);
+char	*get_env_value(t_envp *envp, int location);
+void	upd_env_value(t_envp *envp, char *new_value, int location);
+void	add_to_env(t_envp *envp, char *new_key, char *new_value);
 
 /**********LIST_UTILS*******/
 void	remove_element(t_envp **head, int location);
@@ -147,7 +145,7 @@ size_t	ft_listlen(t_envp *head);
 void	handler22(int sig);
 void	ff(int sig);
 
-char	*ft_global_value(char *str, t_comm *lst, int *i, int *j);
+char *ft_global_value(t_comm *lst, int *i, int *j);
 
 int		ft_lexer(char *str);
 int		ft_process4(char *str, t_envp **envp);
@@ -181,7 +179,7 @@ char	*ft_get_key(int count, char **env);
 char	**ft_update_env(t_envp *list_env);
 char	**ft_get_envp(char **env);
 char	*ft_spasibo_norma(char *tmp, t_comm *lst, int *j);
-char	*ft_global_value(char *str, t_comm *lst, int *i, int *j);
+char *ft_global_value(t_comm *lst, int *i, int *j);
 char	*ft_name_file(t_comm *lst, char *tmp, t_envp *head);
 char	*ft_key_file(char *str, int *begin, int len, char *name);
 char	*ft_new_str(char *str);
@@ -189,8 +187,8 @@ void	handler(int sig);
 void	remove_all_list(t_comm *head);
 void	ft_skip_quotes(char *str, int *i, char c);
 void	remove_all_env_list(t_envp *head);
-void	clean_env(char **env, t_comm *lst);
-void	ft_get_key_value(char **massiv, t_envp *tmp, char *clean, int *i);
+void clean_env(char **env);
+void	ft_get_key_value(char **massiv, t_envp *tmp, int *i);
 int		ft_is_space(char *str, int *i);
 int		ft_return_error(char *str);
 int		ft_len_value_dol(char *tmp, t_comm *lst);

@@ -39,7 +39,6 @@ char	**ft_update_env(t_envp *list_env)
 	char	**massiv;
 	int		count;
 	t_envp	*tmp;
-	char	*clean;
 
 	i = 0;
 	tmp = list_env;
@@ -50,8 +49,10 @@ char	**ft_update_env(t_envp *list_env)
 	while (tmp)
 	{
 		if (tmp->key && tmp->value)
-			ft_get_key_value(massiv, tmp, clean, &i);
-		i++;
+		{
+			ft_get_key_value(massiv, tmp, &i);
+			i++;
+		}
 		tmp = tmp->next;
 	}
 	massiv[i] = NULL;
@@ -65,6 +66,7 @@ char	*ft_get_key(int count, char **env)
 	int		z;
 
 	i = 0;
+	str = NULL;
 	while (env[i])
 	{
 		if (i == count)
@@ -87,6 +89,7 @@ char	*ft_get_value(int count, char **env)
 	int		z;
 
 	i = 0;
+	str = NULL;
 	while (env[i])
 	{
 		if (i == count)

@@ -48,9 +48,9 @@ int	ft_count_dol_value(char *str, int *i)
 int	ft_len_value_dol(char *tmp, t_comm *lst)
 {
 	t_envp	*head;
-	int		len;
+	size_t	len;
 
-	len = (int)ft_strlen(tmp);
+	len = ft_strlen(tmp);
 	head = lst->e;
 	lst->fl = 0;
 	while (head)
@@ -60,12 +60,12 @@ int	ft_len_value_dol(char *tmp, t_comm *lst)
 		{
 			free (tmp);
 			tmp = ft_strdup(head->value);
-			lst->fl = ft_strlen(tmp);
+			lst->fl = (int)ft_strlen(tmp);
 			break ;
 		}
 		head = head->next;
 	}
-	lst->fl = ft_strlen(tmp);
+	lst->fl = (int)ft_strlen(tmp);
 	free (tmp);
 	return (lst->fl);
 }

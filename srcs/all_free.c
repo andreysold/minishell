@@ -43,10 +43,9 @@ void	remove_all_env_list(t_envp *head)
 	free(head);
 }
 
-void	clean_env(char **env, t_comm *lst)
+void	clean_env(char **env)
 {
 	int	i;
-	int	len;
 
 	i = 0;
 	if (env)

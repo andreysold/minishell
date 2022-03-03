@@ -21,7 +21,7 @@ char	*ft_parse_condition(char *str, t_comm *lst, int *i, int *j)
 	else if (str[(*i)] == '>' || str[(*i)] == '<')
 		lst->tmp = ft_open_file(str, i, j, lst);
 	else if (str[(*i)] == '$' && str[(*i) + 1] == '?')
-		lst->tmp = ft_global_value(str, lst, i, j);
+		lst->tmp = ft_global_value(lst, i, j);
 	else if (str[(*i)] == '$'
 		&& (ft_isalnum(str[(*i) + 1]) || str[(*i) + 1] == '_'))
 	{
@@ -102,7 +102,6 @@ t_comm	*ft_create_node(t_comm *lst, char *str, int c, t_envp *e)
 
 t_comm	*ft_parser4(t_comm *lst, char *str, t_envp *e)
 {
-	t_comm	*head;
 	int		count_nd;
 	char	**str_tl;
 	t_comm	*clean;

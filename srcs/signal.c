@@ -44,7 +44,7 @@ void	handler(int sig)
 	rl_redisplay();
 	write(1, "  \b\b\n", 5);
 	rl_on_new_line();
-	rl_replace_line("", 1);
+//	rl_replace_line("", 1);
 	rl_redisplay();
 	g_error_status = 1;
 }

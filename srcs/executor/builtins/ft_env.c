@@ -20,12 +20,7 @@ int	ft_env(t_comm *lst)
 	while (tmp)
 	{
 		if (tmp->key && tmp->value)
-		{
 			printf("%s=%s\n", tmp->key, tmp->value);
-			/*ft_putstr_fd(tmp->key, STDOUT_FILENO);
-			ft_putchar_fd('=', STDOUT_FILENO);
-			ft_putendl_fd(tmp->value, STDOUT_FILENO);*/
-		}
 		tmp = tmp->next;
 	}
 	return (EXIT_SUCCESS);

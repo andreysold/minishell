@@ -19,11 +19,11 @@ static inline void	update_value(t_comm *lst, char *key)
 	char	*buf;
 
 	buf = NULL;
-	location = locate_env_key(lst->e, key, 0);
+	location = locate_env_key(lst->e, key);
 	if (location != -1)
 	{
 		clean = getcwd(buf, 0);
-		upd_env_value(lst->e, clean, location, 0);
+		upd_env_value(lst->e, clean, location);
 		if (clean)
 			free(clean);
 	}
@@ -33,21 +33,20 @@ static inline void	find_home_path(t_comm *lst, char **new_path, int pos)
 {
 	char	*home;
 
-	home = get_env_value(lst->e, pos, 0);
-	pos = locate_env_key(lst->e, "PWD", 0);
+	home = get_env_value(lst->e, pos);
+	pos = locate_env_key(lst->e, "PWD");
 	if (pos != -1)
-		upd_env_value(lst->e, home, pos, 0);
+		upd_env_value(lst->e, home, pos);
 	*new_path = ft_strdup(home);
 }
 
 static inline int	search_path(t_comm *lst, char	**new_path)
 {
 	int		pos;
-	char	*home;
 
 	if (lst->cmd[1] == NULL)
 	{
-		pos = locate_env_key(lst->e, "HOME", 0);
+		pos = locate_env_key(lst->e, "HOME");
 		if (pos == -1)
 		{
 			ft_putendl_fd("bash: cd: HOME not set", 2);
@@ -56,7 +55,7 @@ static inline int	search_path(t_comm *lst, char	**new_path)
 		else
 			find_home_path(lst, new_path, pos);
 	}
-	else if (!ft_strncmp(lst->cmd[1], "\0", 1)) //FIXME doesn't work
+	else if (!ft_strncmp(lst->cmd[1], "\0", 1))
 		return (EXIT_FAILURE);
 	else
 		*new_path = ft_strdup(lst->cmd[1]);
@@ -82,11 +81,8 @@ int	ft_cd(t_comm *lst)
 		else
 			printf("bash: cd: %s\n", strerror(errno));
 	}
-	else
-	{
-		if (new_path)
-			free(new_path);
-	}
+	if (new_path)
+		free(new_path);
 	update_value(lst, "PWD");
 	return (EXIT_SUCCESS);
 }

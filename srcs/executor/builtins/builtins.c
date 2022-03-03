@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	check_builtin(t_comm **lst, char **env)
+int	check_builtin(t_comm **lst)
 {
 	if (ft_strncmp(*(*lst)->cmd, "echo", 5) == 0)
 	{
@@ -45,13 +45,13 @@ int	check_builtin(t_comm **lst, char **env)
 	return (-1);
 }
 
-int	builtins(t_comm **lst, char **env)
+int	builtins(t_comm **lst)
 {
 	int	bool;
 
 	if ((*lst)->cmd)
 	{
-		bool = check_builtin(lst, env);
+		bool = check_builtin(lst);
 		if (bool == EXIT_SUCCESS)
 		{
 			return (EXIT_SUCCESS);

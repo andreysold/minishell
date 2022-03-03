@@ -33,11 +33,7 @@ void	remove_element(t_envp **head, int location)
 	if (tmp != NULL && pos == location)
 	{
 		*head = tmp->next;
-		printf("%s pos - %d\n", YELLOW, pos);
-		printf("%s j - %s%s\n", BLUE, tmp->key, RESET);
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
+		env_list_free(&tmp);
 		return ;
 	}
 	while (tmp != NULL && pos != location)
@@ -48,10 +44,8 @@ void	remove_element(t_envp **head, int location)
 	}
 	if (tmp == NULL)
 		return ;
-	printf("%s pos - %d\n", YELLOW, pos);
-	printf("%s key - %s%s\n", BLUE, tmp->key, RESET);
 	prev->next = tmp->next;
-	free(tmp);
+	env_list_free(&tmp);
 }
 
 size_t	ft_listlen(t_envp *head)

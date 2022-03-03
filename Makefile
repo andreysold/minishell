@@ -1,7 +1,7 @@
 CC		=	gcc
 RM		=	rm -f
 LIBFT	=	srcs/libft
-CFLAGS	=	-I./includes -ggdb3 #-I../../../.brew/opt/readline/include #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -ggdb3 -I../../../.brew/opt/readline/include -Wall -Wextra -Werror -Wunused
 RLFLAG	=	-lreadline #-L../../../.brew/opt/readline/lib
 NAME	=	minishell
 SRCS	=	minishell.c
@@ -30,7 +30,7 @@ SRCS	+=	srcs/executor/pipex/pipex.c \
 SRCS	+=	srcs/list_utils/list_utils.c\
 
 #SIGNALS
-SRCS	+=	srcs/signal.c
+SRCS	+=	srcs/signal.c \
 
 #PARSER
 SRCS	+=	srcs/parser/parse_dollar.c \
@@ -40,7 +40,6 @@ SRCS	+=	srcs/parser/parse_dollar.c \
 			srcs/parser/parse_redir.c\
 			srcs/parser/pre_parser.c\
 			srcs/parser/env.c\
-			srcs/signal.c\
 			srcs/all_free.c\
 			srcs/parser/env_utils.c\
 			srcs/parser/dollar_utils.c\

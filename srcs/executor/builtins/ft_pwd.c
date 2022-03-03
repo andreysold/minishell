@@ -21,9 +21,9 @@ int	ft_pwd(t_comm *lst)
 	buf = NULL;
 	pwd = getcwd(buf, 0);
 	ft_putendl_fd(pwd, STDOUT_FILENO);
-	location = locate_env_key(lst->e, "PWD", 0);
+	location = locate_env_key(lst->e, "PWD");
 	if (location != -1)
-		upd_env_value(lst->e, pwd, location, 0);
+		upd_env_value(lst->e, pwd, location);
 	if (pwd)
 		free(pwd);
 	return (EXIT_SUCCESS);

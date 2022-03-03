@@ -76,13 +76,11 @@ int	ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 	return (0);
 }
 
-int	ft_herdok(t_comm *lst, char *str, int *i, int *begin)
+int	ft_herdok(t_comm *lst, char *str, int *i)
 {
 	int	beg;
 	int	k;
 
-	k = 0;
-	beg = 0;
 	(*i) += 2;
 	while (str[(*i)] && str[(*i)] == ' ')
 		(*i)++;
@@ -116,7 +114,7 @@ char	*ft_open_file(char *str, int *i, int *j, t_comm *lst)
 		else if (str[(*i)] == '<' && str[(*i) + 1] != '<')
 			lst->flag_error = ft_back_redir(lst, str, i, &begin);
 		else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
-			lst->flag_error = ft_herdok(lst, str, i, &begin);
+			lst->flag_error = ft_herdok(lst, str, i);
 		else
 			lst->tmp[(*j)++] = str[(*i)++];
 	}

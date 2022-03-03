@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <galetha@student.42.fr>           +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 14:12:03 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/03/03 12:35:22 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@ void	remove_element(t_envp **head, int location)
 		*head = tmp->next;
 		printf("%s pos - %d\n", YELLOW, pos);
 		printf("%s j - %s%s\n", BLUE, tmp->key, RESET);
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
+		env_list_free(&tmp);
 		return ;
 	}
 	while (tmp != NULL && pos != location)
@@ -51,7 +49,7 @@ void	remove_element(t_envp **head, int location)
 	printf("%s pos - %d\n", YELLOW, pos);
 	printf("%s key - %s%s\n", BLUE, tmp->key, RESET);
 	prev->next = tmp->next;
-	free(tmp);
+	env_list_free(&tmp);
 }
 
 size_t	ft_listlen(t_envp *head)

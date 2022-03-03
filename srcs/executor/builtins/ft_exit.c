@@ -6,41 +6,46 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 18:56:53 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 13:21:45 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"../../../includes/minishell.h"
 
-int	ft_exit_atoi(char *str, int sign, int n)
+int	ft_exit_atoi(char *str, int *sign, int n)
 {	
 	int	i;
 
 	i = 0;
 	if (str && str[i] == '-')
 	{
-		sign = -1;
+		(*sign) = -1;
 		i++;
 	}
-	while (str && ft_isdigit(str[i]))
+	while (str && ft_isdigit(str[i]) && (*sign) != -1)
 	{
 		n = 10 * n + (str[i] - 48);
 		i++;
 	}
-	n *= sign;
+	if ((*sign) == -1)
+	{
+		n = ft_atoi(str);
+		g_error_status = ((unsigned long long)n);
+		exit (g_error_status);
+	}
 	return (n);
 }
 
 int	ft_new_value_error(char *str)
 {
-	long long			n;
+	unsigned long long	n;
 	int					new_val;
 	int					sign;
 	unsigned long long	max;
 
 	max = 9223372036854775807;
 	sign = 1;
-	n = ft_exit_atoi(str, sign, n);
+	n = ft_exit_atoi(str, &sign, n);
 	if (n > max && sign != -1)
 	{
 		write(2, "bash: exit: ", 12);

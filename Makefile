@@ -53,24 +53,24 @@ OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 B_OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
 all:
+			@$(MAKE) -C $(LIBFT)
 			$(MAKE) $(NAME)
 
-$(NAME):	$(OBJS) $(LIBFT)/libft.a $(LIBFT)/libft.h
-			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
+$(NAME):	$(OBJS) $(LIBFT)/libft.h $(LIBFT)/libft.a
+			@$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
 bonus:
 			@$(MAKE) -C $(LIBFT)
 			@$(MAKE) $(B_NAME)
 
-$(B_NAME):	$(B_OBJS) $(LIBFT)/libft.a $(LIBFT)/libft.h
-			$(MAKE) -C $(LIBFT)
-			$(CC) -o $(B_NAME) $(RLFLAG) $(B_OBJS) $(LIBFT)/libft.a
+$(B_NAME):	$(B_OBJS) $(LIBFT)/libft.h $(LIBFT)/libft.a
+			@$(MAKE) -C $(LIBFT)
+			@$(CC) -o $(B_NAME) $(RLFLAG) $(B_OBJS) $(LIBFT)/libft.a
 			@echo "minishell_bonus is ready to use ✅ "
 
 %.o: %.c	includes/minishell.h Makefile
-			$(CC) $(CFLAGS) -c $< -o $@
+			@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 			@$(MAKE) -C $(LIBFT)/ clean

@@ -26,7 +26,7 @@ void	wait_childs(int n)
 		wait(&status);
 		if (WEXITSTATUS(status) && status != 0)
 			g_error_status = WEXITSTATUS(status);
-		else if (status == 0 && g_error_status != 1) // ????? check this!
+		else if (status == 0 && g_error_status != 1)
 				g_error_status = 0;
 		i++;
 	}

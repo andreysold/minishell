@@ -25,30 +25,30 @@
 # include "../srcs/libft/libft.h"
 # include <fcntl.h>
 # include <errno.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-//#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
-//#include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
-//#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-//#include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "../../8.1.2/include/readline/readline.h"
+# include "../../8.1.2/include/readline/history.h"
+
+//# include <readline/readline.h>
+//# include <readline/history.h>
+/*# define G "/Users/galetha/.brew/Cellar/"
+# define A "readline/8.1.2/include/readline/readline.h"
+
+# include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "GA"
+# include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"*/
 
 # define FD_UNUSED	-2
 
-/**********COLOR**********/
-#define RESET	"\033[0m"
-#define RED		"\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
 /***********PRE_PARSER****/
 
-#define	PIPE "bash: syntax error near unexpected token `|'\n"
-#define RED1 "bash: syntax error near unexpected token `>'\n"
-#define RED2 "bash: syntax error near unexpected token `>>'\n"
-#define RED3 "bash: syntax error near unexpected token `<'\n"
-#define RED4 "bash: syntax error near unexpected token `<<'\n"
-#define	RED5 "bash: syntax error near unexpected token `<<<'\n"
-#define	QUOT "bash: syntax error in unclosed quoters\n"
+# define PIPE	"bash: syntax error near unexpected token `|'\n"
+# define RED1	"bash: syntax error near unexpected token `>'\n"
+# define RED2	"bash: syntax error near unexpected token `>>'\n"
+# define RED3	"bash: syntax error near unexpected token `<'\n"
+# define RED4	"bash: syntax error near unexpected token `<<'\n"
+# define RED5	"bash: syntax error near unexpected token `<<<'\n"
+# define QUOT	"bash: syntax error in unclosed quoters\n"
 
 # define START	0
 # define MIDDLE	1
@@ -66,20 +66,10 @@ typedef struct s_iterat
 	int	foq;
 }	t_iter;
 
-typedef struct s_redir
-{
-	char	*tmp1;
-	char	*tmp2;
-	char	*tmp3;
-	char	*tmp4;
-}	t_redir;
-
 typedef struct s_envp
 {
 	char			*key;
 	char			*value;
-	char			*key_orig;
-	char			*value_orig;
 	int				count;
 	struct s_envp	*next;
 }	t_envp;
@@ -121,8 +111,8 @@ void	close_in_out_file(t_comm *tmp);
 void	close_pipes(int *pipes, int count_node);
 
 /**********BUILTIN**********/
-int builtins(t_comm **lst);
-int check_builtin(t_comm **lst);
+int		builtins(t_comm **lst);
+int		check_builtin(t_comm **lst);
 int		ft_echo(t_comm *tmp);
 int		ft_cd(t_comm *lst);
 int		ft_pwd(t_comm *lst);
@@ -145,7 +135,7 @@ size_t	ft_listlen(t_envp *head);
 void	handler22(int sig);
 void	ff(int sig);
 
-char *ft_global_value(t_comm *lst, int *i, int *j);
+char	*ft_global_value(t_comm *lst, int *i, int *j);
 
 int		ft_lexer(char *str);
 int		ft_process4(char *str, t_envp **envp);
@@ -179,7 +169,7 @@ char	*ft_get_key(int count, char **env);
 char	**ft_update_env(t_envp *list_env);
 char	**ft_get_envp(char **env);
 char	*ft_spasibo_norma(char *tmp, t_comm *lst, int *j);
-char *ft_global_value(t_comm *lst, int *i, int *j);
+char	*ft_global_value(t_comm *lst, int *i, int *j);
 char	*ft_name_file(t_comm *lst, char *tmp, t_envp *head);
 char	*ft_key_file(char *str, int *begin, int len, char *name);
 char	*ft_new_str(char *str);
@@ -187,7 +177,7 @@ void	handler(int sig);
 void	remove_all_list(t_comm *head);
 void	ft_skip_quotes(char *str, int *i, char c);
 void	remove_all_env_list(t_envp *head);
-void clean_env(char **env);
+void	clean_env(char **env);
 void	ft_get_key_value(char **massiv, t_envp *tmp, int *i);
 int		ft_is_space(char *str, int *i);
 int		ft_return_error(char *str);

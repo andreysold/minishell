@@ -42,8 +42,9 @@ static inline int	ft_new_value_error(char *str)
 	unsigned long long	n;
 	unsigned long long	max;
 
-	max = 9223372036854775807;
+	n = 0;
 	sign = 1;
+	max = 9223372036854775807;
 	n = ft_exit_atoi(str, &sign, n);
 	if (n > max && sign != -1)
 	{

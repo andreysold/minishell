@@ -89,7 +89,7 @@ static void	export_key_value(t_comm *tmp, char **key, char **value, int i)
 	{
 		g_error_status = 1;
 		printf("bash: export: %s: not a valid identifier\n", tmp->cmd[i]);
-	} 
+	}
 	if (*key)
 	{
 		location = locate_env_key(tmp->e, *key);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/09 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:10:51 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	ft_unset(t_comm **lst)
 	int		location;
 	t_envp	*prev;
 
+	g_error_status = 0;
 	prev = (*lst)->e;
 	if (prev)
 	{

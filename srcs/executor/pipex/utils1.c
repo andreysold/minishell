@@ -29,8 +29,6 @@ void	close_in_out_file(t_comm *tmp)
 		err = close(tmp->outfile);
 	if (tmp->infile != -2)
 		err = close(tmp->infile);
-	if (err != 0)
-		perror("close_in_out_file:");
 }
 
 void	close_pipes(int *pipes, int count_node)

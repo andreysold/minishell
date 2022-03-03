@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                            :+:      :+:    :+:  */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <wjonatho@student.21-school.ru>   +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 17:53:20 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:07:16 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ int	ft_pwd(t_comm *lst)
 		upd_env_value(lst->e, pwd, location);
 	if (pwd)
 		free(pwd);
+	g_error_status = 0;
 	return (EXIT_SUCCESS);
 }

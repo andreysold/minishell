@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 14:09:39 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 17:53:17 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,6 @@ t_comm	*ft_return_node(t_comm *lst)
 		if (lst->last_str)
 		{
 			lst->last_str = ft_destroy_space4(lst->last_str, lst);
-			if (lst->flag_error == -1)
-				return (NULL);
 			lst->cmd = ft_split(lst->last_str, ' ');
 			free (lst->last_str);
 			lst->cmd = ft_return_space(lst->cmd);

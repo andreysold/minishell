@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:40:14 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/22 14:15:18 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 18:22:42 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,8 @@
 # include "../srcs/libft/libft.h"
 # include <fcntl.h>
 # include <errno.h>
-//# include "../../8.1.2/include/readline/readline.h"
-//# include "../../8.1.2/include/readline/history.h"
-
 # include <readline/readline.h>
 # include <readline/history.h>
-
 # define FD_UNUSED	-2
 
 /***********PRE_PARSER****/

@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/03 13:21:45 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 16:50:16 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static inline long long int	ft_exit_atoi(char *str, int *sign, int n)
 	if (str && str[i] == '-')
 	{
 		(*sign) = -1;
+		g_error_status = 255;
+		exit (g_error_status);
 		i++;
 	}
 	while (str && ft_isdigit(str[i]) && (*sign) != -1)

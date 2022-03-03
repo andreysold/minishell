@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 14:20:13 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 17:56:40 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
 {
 	ft_skip_sp(str, i, begin);
 	lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
+	if (!lst->name)
+		return (-1);
 	lst->name = ft_new_sub(*i, lst, str, *begin);
 	lst->outfile = open(lst->name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (!lst->outfile)
@@ -27,6 +29,7 @@ int	ft_one_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(1, ":", 1);
 		perror("");
 		g_error_status = -1;
+		free (lst->name);
 		return (-1);
 	}
 	free (lst->name);
@@ -37,6 +40,8 @@ int	ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
 {
 	ft_skip_sp(str, i, begin);
 	lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin)) + 1);
+	if (!lst->name)
+		return (-1);
 	lst->name = ft_new_sub(*i, lst, str, *begin);
 	lst->infile = open(lst->name, O_RDONLY, 0644);
 	if (!lst->infile)
@@ -48,6 +53,7 @@ int	ft_back_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(1, ":", 1);
 		perror("");
 		g_error_status = 1;
+		free (lst->name);
 		return (-1);
 	}
 	free (lst->name);
@@ -59,6 +65,8 @@ int	ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 	(*i)++;
 	ft_skip_sp(str, i, begin);
 	lst->name = (char *)malloc(sizeof(char) * ((*i) - (*begin) + 1));
+	if (!lst->name)
+		return (-1);
 	lst->name = ft_new_sub(*i, lst, str, *begin);
 	lst->outfile = open(lst->name, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (!lst->outfile)
@@ -70,6 +78,7 @@ int	ft_add_redir(t_comm *lst, char *str, int *i, int *begin)
 		write(1, ":", 1);
 		perror("");
 		g_error_status = -1;
+		free (lst->name);
 		return (-1);
 	}
 	free (lst->name);

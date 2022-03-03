@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wjonatho <galetha@student.42.fr>           +#+  +:+       +#+        */
+/*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/09 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/20 14:12:03 by wjonatho         ###   ########.fr       */
+/*   Updated: 2022/03/03 17:29:05 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ void	add_to_env(t_envp *envp, char *new_key, char *new_value)
 	node->key = ft_strdup(new_key);
 	if (new_value)
 		node->value = ft_strdup(new_value);
+	else
+		node->value = NULL;
 	node->next = NULL;
 	tmp = envp;
 	while (tmp->next)

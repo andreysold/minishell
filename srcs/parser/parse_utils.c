@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/03 12:40:05 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 16:38:26 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ int	ft_is_space(char *str, int *i)
 		while (str[(*i)] && str[(*i)] == ' ')
 			(*i)++;
 		if ((*i) == len)
-		{
-			free (str);
 			return (-1);
-		}
 	}
 	return (1);
 }

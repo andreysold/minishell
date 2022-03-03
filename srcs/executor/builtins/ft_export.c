@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/02 19:20:38 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 18:10:14 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,7 @@ static void	export_key_value(t_comm *tmp, char **key, char **value, int i)
 		else
 		{
 			if (*value)
-			{
 				upd_env_value(tmp->e, *value, location);
-				free(*value);
-			}
 		}
 	}
 }
@@ -130,5 +127,6 @@ int	ft_export(t_comm *lst)
 			i++;
 		}
 	}
+	g_error_status = 0;
 	return (EXIT_SUCCESS);
 }

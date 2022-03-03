@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 20:46:09 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/03/03 14:04:38 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 18:23:39 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,23 @@ void	ft_up_shlvl(t_envp *list_env)
 	}
 }
 
+int	ft_support_circle(char *str, int *i, t_envp **list_env)
+{
+	if (ft_is_space(str, i) == -1)
+	{
+		free (str);
+		return (-1);
+	}
+	if (ft_lexer(str) != -1)
+	{
+		if (ft_process4(str, list_env) == -1)
+			exit(0);
+	}
+	else
+		free (str);
+	return (0);
+}
+
 int	ft_main_circle(char *str, t_envp **list_env)
 {
 	int	i;
@@ -66,15 +83,8 @@ int	ft_main_circle(char *str, t_envp **list_env)
 	str = readline("bash:");
 	if (str && *str)
 	{
-		if (ft_is_space(str, &i) == -1)
+		if (ft_support_circle(str, &i, list_env) == -1)
 			return (0);
-		if (ft_lexer(str) != -1)
-		{
-			if (ft_process4(str, list_env) == -1)
-				exit(0);
-		}
-		else
-			free (str);
 	}
 	else if (str == NULL)
 	{

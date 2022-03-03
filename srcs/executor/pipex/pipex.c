@@ -6,7 +6,7 @@
 /*   By: galetha <galetha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:08:07 by wjonatho          #+#    #+#             */
-/*   Updated: 2022/02/27 19:55:44 by galetha          ###   ########.fr       */
+/*   Updated: 2022/03/03 17:39:13 by galetha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,8 @@ void	redirect(t_comm *tmp)
 	err = 0;
 	if (tmp->infile != FD_UNUSED)
 		err = dup2(tmp->infile, STDIN_FILENO);
-	if (err != 0)
-		perror("1redirect:");
-	err = 0;
 	if (tmp->outfile != FD_UNUSED)
 		err = dup2(tmp->outfile, STDOUT_FILENO);
-	if (err != 0)
-		perror("2redirect:");
 }
 
 int	*open_pipes(t_comm *tmp)

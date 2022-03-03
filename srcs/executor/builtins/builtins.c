@@ -15,33 +15,19 @@
 int	check_builtin(t_comm **lst)
 {
 	if (ft_strncmp(*(*lst)->cmd, "echo", 5) == 0)
-	{
 		return (ft_echo(*lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "cd", 3) == 0)
-	{
 		return (ft_cd(*lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "pwd", 4) == 0)
-	{
 		return (ft_pwd(*lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "export", 7) == 0)
-	{
 		return (ft_export(*lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "unset", 6) == 0)
-	{
 		return (ft_unset(lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "env", 4) == 0)
-	{
 		return (ft_env(*lst));
-	}
 	else if (ft_strncmp(*(*lst)->cmd, "exit", 5) == 0)
-	{
 		return (ft_exit(*lst));
-	}
 	return (-1);
 }
 

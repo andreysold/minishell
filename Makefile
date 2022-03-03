@@ -4,6 +4,7 @@ LIBFT	=	srcs/libft
 CFLAGS	=	-I./includes -ggdb3 -I../../8.1.2/include/readline/include -Wall -Wextra -Werror
 RLFLAG	=	-lreadline -L../../8.1.2/include/readline/lib
 NAME	=	minishell
+B_NAME	=	minishell_bonus
 SRCS	=	minishell.c
 
 #EXECUTOR
@@ -49,25 +50,36 @@ SRCS	+=	srcs/parser/parse_dollar.c \
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 
+B_OBJS	=	$(patsubst %.c, %.o, $(SRCS))
+
 all:
 			$(MAKE) $(NAME)
 
-$(NAME):	$(OBJS)
+$(NAME):	$(OBJS) $(LIBFT)/libft.a $(LIBFT)/libft.h
 			$(MAKE) -C $(LIBFT)
 			$(CC) -o $(NAME) $(RLFLAG) $(OBJS) $(LIBFT)/libft.a
 			@echo "minishell is ready to use ✅ "
 
-%.o: %.c	includes/minishell.h includes/pipex.h
+bonus:
+			@$(MAKE) -C $(LIBFT)
+			@$(MAKE) $(B_NAME)
+
+$(B_NAME):	$(B_OBJS) $(LIBFT)/libft.a $(LIBFT)/libft.h
+			$(MAKE) -C $(LIBFT)
+			$(CC) -o $(B_NAME) $(RLFLAG) $(B_OBJS) $(LIBFT)/libft.a
+			@echo "minishell_bonus is ready to use ✅ "
+
+%.o: %.c	includes/minishell.h Makefile
 			$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 			@$(MAKE) -C $(LIBFT)/ clean
-			@$(RM)	$(OBJS)
+			@$(RM)	$(OBJS) $(B_OBJS)
 			@echo ".o Deleted 🗿"
 
 fclean: 	clean
 			@$(MAKE) -C $(LIBFT)/ fclean
-			@$(RM)	 $(NAME)
+			@$(RM)	 $(NAME) $(B_NAME)
 			@echo "Deleted 😬"
 
 re:			fclean all
@@ -75,4 +87,4 @@ re:			fclean all
 run:		all
 			./$(NAME)
 
-.PHONY: all clean fclean re run
+.PHONY: all bonus clean fclean re run

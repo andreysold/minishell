@@ -85,6 +85,7 @@ static void	export_key_value(t_comm *tmp, char **key, char **value, int i)
 
 	*key = NULL;
 	*value = NULL;
+	g_error_status = 0;
 	if (check_export_arg(tmp, i, key, value))
 	{
 		g_error_status = 1;

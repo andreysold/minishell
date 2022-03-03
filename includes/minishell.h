@@ -25,18 +25,11 @@
 # include "../srcs/libft/libft.h"
 # include <fcntl.h>
 # include <errno.h>
-# include "../../8.1.2/include/readline/readline.h"
-# include "../../8.1.2/include/readline/history.h"
+//# include "../../8.1.2/include/readline/readline.h"
+//# include "../../8.1.2/include/readline/history.h"
 
-//# include <readline/readline.h>
-//# include <readline/history.h>
-/*# define G "/Users/galetha/.brew/Cellar/"
-# define A "readline/8.1.2/include/readline/readline.h"
-
-# include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "../../../home/linuxbrew/.linuxbrew/Cellar/readline/8.1.2/include/readline/history.h"
-# include "GA"
-# include "/Users/galetha/.brew/Cellar/readline/8.1.2/include/readline/history.h"*/
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define FD_UNUSED	-2
 

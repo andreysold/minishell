@@ -80,9 +80,11 @@ int	ft_cd(t_comm *lst)
 			printf("bash: cd: %s: %s\n", lst->cmd[1], strerror(errno));
 		else
 			printf("bash: cd: %s\n", strerror(errno));
+		g_error_status = 1;
 	}
 	if (new_path)
 		free(new_path);
 	update_value(lst, "PWD");
+	g_error_status = 0;
 	return (EXIT_SUCCESS);
 }

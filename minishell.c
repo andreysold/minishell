@@ -91,6 +91,8 @@ int	ft_main_circle(char *str, t_envp **list_env)
 		write(1, "exit\n", 5);
 		remove_all_env_list(*list_env);
 		exit(0);
+	}else{
+		free (str);
 	}
 	return (0);
 }

@@ -37,5 +37,7 @@ ctrl-C, ctrl-D и ctrl-\ ведут себя как в bash
 
 * git clone <repo-url> minishell
 * cd minishell
+* git submodule init
+* git submodule update
 * make/make run
 * ./minishell
